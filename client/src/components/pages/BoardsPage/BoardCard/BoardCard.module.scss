@@ -1,0 +1,24 @@
+
+.board_card {
+  width: 50ch;
+  height: 20ch;
+  display: inline-block;
+}
+
+.card_content {
+  padding: 1rem;
+  margin: 0 auto auto 0;
+  display: flex;
+}
+
+.board_image {
+  max-height: 100px;
+  max-width: 100px;
+  border-radius: 10px;
+
+  margin: 0 1rem 1rem 0;
+}
+
+.text_content {
+  overflow: hidden;
+}

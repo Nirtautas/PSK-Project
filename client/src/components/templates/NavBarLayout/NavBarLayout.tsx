@@ -12,7 +12,7 @@ type Props = {
 
 const NavBarLayout = ({ children }: Props) => {
     return (
-        <Paper>
+        <div>
             <header>
                 <Paper className={styles.navbar}>
                     <div className={styles.start_container}>
@@ -62,7 +62,7 @@ const NavBarLayout = ({ children }: Props) => {
             <main>
                 {children}
             </main>
-        </Paper>
+        </div>
     )
 }
 

@@ -1,6 +1,8 @@
 import {Board} from '@/types/types'
 
-export type CreateBoardDto = Omit<Board, 'id'>
+export type CreateBoardDto = Omit<Board, 'id' | 'imgUrl'> & {
+    imageFile?: File
+}
 
 export default class BoardApi {
     static async getBoards(): Promise<Board[]> {
@@ -35,7 +37,8 @@ export default class BoardApi {
     static async createBoard(board: CreateBoardDto): Promise<Board> {
         return {
             ...board,
-            id: 1
+            id: 1,
+            imgUrl: ''
         }
     }
 }

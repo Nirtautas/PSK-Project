@@ -1,20 +1,26 @@
 import { Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
 import styles from './BoardManagemenModal.module.scss'
-import Form from 'next/form'
 import { useState } from 'react'
+import { placeholderImageUrl } from '@/constants/placeholders'
 
 type Props = {
     open: boolean
     onClose: () => void
-    onSubmit: (boardName: string, description: string, image: File | null) => void
+    onSubmit: (args: CreateBoardArgs) => void
+}
+
+export type CreateBoardArgs = {
+    boardName: string,
+    description: string,
+    image: File | null
 }
 
 const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
     const [boardName, setBoardName] = useState('')
     const [description, setDescription] = useState('')
     const [image, setImage] = useState<File | null>(null)
-    const imageUrl = (image && URL.createObjectURL(image as Blob)) || 'https://onlinetools.com/images/examples-onlineimagetools/empty-translucent-image.png'
+    const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
@@ -23,7 +29,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
     }
 
     const handleSubmit = () => {
-        onSubmit(boardName, description, image)
+        onSubmit({ boardName, description, image })
     }
 
     return (

@@ -1,8 +1,12 @@
 
+.content {
+  padding: 1rem;
+}
+
 .toolbar {
   display: flex;
   flex-direction: row;
-  padding: 0.5rem 0;
+  padding-bottom: 0.5rem;
   margin: 1rem 0;
   max-width: 80%;
   border-bottom: 2px solid lightgrey;

@@ -1,0 +1,20 @@
+appsettings.Development.json
+
+# IDE
+.idea
+.vscode
+
+# Environment
+.env
+
+# Output
+obj
+bin
+node_modules
+
+# Migrations
+.vs
+.Development.json
+
+# Logger
+Logs

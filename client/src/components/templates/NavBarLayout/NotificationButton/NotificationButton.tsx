@@ -26,7 +26,7 @@ const NotificationButton = ({ notifications }: Props) => {
 
     return (
         <div className={styles.container}>
-            <Badge badgeContent={4} color="error" showZero>
+            <Badge badgeContent={notifications.length} color="error" showZero>
                 <Card elevation={2} sx={{ borderRadius: '25%' }}>
                     <IconButton onClick={handleClick}>
                         <NotificationsIcon fontSize="large"/>

@@ -1,5 +1,7 @@
 import {Board} from '@/types/types'
 
+export type CreateBoardDto = Omit<Board, 'id'>
+
 export default class BoardApi {
     static async getBoards(): Promise<Board[]> {
         return [
@@ -28,5 +30,12 @@ export default class BoardApi {
                 imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
             }
         ] satisfies Board[]
+    }
+
+    static async createBoard(board: CreateBoardDto): Promise<Board> {
+        return {
+            ...board,
+            id: 1
+        }
     }
 }

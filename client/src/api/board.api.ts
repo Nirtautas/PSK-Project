@@ -38,7 +38,8 @@ export default class BoardApi {
         return {
             ...board,
             id: 1,
-            imgUrl: ''
+            // @ts-ignore
+            imgUrl: null
         }
     }
 }

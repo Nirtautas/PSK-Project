@@ -26,6 +26,7 @@ const BoardsPage = () => {
         BoardApi.createBoard({ name: boardName, description, imageFile: image || undefined }).then((board) => {
             setBoards([...boards, board])
         })
+        setIsModalOpen(false)
     }
 
     return (

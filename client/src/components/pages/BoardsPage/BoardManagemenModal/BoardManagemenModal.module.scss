@@ -28,13 +28,13 @@
 
 .buttons {
   border-top: 2px solid lightgrey;
-  @media screen and (prefers-color-scheme: dark) {
-    border-top: 2px solid darkgray;
-  }
-
   display: flex;
   justify-content: flex-end;
   padding-top: 1rem;
+
+  @media screen and (prefers-color-scheme: dark) {
+    border-top: 2px solid darkgray;
+  }
 }
 
 .upload {

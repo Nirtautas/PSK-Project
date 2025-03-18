@@ -15,7 +15,22 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
     const router = useRouter()
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return (
+            <div>
+                {Array.from({ length: 4 }).map((_, index) => (
+                    <div className={styles.card_wrapper} key={index}>
+                        <BoardCard
+                            name={''}
+                            description={''}
+                            imgUrl={''}
+                            onClick={() => {
+                            }}
+                            isLoading={true}
+                        />
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     if (errorMsg) {
@@ -31,6 +46,7 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
                         description={board.description}
                         imgUrl={board.imgUrl}
                         onClick={() => router.push(getPageUrl.board(board.id))}
+                        isLoading={false}
                     />
                 </div>
             ))}

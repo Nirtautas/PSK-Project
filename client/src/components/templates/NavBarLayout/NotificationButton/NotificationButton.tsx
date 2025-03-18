@@ -1,6 +1,6 @@
-import {useState} from 'react'
-import {Card, IconButton, Menu, MenuItem} from '@mui/material'
-import { Notifications  as NotificationsIcon } from '@mui/icons-material'
+import { useState } from 'react'
+import { Badge, Card, IconButton, Menu, MenuItem } from '@mui/material'
+import { Notifications as NotificationsIcon } from '@mui/icons-material'
 
 import styles from './NotificationButton.module.scss'
 
@@ -26,21 +26,21 @@ const NotificationButton = ({ notifications }: Props) => {
 
     return (
         <div className={styles.container}>
-            <Card elevation={2} sx={{ borderRadius: '50%' }}>
-                <IconButton onClick={handleClick}>
-                    <NotificationsIcon fontSize="large" />
-                </IconButton>
-            </Card>
+            <Badge badgeContent={4} color="error" showZero>
+                <Card elevation={2} sx={{ borderRadius: '25%' }}>
+                    <IconButton onClick={handleClick}>
+                        <NotificationsIcon fontSize="large"/>
+                    </IconButton>
+                </Card>
+            </Badge>
             <Menu
                 anchorEl={anchorEl}
                 onClose={handleClose}
                 open={isOpen}
             >
-                {notifications.map((notification, index) => (
-                    <MenuItem key={index} onClick={notification.onClick}>
-                        {notification.component}
-                    </MenuItem>
-                ))}
+                {notifications.map((notification, index) => (<MenuItem key={index} onClick={notification.onClick}>
+                    {notification.component}
+                </MenuItem>))}
             </Menu>
         </div>
     )

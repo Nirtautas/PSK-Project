@@ -1,8 +1,10 @@
 import {Board} from '@/types/types'
-import {Box} from '@mui/material'
 import BoardCard from '@/components/pages/BoardsPage/BoardCard'
+import {useRouter} from 'next/navigation'
 
 import styles from './BoardsView.module.scss'
+import {getPageUrl} from '@/constants/urls'
+import {Badge} from '@mui/material'
 
 type Props = {
     boards: Board[]
@@ -11,6 +13,7 @@ type Props = {
 }
 
 const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
+    const router = useRouter()
 
     if (isLoading) {
         return <div>Loading...</div>
@@ -22,12 +25,16 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
 
     return (
         <div>
-                {boards.map((board, index) => (
-
-                    <div className={styles.card_wrapper}  key={index}>
-                        <BoardCard name={board.name} description={board.description} imgUrl={board.imgUrl} />
-                    </div>
-                ))}
+            {boards.map((board, index) => (
+                <div className={styles.card_wrapper} key={index}>
+                    <BoardCard
+                        name={board.name}
+                        description={board.description}
+                        imgUrl={board.imgUrl}
+                        onClick={() => router.push(getPageUrl.board(board.id))}
+                    />
+                </div>
+            ))}
         </div>
     )
 }

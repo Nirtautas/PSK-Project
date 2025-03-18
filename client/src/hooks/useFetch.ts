@@ -20,10 +20,15 @@ const useFetch = <T>({ resolver }: Args<T>) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await resolver()
-            setIsLoading(false)
-            setErrorMsg('')
-            setData(response)
+            try {
+                const response = await resolver()
+                setErrorMsg('')
+                setData(response)
+            } catch (e: any) {
+                setErrorMsg(e.message || 'Something went wrong')
+            } finally {
+                setIsLoading(false)
+            }
         }
         fetchData()
     }, [])

@@ -10,4 +10,9 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WorthBoards.Common\WorthBoards.Common.csproj" />
+    <ProjectReference Include="..\WorthBoards.Data\WorthBoards.Data.csproj" />
+  </ItemGroup>
+
 </Project>

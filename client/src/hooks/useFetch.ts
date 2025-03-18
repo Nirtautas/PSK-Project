@@ -1,18 +1,18 @@
 import {useEffect, useState} from 'react'
 
 
-enum HttpMethod {
+export enum HttpMethod {
     GET = 'GET',
     POST = 'POST',
     PUT = 'PUT',
     DELETE = 'DELETE'
 }
 
-type Props<T> = {
+type Args<T> = {
     resolver: () => Promise<T>
 }
 
-const useFetch = <T>({ resolver }: Props<T>) => {
+const useFetch = <T>({ resolver }: Args<T>) => {
     // TODO: implement error handling
     const [data, setData] = useState<T>(null as T)
     const [isLoading, setIsLoading] = useState<boolean>(true)

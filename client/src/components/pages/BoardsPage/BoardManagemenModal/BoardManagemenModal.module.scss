@@ -14,9 +14,9 @@
 
 .title_text {
   width: 100%;
-  border-bottom: 2px solid lightgrey;
+  border-bottom: 2px solid darkgray;
   @media screen and (prefers-color-scheme: dark) {
-    border-bottom: 2px solid darkgray;
+    border-bottom: 2px solid lightgrey;
   }
 }
 

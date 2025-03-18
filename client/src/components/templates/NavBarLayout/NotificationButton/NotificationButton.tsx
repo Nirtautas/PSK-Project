@@ -1,16 +1,12 @@
 import { useState } from 'react'
-import { Badge, Card, IconButton, Menu, MenuItem } from '@mui/material'
+import { Badge, Card, IconButton, Menu } from '@mui/material'
 import { Notifications as NotificationsIcon } from '@mui/icons-material'
 
 import styles from './NotificationButton.module.scss'
 
-type Notification = {
-    component: React.ReactNode
-    onClick: () => void
-}
 
 type Props = {
-    notifications: Notification[]
+    notifications: React.ReactNode[]
 }
 
 const NotificationButton = ({ notifications }: Props) => {
@@ -37,10 +33,25 @@ const NotificationButton = ({ notifications }: Props) => {
                 anchorEl={anchorEl}
                 onClose={handleClose}
                 open={isOpen}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right', // Aligns the menu to the right of the anchor
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right', // Moves the menu towards the left
+                }}
             >
-                {notifications.map((notification, index) => (<MenuItem key={index} onClick={notification.onClick}>
-                    {notification.component}
-                </MenuItem>))}
+                <div className={styles.dropdown_content}>
+                    <div className={styles.content_wrapper}>
+                        <span className={styles.notification_text}>
+                            {'You have '}
+                            <span className={notifications.length > 0 ? styles.notification_number_active : styles.notification_number}>{notifications.length}</span>
+                            {` ${notifications.length === 1 ? 'notification' : 'notifications'}:`}
+                        </span>
+                    </div>
+                    {notifications}
+                </div>
             </Menu>
         </div>
     )

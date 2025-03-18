@@ -1,16 +1,28 @@
 'use client'
 
-import {Box, Paper, Typography} from '@mui/material'
+import { Box, MenuItem, Paper, Typography } from '@mui/material'
 
 import styles from './NavBarLayout.module.scss'
 import UserProfile from '@/components/templates/NavBarLayout/UserProfile'
 import NotificationButton from '@/components/templates/NavBarLayout/NotificationButton'
+import { useRouter } from 'next/navigation'
+import { getPageUrl } from '@/constants/urls'
+import useFetch from '@/hooks/useFetch'
+import NotificationApi from '@/api/notification.api'
+import { Notification } from '@/types/types'
 
 type Props = {
     children: React.ReactNode
 }
 
 const NavBarLayout = ({ children }: Props) => {
+    const router = useRouter()
+    const {
+        data,
+    } = useFetch({ resolver: () => NotificationApi.getNotifications()})
+    const notifications = data?.items || []
+
+    // @ts-ignore
     return (
         <div>
             <header>
@@ -20,21 +32,19 @@ const NavBarLayout = ({ children }: Props) => {
                     </div>
                     <div className={styles.end_container}>
                         <Box className={styles.notification_button_wrapper}>
-                            <NotificationButton notifications={[
-                                {
-                                    component: <Typography>Notification 1</Typography>,
-                                    onClick: () => {
-                                        console.log('Notification 1')
-                                    }
-                                },
-                                {
-                                    component: <Typography>Notification 2</Typography>,
-                                    onClick: () => {
-                                        console.log('Notification 2')
-                                    }
-                                }
-                            ]}
-                            />
+                            <NotificationButton notifications={notifications.map((notification: Notification) => (
+                                <MenuItem
+                                    // TODO: create notification component
+                                    key={notification.id}
+                                    onClick={() => console.log('IMPLEMENT ME')}
+                                >
+                                    <div>
+                                        <strong>{notification.title}</strong>
+                                        <br />
+                                        <sub>{notification.description}</sub>
+                                    </div>
+                                </MenuItem>
+                            ))}/>
                         </Box>
                         <Box className={styles.centered_wrapper}>
                             <UserProfile
@@ -42,17 +52,23 @@ const NavBarLayout = ({ children }: Props) => {
                                 imageUrl="https://preview.colorkit.co/color/ff0000.png?static=true"
                                 buttons={[
                                     {
-                                        label: 'Logout',
+                                        label: 'My Boards',
                                         onClick: () => {
-                                            console.log('Logout')
+                                            router.push(getPageUrl.boards())
                                         }
                                     },
                                     {
                                         label: 'Settings',
                                         onClick: () => {
-                                            console.log('Settings')
+                                            router.push(getPageUrl.settings())
                                         }
-                                    }
+                                    },
+                                    {
+                                        label: 'Log out',
+                                        onClick: () => {
+                                            router.push(getPageUrl.logout())
+                                        }
+                                    },
                                 ]}
                             />
                         </Box>

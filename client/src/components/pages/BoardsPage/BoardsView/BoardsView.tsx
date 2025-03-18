@@ -1,10 +1,9 @@
-import {Board} from '@/types/types'
+import { Board } from '@/types/types'
 import BoardCard from '@/components/pages/BoardsPage/BoardCard'
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import styles from './BoardsView.module.scss'
-import {getPageUrl} from '@/constants/urls'
-import {Badge} from '@mui/material'
+import { getPageUrl } from '@/constants/urls'
 
 type Props = {
     boards: Board[]

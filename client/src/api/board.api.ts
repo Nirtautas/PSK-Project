@@ -42,4 +42,13 @@ export default class BoardApi {
             imgUrl: null
         }
     }
+
+    static async getBoardById(id: number): Promise<Board> {
+        return {
+            name: 'test',
+            id,
+            description: 'test description',
+            imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+        }
+    }
 }

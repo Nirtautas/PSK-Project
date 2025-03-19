@@ -4,9 +4,9 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDataServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //Register stuff for data layer here
+            //Register stuff for business layer here
 
             return services;
         }

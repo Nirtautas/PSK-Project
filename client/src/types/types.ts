@@ -5,6 +5,7 @@ export type Board = {
     name: string
     description: string
     imgUrl: string
+    tasks?: Task[]
 }
 
 export type Task = {

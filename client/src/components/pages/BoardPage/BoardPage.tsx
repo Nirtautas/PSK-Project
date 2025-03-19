@@ -14,6 +14,7 @@ type Props = {
 const BoardPage = ({ boardId }: Props) => {
     const {
         data: board,
+        errorMsg,
         isLoading
     } = useFetch({ resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000 })
 
@@ -23,7 +24,7 @@ const BoardPage = ({ boardId }: Props) => {
                 <Typography variant="h3">{ !isLoading ? board?.name || '' : <Skeleton sx={{ width: '10em' }} />}</Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView />
+                <BoardView tasks={board?.tasks} errorMsg={errorMsg} isLoading={isLoading}/>
             </div>
         </div>
     )

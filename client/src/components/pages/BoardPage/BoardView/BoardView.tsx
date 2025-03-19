@@ -5,12 +5,19 @@ import BoardViewButtons, { BoardViewTab } from '@/components/pages/BoardPage/Boa
 import TasksView from '@/components/pages/BoardPage/BoardView/TasksView'
 
 import styles from './BoardView.module.scss'
+import { Task } from '@/types/types'
 
-const BoardView = () => {
+type Props = {
+    isLoading: boolean
+    errorMsg: string
+    tasks: Task[] | undefined
+}
+
+const BoardView = ({ tasks, isLoading, errorMsg }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView />
+        if (tab === 'Tasks') return <TasksView tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} />
         if (tab === 'Collaborators') return <div>Collaborators</div>
         if (tab === 'Archives') return <div>Archives</div>
         return <div>Settings</div>

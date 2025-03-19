@@ -5,36 +5,17 @@ import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
 import { Task } from '@/types/types'
 
-const TasksView = () => {
+type Props = {
+    tasks: Task[]
+    isLoading: boolean
+    errorMsg: string
+}
+
+const TasksView = ({ tasks, isLoading, errorMsg }: Props) => {
     const columns: { label: string, items: Task[] }[] = [
         {
             label: 'Waiting',
-            items: [
-                {
-                    id: 123,
-                    title: 'Task 1',
-                },
-                {
-                    id: 123,
-                    title: 'Task 1',
-                },
-                {
-                    id: 123,
-                    title: 'Task 1',
-                },
-                {
-                    id: 123,
-                    title: 'Task 1',
-                },
-                // {
-                //     id: 123,
-                //     title: 'Task 1',
-                // },
-                // {
-                //     id: 123,
-                //     title: 'Task 1',
-                // }
-            ]
+            items: tasks
         },
         {
             label: 'In Progress',
@@ -54,7 +35,7 @@ const TasksView = () => {
                         <div className={styles.label_wrapper}>
                             <Typography variant="h6" className={styles.label}>{column.label}</Typography>
                         </div>
-                        <TaskList isLoading={false} tasks={column.items} />
+                        <TaskList isLoading={isLoading} tasks={column.items} errorMsg={errorMsg} />
                     </div>
                 ))
             }

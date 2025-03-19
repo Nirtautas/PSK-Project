@@ -1,4 +1,5 @@
 import {Board} from '@/types/types'
+import TaskApi from '@/api/task.api'
 
 export type CreateBoardDto = Omit<Board, 'id' | 'imgUrl'> & {
     imageFile?: File
@@ -48,7 +49,8 @@ export default class BoardApi {
             name: 'test',
             id,
             description: 'test description',
-            imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+            imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+            tasks: (await TaskApi.getTasks(id)).items
         }
     }
 }

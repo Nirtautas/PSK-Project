@@ -7,6 +7,11 @@ export type Board = {
     imgUrl: string
 }
 
+export type Task = {
+    id: number
+    title: string
+}
+
 export type User = {
     id: number
     name: string

@@ -1,13 +1,40 @@
 
-import { Button, Paper, Typography } from '@mui/material'
+import { Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
+import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
+import { Task } from '@/types/types'
 
 const TasksView = () => {
-    const columns = [
+    const columns: { label: string, items: Task[] }[] = [
         {
             label: 'Waiting',
-            items: []
+            items: [
+                {
+                    id: 123,
+                    title: 'Task 1',
+                },
+                {
+                    id: 123,
+                    title: 'Task 1',
+                },
+                {
+                    id: 123,
+                    title: 'Task 1',
+                },
+                {
+                    id: 123,
+                    title: 'Task 1',
+                },
+                // {
+                //     id: 123,
+                //     title: 'Task 1',
+                // },
+                // {
+                //     id: 123,
+                //     title: 'Task 1',
+                // }
+            ]
         },
         {
             label: 'In Progress',
@@ -25,8 +52,9 @@ const TasksView = () => {
                 columns.map((column, index) => (
                     <div className={styles.tasks_list} key={index}>
                         <div className={styles.label_wrapper}>
-                            <Typography variant="h6" className={styles.label}>Waiting</Typography>
+                            <Typography variant="h6" className={styles.label}>{column.label}</Typography>
                         </div>
+                        <TaskList isLoading={false} tasks={column.items} />
                     </div>
                 ))
             }

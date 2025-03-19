@@ -9,11 +9,18 @@ import styles from './BoardView.module.scss'
 const BoardView = () => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
+    const getView = () => {
+        if (tab === 'Tasks') return <TasksView />
+        if (tab === 'Collaborators') return <div>Collaborators</div>
+        if (tab === 'Archives') return <div>Archives</div>
+        return <div>Settings</div>
+    }
+
     return (
         <div className={styles.wrapper}>
             <BoardViewButtons current={tab} onClick={(tab) => setTab(tab)} />
             <div className={styles.view_wrapper}>
-                <TasksView />
+                {getView()}
             </div>
         </div>
     )

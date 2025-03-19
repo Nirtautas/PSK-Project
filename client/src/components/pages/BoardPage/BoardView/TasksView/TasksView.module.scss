@@ -13,7 +13,7 @@
   height: 100%;
   overflow: auto;
   border-radius: 5px;
-  padding: 1rem;
+  padding: 1rem 0.5rem 1rem 1rem;
 
   &:nth-child(even) {
     background-color: rgba(#000000, 0.1);
@@ -25,12 +25,13 @@
 
 .label_wrapper {
   padding-bottom: 0.5em;
-  margin-bottom: 0.5em;
+  margin-bottom: 1rem;
   border-bottom: 1px solid darkgray;
+  width: 100%;
+
   @media screen and (prefers-color-scheme: dark) {
     border-bottom: 1px solid lightgrey;
   }
-  width: 100%;
 }
 
 .label {

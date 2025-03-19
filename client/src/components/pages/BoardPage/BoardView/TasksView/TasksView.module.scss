@@ -1,0 +1,38 @@
+
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+}
+
+.tasks_list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  border-radius: 5px;
+  padding: 1rem;
+
+  &:nth-child(even) {
+    background-color: rgba(#000000, 0.1);
+    @media screen and (prefers-color-scheme: dark) {
+      background-color: rgba(#ffffff, 0.1);
+    }
+  }
+}
+
+.label_wrapper {
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid darkgray;
+  @media screen and (prefers-color-scheme: dark) {
+    border-bottom: 1px solid lightgrey;
+  }
+  width: 100%;
+}
+
+.label {
+  display: inline-block;
+}

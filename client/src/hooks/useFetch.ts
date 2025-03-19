@@ -10,9 +10,10 @@ export enum HttpMethod {
 
 type Args<T> = {
     resolver: () => Promise<T>
+    delayMs?: number
 }
 
-const useFetch = <T>({ resolver }: Args<T>) => {
+const useFetch = <T>({ resolver, delayMs }: Args<T>) => {
     // TODO: implement error handling
     const [data, setData] = useState<T>(null as T)
     const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -22,6 +23,7 @@ const useFetch = <T>({ resolver }: Args<T>) => {
         const fetchData = async () => {
             try {
                 const response = await resolver()
+                delayMs && await new Promise((resolve) => setTimeout(resolve, delayMs))
                 setErrorMsg('')
                 setData(response)
             } catch (e: any) {

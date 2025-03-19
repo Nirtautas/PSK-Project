@@ -1,0 +1,28 @@
+.content {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 0.5rem;
+  margin: 1rem 0;
+  max-width: 80%;
+  border-bottom: 2px solid lightgrey;
+  @media screen and (prefers-color-scheme: dark) {
+    border-bottom: 2px solid darkgray;
+  }
+
+  > button {
+    margin: auto 0 auto auto;
+  }
+}
+
+.board_view_container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}

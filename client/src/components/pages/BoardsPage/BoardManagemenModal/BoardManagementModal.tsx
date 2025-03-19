@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
 import styles from './BoardManagemenModal.module.scss'

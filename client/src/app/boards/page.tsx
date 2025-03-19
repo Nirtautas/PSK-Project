@@ -1,3 +1,12 @@
 import BoardsPage from '@/components/pages/BoardsPage'
+import NavBarLayout from '@/components/templates/NavBarLayout'
 
-export default BoardsPage
+const Page = () => {
+    return (
+        <NavBarLayout>
+            <BoardsPage />
+        </NavBarLayout>
+    )
+}
+
+export default Page

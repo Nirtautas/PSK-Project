@@ -30,20 +30,18 @@ const BoardsPage = () => {
     }
 
     return (
-        <NavBarLayout>
-            <div className={styles.content}>
-                <Box className={styles.toolbar}>
-                    <Typography variant="h3">Your Boards</Typography>
-                    <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>
-                </Box>
-                <BoardsView boards={boards} isLoading={isLoading} errorMsg={errorMsg} />
-                <BoardManagementModal
-                    open={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleBoardCreate}
-                />
-            </div>
-        </NavBarLayout>
+        <div className={styles.content}>
+            <Box className={styles.toolbar}>
+                <Typography variant="h3">Your Boards</Typography>
+                <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>
+            </Box>
+            <BoardsView boards={boards} isLoading={isLoading} errorMsg={errorMsg} />
+            <BoardManagementModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleBoardCreate}
+            />
+        </div>
     )
 }
 

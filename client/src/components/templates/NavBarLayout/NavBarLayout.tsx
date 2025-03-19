@@ -24,7 +24,7 @@ const NavBarLayout = ({ children }: Props) => {
 
     // @ts-ignore
     return (
-        <div>
+        <div className={styles.layout}>
             <header>
                 <Paper className={styles.navbar}>
                     <div className={styles.start_container}>
@@ -75,7 +75,7 @@ const NavBarLayout = ({ children }: Props) => {
                     </div>
                 </Paper>
             </header>
-            <main>
+            <main className={styles.main}>
                 {children}
             </main>
         </div>

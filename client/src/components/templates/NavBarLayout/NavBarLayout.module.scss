@@ -24,3 +24,15 @@
 .notification_button_wrapper {
   margin: auto 1rem;
 }
+
+.layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}

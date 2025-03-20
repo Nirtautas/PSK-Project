@@ -11,6 +11,7 @@ export type Board = {
 export type Task = {
     id: number
     title: string
+    status: string
 }
 
 export type User = {

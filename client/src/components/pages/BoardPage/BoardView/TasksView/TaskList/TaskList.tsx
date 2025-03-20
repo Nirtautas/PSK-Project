@@ -6,12 +6,15 @@ import TaskCard from '@/components/pages/BoardPage/BoardView/TasksView/TaskList/
 import ErrorDisplay from '@/components/shared/ErrorDisplay'
 
 type Props = {
+    id: string,
     isLoading: boolean
     errorMsg: string
     tasks: Task[]
+    onMouseDown: (task: Task, e: MouseEvent) => void
+    onClick: () => void
 }
 
-const TaskList = ({ isLoading, tasks, errorMsg }: Props) => {
+const TaskList = ({ id, isLoading, tasks, errorMsg, onClick, onMouseDown }: Props) => {
     if (isLoading) {
         return (
             <div className={styles.tasks_list}>
@@ -25,15 +28,11 @@ const TaskList = ({ isLoading, tasks, errorMsg }: Props) => {
         )
     }
 
-    const handleClick = () => {
-
-    }
-
     return (
         <div className={styles.tasks_list}>
                 {tasks.map((task, index) => (
                     <div key={index} className={styles.task_card_wrapper}>
-                        <TaskCard task={task} onClick={handleClick} />
+                        <TaskCard task={task} onClick={onClick} onMouseDown={onMouseDown}/>
                     </div>
                 ))}
         </div>

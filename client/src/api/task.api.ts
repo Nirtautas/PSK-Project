@@ -11,20 +11,28 @@ export default class TaskApi {
                 {
                     id: 123,
                     title: 'Task 1',
+                    status: 'waiting'
                 },
                 {
                     id: 123,
                     title: 'Task 1',
+                    status: 'waiting'
                 },
                 {
                     id: 123,
                     title: 'Task 1',
+                    status: 'waiting'
                 },
                 {
                     id: 123,
                     title: 'Task 1',
+                    status: 'waiting'
                 }
             ]
         }
+    }
+
+    public static async update(task: Task): Promise<Task> {
+        return task
     }
 }

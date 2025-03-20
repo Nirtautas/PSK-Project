@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.WebHost.UseUrls("http://localhost:3000");
+builder.WebHost.UseUrls("http://localhost:5000");
 
 builder.Services.AddCors(options =>
 {

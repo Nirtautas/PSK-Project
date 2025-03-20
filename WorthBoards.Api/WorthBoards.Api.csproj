@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\WorthBoards.Business\WorthBoards.Business.csproj" />
     <ProjectReference Include="..\WorthBoards.Common\WorthBoards.Common.csproj" />
   </ItemGroup>

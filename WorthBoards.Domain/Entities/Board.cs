@@ -16,6 +16,6 @@ namespace WorthBoards.Domain.Entities
         public required DateTime CreationDate { get; set; }
 
         //Navigation properties
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<BoardTask> BoardTasks { get; set; }
     }
 }

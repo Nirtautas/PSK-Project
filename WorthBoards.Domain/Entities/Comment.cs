@@ -15,6 +15,6 @@ namespace WorthBoards.Domain.Entities
         public required bool Edited { get; set; }
 
         //Navigation properties
-        public virtual Task Task { get; set; }
+        public virtual BoardTask BoardTask { get; set; }
     }
 }

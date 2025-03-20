@@ -12,6 +12,6 @@ namespace WorthBoards.Domain.Entities
         public required DateTime AssignedAt { get; set; }
 
         //Navigation properties
-        public virtual Task Task { get; set; }
+        public virtual BoardTask BoardTask { get; set; }
     }
 }

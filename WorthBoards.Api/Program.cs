@@ -1,11 +1,16 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WorthBoards.Api.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureSwagger();
+builder
+    .ConfigureSwagger()
+    .ConfigureAuthentication()
+    .ConfigureAuthorization();
 
 // Add services to the container.
-builder.Services.AddAuthentication();
 
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);

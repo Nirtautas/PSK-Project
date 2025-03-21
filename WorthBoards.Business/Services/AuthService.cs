@@ -5,6 +5,8 @@ using System.Security.Claims;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
+using WorthBoards.Common.Enums;
+using WorthBoards.Data.Database;
 using WorthBoards.Data.Identity;
 
 namespace WorthBoards.Business.Services
@@ -13,7 +15,8 @@ namespace WorthBoards.Business.Services
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IMapper mapper,
-        ITokenGenerator tokenGenerator
+        ITokenGenerator tokenGenerator,
+        ApplicationDbContext context
     ) : IAuthService
     {
         public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest credentials)
@@ -21,7 +24,8 @@ namespace WorthBoards.Business.Services
             var user = await userManager.FindByNameAsync(credentials.UserName);
 
             // TODO: Add custom exception handle
-            ArgumentNullException.ThrowIfNull(user);
+            if (user is null)
+                throw new UnauthorizedAccessException("Invalid Login credentials.");
 
             var result = await signInManager.CheckPasswordSignInAsync(user, credentials.Password, false);
 
@@ -29,12 +33,21 @@ namespace WorthBoards.Business.Services
             if (!result.Succeeded)
                 throw new UnauthorizedAccessException("Invalid Login credentials.");
 
+            // Get all roles
+            var boardRoles = await context.BoardOnUsers
+                .Where(bu => bu.UserId == user.Id)
+                .Select(bu => new { bu.BoardId, RoleName = bu.UserRole.ToString() })
+                .ToListAsync();
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
+
+            // Add roles to claims
+            claims.AddRange(boardRoles.Select(br => new Claim("BoardPermission", $"{br.BoardId}:{br.RoleName}")));
 
             var jwtToken = tokenGenerator.GenerateJwtToken(claims);
             

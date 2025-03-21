@@ -13,7 +13,8 @@ builder.Services.AddDataServices(builder.Configuration);
 
 builder.Services.AddControllers();
 
-builder.WebHost.UseUrls("https://localhost:5000");
+var baseUrl = builder.Configuration.GetValue<string>("BaseUrl") ?? string.Empty;
+builder.WebHost.UseUrls(baseUrl);
 
 builder.Services.AddCors(options =>
 {

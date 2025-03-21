@@ -10,9 +10,8 @@ namespace WorthBoards.Api.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
-        [AuthorizeRole(UserRoleEnum.VIEWER)] // TODO: remove tag
         [HttpPost("/register")]
-        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
+        public async Task<IActionResult> RegisterUserAsync(int Id, [FromBody] UserRegisterRequest request)
         {
             var response = await authService.RegisterUserAsync(request);
             return Ok(response);

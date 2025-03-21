@@ -1,10 +1,13 @@
-﻿namespace Microsoft.Extensions.DependencyInjection
+﻿using Microsoft.AspNetCore.Authorization;
+using WorthBoards.Api.Utils;
+
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyInjection
     {
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //Register stuff for api layer here
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             return services;
         }

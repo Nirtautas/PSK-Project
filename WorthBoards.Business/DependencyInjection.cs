@@ -1,4 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using WorthBoards.Business.AutoMapper;
+using WorthBoards.Business.Services;
+using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Business.Utils.Interfaces;
+using WorthBoards.Business.Utils;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -6,7 +12,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //Register stuff for business layer here
+
+            services.AddAutoMapper(typeof(MappingProfile));
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
             return services;
         }

@@ -19,10 +19,10 @@ namespace WorthBoards.Data.Database
         public DbSet<NotificationOnUser> NotificationsOnUsers { get; set; }
         public DbSet<TaskOnUser> TasksOnUsers { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            Linker.LinkAll(modelBuilder);
-            base.OnModelCreating(modelBuilder);
+            Linker.LinkAll(builder);
+            base.OnModelCreating(builder);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
-using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Controllers
 {
@@ -11,7 +9,7 @@ namespace WorthBoards.Api.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("/register")]
-        public async Task<IActionResult> RegisterUserAsync(int Id, [FromBody] UserRegisterRequest request)
+        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
         {
             var response = await authService.RegisterUserAsync(request);
             return Ok(response);

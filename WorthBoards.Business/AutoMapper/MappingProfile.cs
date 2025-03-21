@@ -11,6 +11,7 @@ namespace WorthBoards.Business.AutoMapper
             // User
             CreateMap<ApplicationUser, UserResponse>();
             CreateMap<UserRequest, ApplicationUser>();
+            CreateMap<UserRegisterRequest, ApplicationUser>();
         }
     }
 }

@@ -1,4 +1,8 @@
+using WorthBoards.Api.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.ConfigureSwagger();
 
 // Add services to the container.
 builder.Services.AddAuthentication();
@@ -8,9 +12,6 @@ builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddDataServices(builder.Configuration);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.WebHost.UseUrls("https://localhost:5000");
 

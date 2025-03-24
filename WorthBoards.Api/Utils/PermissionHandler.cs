@@ -1,36 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Utils
 {
-    public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+    public class PermissionHandler(IBoardService boardService) : AuthorizationHandler<PermissionRequirement>
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             var httpContext = (context.Resource as DefaultHttpContext)?.HttpContext;
             var routeValues = httpContext?.Request.RouteValues;
 
-            if (routeValues == null)
+            if (routeValues is null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var boardIdObj = routeValues.FirstOrDefault(kv => kv.Key.EndsWith("Id")).Value;
             var boardId = boardIdObj?.ToString();
             if (string.IsNullOrEmpty(boardId))
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            var hasPermission = context.User.Claims
-                .Where(c => c.Type == "BoardPermission")
-                .Any(c => c.Value == $"{boardId}:{requirement.Role}");
-
-            if (hasPermission)
+            var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId is null)
             {
-                context.Succeed(requirement);
+                return;
             }
 
-            return Task.CompletedTask;
+            var userRole = await boardService.GetUserRoleByBoardIdAndUserIdAsync(int.Parse(boardId), int.Parse(userId));
+
+            if (userRole.ToString() == requirement.Role)
+                context.Succeed(requirement);
         }
     }
 }

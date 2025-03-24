@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             return services;
         }

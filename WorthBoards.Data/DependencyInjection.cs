@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WorthBoards.Data.Database;
 using WorthBoards.Data.Identity;
+using WorthBoards.Data.Repositories.Interfaces;
+using WorthBoards.Data.Repositories;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -43,6 +45,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddRoleManager<RoleManager<ApplicationRole>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddDefaultTokenProviders();
+
+            services
+                .AddScoped<IBoardRepository, BoardRepository>()
+                .AddScoped<ICommentRepository, CommentRepository>()
+                .AddScoped<IInvitationDataRepository, InvitationDataRepository>()
+                .AddScoped<INotificationRepository, NotificationRepository>()
+                .AddScoped<ITasksOnUserRepository, TasksOnUserRepository>()
+                .AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

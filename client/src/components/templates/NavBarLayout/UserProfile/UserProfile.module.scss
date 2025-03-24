@@ -1,0 +1,22 @@
+
+.container {
+  height: 5rem;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  margin: auto;
+
+  > h6 {
+    margin: auto 1rem;
+  }
+
+  > img {
+    width: 4rem;
+    height: 4rem;
+    border: 5px solid black;
+    border-color: transparent;
+    border-radius: 50%;
+  }
+}

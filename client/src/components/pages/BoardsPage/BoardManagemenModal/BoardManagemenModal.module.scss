@@ -1,0 +1,59 @@
+
+.view_wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.container {
+  margin: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.title_text {
+  width: 100%;
+  border-bottom: 2px solid darkgray;
+  @media screen and (prefers-color-scheme: dark) {
+    border-bottom: 2px solid lightgrey;
+  }
+}
+
+.form {
+  padding: 1rem;
+  margin: auto;
+
+}
+
+.buttons {
+  border-top: 2px solid lightgrey;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+
+  @media screen and (prefers-color-scheme: dark) {
+    border-top: 2px solid darkgray;
+  }
+}
+
+.upload {
+  padding: 0.5rem 0;
+  display: flex;
+
+  &_button {
+    margin: auto 0 auto auto;
+  }
+
+  > img {
+    max-height: 75px;
+    max-width: 75px;
+    margin-right: 1rem;
+  }
+
+}
+
+.image_section {
+  padding: 0.5rem;
+}
+

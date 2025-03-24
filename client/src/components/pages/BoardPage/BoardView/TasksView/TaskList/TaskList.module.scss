@@ -1,0 +1,22 @@
+
+.tasks_list {
+  height: 57vh;
+  min-height: 0;
+  padding-right: 0.5rem;
+  overflow-y: scroll;
+
+  &_error {
+    display: flex;
+    flex: 1;
+    justify-self: center;
+  }
+}
+
+.task_card_wrapper {
+  margin-bottom: 0.5rem;
+}
+
+.error_display {
+  color: red;
+  margin: auto;
+}

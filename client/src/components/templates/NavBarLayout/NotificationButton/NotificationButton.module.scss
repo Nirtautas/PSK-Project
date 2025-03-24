@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+
+  * {
+    margin: auto;
+  }
+}
+
+.dropdown_content {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 30vh;
+}
+
+.content_wrapper {
+  width: 30ch;
+  margin: 1rem;
+  min-height: 3ch;
+
+  border-bottom: 2px solid darkgray;
+  @media screen and (prefers-color-scheme: dark) {
+    border-bottom: 2px solid lightgrey;
+  }
+}
+
+.notification_text {}
+
+.notification_number {
+  &_active {
+    color: red;
+  }
+}

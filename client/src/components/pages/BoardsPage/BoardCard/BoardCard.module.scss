@@ -1,0 +1,29 @@
+
+.board_card {
+  width: 50ch;
+  height: 20ch;
+  display: inline-block;
+}
+
+.card_content {
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.board_image {
+  max-height: 100px;
+  max-width: 100px;
+  border-radius: 10px;
+
+  margin: 0 1rem 1rem auto;
+}
+
+.text_content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}

@@ -15,6 +15,9 @@ const eslintConfig = [
         rules: {
             semi: ['error', 'never'],
             quotes: ['error', 'single'],
+            '@typescript-eslint/ban-ts-comment': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unused-expressions': 'off',
             'prefer-const': 'error'
         }
     }

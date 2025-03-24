@@ -2,17 +2,16 @@ import { Card, CardActionArea } from '@mui/material'
 import { Task } from '@/types/types'
 
 import styles from './TaskCard.module.scss'
-import { MouseEventHandler } from 'react'
 
 type Props = {
     task: Task
     onClick: () => void
-    onMouseDown: (task: Task, e: MouseEvent) => void
+    onMouseDown: (e: MouseEvent, task: Task) => void
 }
 
 const TaskCard = ({ onClick, task, onMouseDown }: Props) => {
     return (
-        <Card elevation={2} className={styles.task_card} onMouseDown={(e) => onMouseDown(task, e as unknown as MouseEvent)} onClick={onClick}>
+        <Card elevation={2} className={styles.task_card} onMouseDown={(e) => onMouseDown(e as unknown as MouseEvent, task)} onClick={onClick}>
             <CardActionArea
                 onClick={onClick}
                 sx={{

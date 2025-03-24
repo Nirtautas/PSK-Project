@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import BoardManagementModal from '@/components/pages/BoardsPage/BoardManagemenModal'
 import { CreateBoardArgs } from '@/components/pages/BoardsPage/BoardManagemenModal/BoardManagementModal'
-import NavBarLayout from '@/components/templates/NavBarLayout'
 import { Box, Button, Typography } from '@mui/material'
 import useFetch from '@/hooks/useFetch'
 import BoardApi from '@/api/board.api'

@@ -13,6 +13,7 @@ export type Task = {
     title: string
     status: string
 }
+export const sortTasksByTitle = (a: Task, b: Task) => b.title.localeCompare(a.title)
 
 export type User = {
     id: number

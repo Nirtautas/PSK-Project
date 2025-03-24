@@ -9,23 +9,23 @@ export default class TaskApi {
             pageSize: 10,
             items: [
                 {
-                    id: 123,
+                    id: 1,
                     title: 'Task 1',
                     status: 'waiting'
                 },
                 {
-                    id: 123,
-                    title: 'Task 1',
+                    id: 2,
+                    title: 'Task 2',
                     status: 'waiting'
                 },
                 {
-                    id: 123,
-                    title: 'Task 1',
+                    id: 3,
+                    title: 'Task 3',
                     status: 'waiting'
                 },
                 {
-                    id: 123,
-                    title: 'Task 1',
+                    id: 4,
+                    title: 'Task 4',
                     status: 'waiting'
                 }
             ]

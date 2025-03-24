@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Skeleton, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 
 import styles from './BoardPage.module.scss'
 import BoardView from '@/components/pages/BoardPage/BoardView'

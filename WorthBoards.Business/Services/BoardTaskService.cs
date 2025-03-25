@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Exceptions;
+using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
@@ -12,8 +14,8 @@ namespace WorthBoards.Business.Services
     {
         public async Task<BoardTaskResponse> GetBoardTaskById(int boardTaskId, CancellationToken cancellationToken)
         {
-            var boardTask = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken);
-            //if (boardTask == null) Throw exception
+            var boardTask = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             return _mapper.Map<BoardTaskResponse>(boardTask);
         }
@@ -22,8 +24,8 @@ namespace WorthBoards.Business.Services
         {
             var boardTask = _mapper.Map<BoardTask>(boardTaskDto);
 
-            var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardTask.Id, cancellationToken);
-            //if (board == null) throw exception
+            var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardTask.BoardId, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             await _unitOfWork.BoardTaskRepository.CreateAsync(boardTask, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -33,8 +35,8 @@ namespace WorthBoards.Business.Services
 
         public async Task DeleteBoardTask(int boardTaskId, CancellationToken cancellationToken)
         {
-            var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken);
-            // if (boardTaskToDelete == null) Throw exception
+            var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             _unitOfWork.BoardTaskRepository.Delete(boardTaskToDelete); ;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -42,8 +44,8 @@ namespace WorthBoards.Business.Services
 
         public async Task<BoardTaskResponse> UpdateBoardTask(int boardTaskToUpdateId, BoardTaskUpdateRequest boardTaskDto, CancellationToken cancellationToken)
         {
-            var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken);
-            // if (boardToUpdate == null) Throw exception
+            var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             _mapper.Map(boardTaskDto, boardTaskToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -52,8 +54,8 @@ namespace WorthBoards.Business.Services
 
         public async Task<BoardTaskResponse> PatchBoardTask(int boardTaskToUpdateId, JsonPatchDocument<BoardTaskUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
-            var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken);
-            // if (boardTaskToPatch == null) Throw exception
+            var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken)
+                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             var boardTaskToUpdateDto = _mapper.Map<BoardTaskUpdateRequest>(boardTaskToPatch);
 

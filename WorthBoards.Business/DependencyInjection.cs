@@ -14,9 +14,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
 
             services.AddAutoMapper(typeof(MappingProfile));
+
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
+
+            services.AddScoped<IBoardTaskService, BoardTaskService>();
 
             return services;
         }

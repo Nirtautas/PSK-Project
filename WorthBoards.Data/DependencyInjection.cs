@@ -42,6 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services
                 .AddScoped<IBoardRepository, BoardRepository>()
+                .AddScoped<IBoardTaskRepository, BoardTaskRepository>()
                 .AddScoped<ICommentRepository, CommentRepository>()
                 .AddScoped<IInvitationDataRepository, InvitationDataRepository>()
                 .AddScoped<INotificationRepository, NotificationRepository>()

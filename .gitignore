@@ -15,6 +15,7 @@ node_modules
 # Migrations
 .vs
 .Development.json
+Migrations
 
 # Logger
 Logs

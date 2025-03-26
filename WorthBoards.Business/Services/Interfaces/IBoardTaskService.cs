@@ -6,14 +6,14 @@ namespace WorthBoards.Business.Services.Interfaces
 {
     public interface IBoardTaskService
     {
-        Task<BoardTaskResponse> GetBoardTaskById(int boardTaskId, CancellationToken cancellationToken);
+        Task<BoardTaskResponse> GetBoardTaskById(int boardId, int boardTaskId, CancellationToken cancellationToken);
 
-        Task<BoardTaskResponse> CreateBoardTask(BoardTaskRequest boardTaskDto, CancellationToken cancellationToken);
+        Task<BoardTaskResponse> CreateBoardTask(int boardId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken);
 
-        Task DeleteBoardTask(int boardTaskId, CancellationToken cancellationToken);
+        Task DeleteBoardTask(int boardId, int boardTaskId, CancellationToken cancellationToken);
 
-        Task<BoardTaskResponse> UpdateBoardTask(int boardTaskToUpdateId, BoardTaskUpdateRequest boardTaskDto, CancellationToken cancellationToken);
+        Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken);
 
-        Task<BoardTaskResponse> PatchBoardTask(int boardTaskToUpdateId, JsonPatchDocument<BoardTaskUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken);
+        Task<BoardTaskResponse> PatchBoardTask(int boardId, int boardTaskToUpdateId, JsonPatchDocument<BoardTaskRequest> taskBoardPatchDoc, CancellationToken cancellationToken);
     }
 }

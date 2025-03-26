@@ -12,17 +12,18 @@ namespace WorthBoards.Business.Services
 {
     public class BoardTaskService(IUnitOfWork _unitOfWork, IMapper _mapper) : IBoardTaskService
     {
-        public async Task<BoardTaskResponse> GetBoardTaskById(int boardTaskId, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> GetBoardTaskById(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
-            var boardTask = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken)
+            var boardTask = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             return _mapper.Map<BoardTaskResponse>(boardTask);
         }
 
-        public async Task<BoardTaskResponse> CreateBoardTask(BoardTaskRequest boardTaskDto, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> CreateBoardTask(int boardId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken)
         {
             var boardTask = _mapper.Map<BoardTask>(boardTaskDto);
+            boardTask.BoardId = boardId;
 
             var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardTask.BoardId, cancellationToken)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
@@ -33,18 +34,18 @@ namespace WorthBoards.Business.Services
             return _mapper.Map<BoardTaskResponse>(boardTask);
         }
 
-        public async Task DeleteBoardTask(int boardTaskId, CancellationToken cancellationToken)
+        public async Task DeleteBoardTask(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
-            var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskId, cancellationToken)
+            var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             _unitOfWork.BoardTaskRepository.Delete(boardTaskToDelete); ;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<BoardTaskResponse> UpdateBoardTask(int boardTaskToUpdateId, BoardTaskUpdateRequest boardTaskDto, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken)
         {
-            var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken)
+            var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
             _mapper.Map(boardTaskDto, boardTaskToUpdate);
@@ -52,12 +53,12 @@ namespace WorthBoards.Business.Services
             return _mapper.Map<BoardTaskResponse>(boardTaskToUpdate);
         }
 
-        public async Task<BoardTaskResponse> PatchBoardTask(int boardTaskToUpdateId, JsonPatchDocument<BoardTaskUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> PatchBoardTask(int boardId, int boardTaskToUpdateId, JsonPatchDocument<BoardTaskRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
-            var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByIdAsync(boardTaskToUpdateId, cancellationToken)
+            var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
 
-            var boardTaskToUpdateDto = _mapper.Map<BoardTaskUpdateRequest>(boardTaskToPatch);
+            var boardTaskToUpdateDto = _mapper.Map<BoardTaskRequest>(boardTaskToPatch);
 
             taskBoardPatchDoc.ApplyTo(boardTaskToUpdateDto);
             _mapper.Map(boardTaskToUpdateDto, boardTaskToPatch);

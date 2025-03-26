@@ -4,8 +4,8 @@ export type Board = {
     id: number
     name: string
     description: string
-    imgUrl: string
-    tasks?: Task[]
+    imgUrl: string | null
+    tasks: Task[] | null
 }
 
 export type Task = {

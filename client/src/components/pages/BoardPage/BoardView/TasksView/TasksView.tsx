@@ -1,4 +1,4 @@
-import { Paper, Typography } from '@mui/material'
+import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
@@ -6,6 +6,7 @@ import { Task } from '@/types/types'
 import { useEffect, useState } from 'react'
 import TaskApi from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
+import React from 'react'
 
 type Props = {
     tasks: Task[]
@@ -90,9 +91,39 @@ const TasksView = ({ tasks, isLoading, errorMsg }: Props) => {
         }
     })
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     return (
         <Paper className={styles.container}>
+            <Button onClick={handleOpen}>Create new task</Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        create a task
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        wtv the inputs should be
+                    </Typography>
+                </Box>
+            </Modal>
+            <Box className={styles.tasks_container}>
             {
                 columns.map((column, index) => (
                     <div className={[styles.tasks_list, 'task_list_droppable'].join(' ')} key={index} id={column.id}>
@@ -105,12 +136,11 @@ const TasksView = ({ tasks, isLoading, errorMsg }: Props) => {
                             tasks={column.items}
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
-                            onClick={() => {
-                            }}
-                        />
+                            />
                     </div>
                 ))
             }
+            </Box>
         </Paper>
     )
 }

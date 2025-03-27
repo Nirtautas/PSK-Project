@@ -1,24 +1,29 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using WorthBoards.Api.Helpers;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Controllers
 {
     [ApiController]
-    [Route("api/boards/{boardid:int}/comments")]
+    [Route("api/boards/{boardid:int}/tasks/{taskid:int}/comments")]
     public class CommentController(ICommentService _commentService) : ControllerBase
     {
         [HttpGet("{commentId}")]
-        public async Task<IActionResult> GetCommentById(int commentId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCommentById([FromRoute] int taskid, int commentId, CancellationToken cancellationToken)
         {
             var commentResponse = await _commentService.GetCommentById(commentId, cancellationToken);
             return Ok(commentResponse);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateComment([FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateComment([FromRoute] int taskid, [FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
         {
+            var signedInUserId = ClaimsHelper.GetUserIdFromToken(User);
+            commentRequest.UserId = signedInUserId;
+            commentRequest.TaskId = taskid;
+
             var commentResponse = await _commentService.CreateComment(commentRequest, cancellationToken);
             return CreatedAtAction(nameof(GetCommentById), new { commentId = commentResponse.Id }, commentResponse);
         }
@@ -31,9 +36,9 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPut("{commentId}")]
-        public async Task<IActionResult> UpdateComment(int commentId, [FromBody] CommentUpdateRequest CommentRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateComment(int commentId, [FromBody] CommentUpdateRequest commentRequest, CancellationToken cancellationToken)
         {
-            var commentResponse = await _commentService.UpdateComment(commentId, CommentRequest, cancellationToken);
+            var commentResponse = await _commentService.UpdateComment(commentId, commentRequest, cancellationToken);
             return Ok(commentResponse);
         }
 

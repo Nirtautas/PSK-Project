@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using System.ComponentModel.Design;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
@@ -21,6 +22,12 @@ namespace WorthBoards.Business.Services
         public async Task<CommentResponse> CreateComment(CommentRequest commentDto, CancellationToken cancellationToken)
         {
             var comment = _mapper.Map<Comment>(commentDto);
+
+            _ = await _unitOfWork.BoardRepository.GetByIdAsync(commentDto.UserId, cancellationToken)
+                ?? throw new Exception($"User [id {commentDto.UserId}] doesn't exist.");
+
+            _ = await _unitOfWork.BoardRepository.GetByIdAsync(commentDto.TaskId, cancellationToken) 
+                ?? throw new Exception($"Task [id {commentDto.TaskId}] doesn't exist.");
 
             await _unitOfWork.CommentRepository.CreateAsync(comment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

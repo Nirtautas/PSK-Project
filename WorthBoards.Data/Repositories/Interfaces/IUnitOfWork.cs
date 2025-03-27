@@ -8,6 +8,8 @@ public interface IUnitOfWork
     IInvitationDataRepository InvitationDataRepository { get; }
     INotificationRepository NotificationRepository { get; }
     ITasksOnUserRepository TasksOnUserRepository { get; }
+    IBoardOnUserRepository BoardOnUserRepository { get; }   
+    INotificationOnUserRepository NotificationOnUserRepository { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

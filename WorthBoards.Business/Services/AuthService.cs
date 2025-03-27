@@ -33,21 +33,12 @@ namespace WorthBoards.Business.Services
             if (!result.Succeeded)
                 throw new UnauthorizedAccessException("Invalid Login credentials.");
 
-            // Get all roles
-            var boardRoles = await context.BoardOnUsers
-                .Where(bu => bu.UserId == user.Id)
-                .Select(bu => new { bu.BoardId, RoleName = bu.UserRole.ToString() })
-                .ToListAsync();
-
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
-
-            // Add roles to claims
-            claims.AddRange(boardRoles.Select(br => new Claim("BoardPermission", $"{br.BoardId}:{br.RoleName}")));
 
             var jwtToken = tokenGenerator.GenerateJwtToken(claims);
             

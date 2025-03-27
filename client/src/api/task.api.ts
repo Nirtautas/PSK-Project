@@ -2,6 +2,8 @@ import { Board, Task } from '@/types/types'
 import { Paginated } from '@/types/api'
 
 export default class TaskApi {
+    
+
     public static async getTasks(boardId: Board['id']): Promise<Paginated<Task>> {
         return {
             pageNumber: 1,
@@ -34,5 +36,12 @@ export default class TaskApi {
 
     public static async update(task: Task): Promise<Task> {
         return task
+    }
+
+    public static async create(task: Omit<Task, 'id'>): Promise<Task> {
+        return {
+            ...task,
+            id: 1
+        }
     }
 }

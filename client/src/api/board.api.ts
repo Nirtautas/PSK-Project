@@ -12,7 +12,7 @@ export default class BoardApi {
                 name: 'test',
                 id: 1,
                 description: 'test description',
-                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
             },
             {
                 name: 'test',

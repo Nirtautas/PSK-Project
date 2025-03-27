@@ -7,8 +7,10 @@ import { useEffect, useState } from 'react'
 import TaskApi from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
+import CreateTaskForm from './CreateTaskForm'
 
 type Props = {
+    boardId: number
     tasks: Task[]
     isLoading: boolean
     errorMsg: string
@@ -21,7 +23,7 @@ type TaskColumn = {
 }
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ tasks, isLoading, errorMsg }: Props) => {
+const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
     useEffect(() => {
         setColumns([
             {
@@ -118,9 +120,7 @@ const TasksView = ({ tasks, isLoading, errorMsg }: Props) => {
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         create a task
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        wtv the inputs should be
-                    </Typography>
+                    <CreateTaskForm handleClose={handleClose} boardId={boardId}></CreateTaskForm>
                 </Box>
             </Modal>
             <Box className={styles.tasks_container}>

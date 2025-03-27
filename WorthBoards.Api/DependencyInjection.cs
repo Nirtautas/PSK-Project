@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddExceptionHandler<GlobalExceptionHandler>();
 
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             return services;
         }

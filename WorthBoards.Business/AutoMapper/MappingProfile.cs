@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using WorthBoards.Business.Dtos.Identity;
+using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Data.Identity;
+using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Business.AutoMapper
 {
@@ -12,6 +15,12 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<ApplicationUser, UserResponse>();
             CreateMap<UserRequest, ApplicationUser>();
             CreateMap<UserRegisterRequest, ApplicationUser>();
+
+            //BoardTask
+            CreateMap<BoardTask, BoardTaskResponse>();
+
+            CreateMap<BoardTaskRequest, BoardTask>();
+            CreateMap<BoardTask, BoardTaskRequest>();
         }
     }
 }

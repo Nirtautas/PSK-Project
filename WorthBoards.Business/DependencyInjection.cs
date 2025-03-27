@@ -20,6 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
             services.AddScoped<IBoardTaskService, BoardTaskService>();
+            services.AddScoped<IBoardService, BoardService>();
+            services.AddScoped<ICommentService, CommentService>();
 
             return services;
         }

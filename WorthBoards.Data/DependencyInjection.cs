@@ -47,7 +47,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IInvitationDataRepository, InvitationDataRepository>()
                 .AddScoped<INotificationRepository, NotificationRepository>()
                 .AddScoped<ITasksOnUserRepository, TasksOnUserRepository>()
-                .AddScoped<IUnitOfWork, UnitOfWork>();
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+                .AddScoped<IBoardOnUserRepository, BoardOnUserRepository>()
+                .AddScoped<INotificationOnUserRepository, NotificationOnUserRepository>();
 
             return services;
         }

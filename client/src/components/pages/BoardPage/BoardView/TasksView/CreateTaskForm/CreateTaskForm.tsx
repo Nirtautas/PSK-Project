@@ -32,8 +32,10 @@ export default function CreateTaskForm({
                 assignedUsers: selectedUsers
             };
             console.log('data received: ', newTask);
-            const createdTask = await TaskApi.create({title: newTask.title, status: "Waiting"} as Omit<Task, 'id'>);
             
+            const createdTask = await TaskApi.create({title: newTask.title, status: "Waiting"} as Omit<Task, 'id'>);
+            //refresh tasks here
+
             handleClose();
         } catch (error) {
             console.error('Task creation failed:', error);

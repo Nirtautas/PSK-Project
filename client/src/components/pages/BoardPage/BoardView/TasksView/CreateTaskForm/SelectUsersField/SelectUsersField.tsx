@@ -19,7 +19,7 @@ const MenuProps = {
   },
 };
 
-// Simulated user list (should be fetched)
+//TODO: Fetch valid users from the server
 const names = [
   'Oliver Hansen',
   'Van Henry',

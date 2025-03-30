@@ -6,15 +6,19 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
+import DeadlineDescriptionView from './DeadlineDescriptionView';
+import CommentsView from './CommentsView';
+import AssignedUsersView from './AssignedUsersView';
+import { Task } from '@/types/types';
 
 export default function TaskCardInfoPopup({
     open,
     setOpen,
-    taskTitle
+    task
 }: {
     open: boolean, 
     setOpen: (open: boolean) => void,
-    taskTitle: string
+    task: Task
 }) {
     
     const handleClose = () => setOpen(false);
@@ -38,31 +42,34 @@ export default function TaskCardInfoPopup({
             onClose={handleClose}
         >
             <Box sx={style}>
-                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', padding: 2, height: 100, alignItems: 'center'}}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {taskTitle}
+                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', padding: 2, height: 100, alignItems: 'center' }}>
+                    <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ flexGrow: 1 }}>
+                        {task.title}
                     </Typography>
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1 }}>
+                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Edit
                     </Button>
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1 }}>
+                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
+                        Delete
+                    </Button>
+                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Close
                     </Button>
                 </Box>
                 <Divider />
-                <Box sx={{ width: '100%', height: '100%', padding: 2}}>
+                <Box sx={{ width: '100%', height: '100%', padding: 1}}>
                     <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 2}} >
-                        <Grid size={8} sx={{border: '1px solid black', height: '100%'}}>
+                        <Grid size={8} sx={{height: '100%'}}>
                             <Stack spacing={2} sx={{height: '100%'}}>
-                                <Typography sx={{height: '50%', border: '1px solid red'}}>Deadline and description</Typography>
-                                <Typography sx={{height: '50%', border: '1px solid red'}}>Comments</Typography>
+                                <DeadlineDescriptionView deadline='2022-02-03' description='a very important task you must get done'/>
+                                <CommentsView comments={['nice', 'great', 'wont be able to do it', 'a', 'a', 'a', 'a']} taskId={task.id}/>
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>
                             <Divider orientation="vertical" />
                         </Grid>
                         <Grid size={3}>
-                            <Typography sx={{ height: '100%', border: '1px solid red'}}>Assigned users</Typography>
+                            <AssignedUsersView users={[{id: 1, name: 'User 1'}, {id: 2, name: 'User 2'}]}/>
                         </Grid>
                     </Grid>
                 </Box>

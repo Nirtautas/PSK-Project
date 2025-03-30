@@ -30,7 +30,7 @@ const TaskCard = ({ onClick, task, onMouseDown }: Props) => {
                     </span>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup open={open} setOpen={setOpen} taskTitle={task.title}/>
+            <TaskCardInfoPopup open={open} setOpen={setOpen} task={task}/>
         </>
     )
 }

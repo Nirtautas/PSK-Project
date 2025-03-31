@@ -19,3 +19,4 @@ Migrations
 
 # Logger
 Logs
+/WorthBoards.Data/Migrations/ApplicationDbContextModelSnapshot.cs

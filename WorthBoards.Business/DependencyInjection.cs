@@ -16,8 +16,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IBoardService, BoardService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
+
+            // TODO: Add global user roles
+            //services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
+
+            services.AddScoped<IBoardTaskService, BoardTaskService>();
 
             services.AddScoped<IBoardTaskService, BoardTaskService>();
             services.AddScoped<IBoardService, BoardService>();

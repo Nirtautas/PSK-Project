@@ -1,4 +1,9 @@
+<<<<<<< HEAD
+=======
+using Microsoft.AspNetCore.Diagnostics;
+>>>>>>> 7701e0234a41a543a59bf45afdff968aabcc1278
 using WorthBoards.Api.Configurations;
+using WorthBoards.Api.Utils.ExceptionHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +41,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler(new ExceptionHandlerOptions
+{
+    ExceptionHandler = async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        if (exception != null)
+        {
+            var handler = context.RequestServices.GetRequiredService<GlobalExceptionHandler>();
+            await handler.TryHandleAsync(context, exception, CancellationToken.None);
+        }
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();

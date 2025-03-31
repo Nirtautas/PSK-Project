@@ -8,10 +8,6 @@ namespace WorthBoards.Business.Validators
     {
         public BoardTaskValidator()
         {
-            RuleFor(x => x.BoardId)
-                .GreaterThan(0)
-                .WithMessage(ValidationMessages.BoardIdInvalid);
-
             RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage(ValidationMessages.TitleRequired)

@@ -10,6 +10,9 @@ import { getPageUrl } from '@/constants/urls'
 import useFetch from '@/hooks/useFetch'
 import NotificationApi from '@/api/notification.api'
 import { Notification } from '@/types/types'
+import { removeUserId } from '@/utils/userId'
+import { deleteCookie } from 'cookies-next'
+import { GetPageUrl } from '@/constants/route'
 
 type Props = {
     children: React.ReactNode
@@ -21,6 +24,12 @@ const NavBarLayout = ({ children }: Props) => {
         data,
     } = useFetch({ resolver: () => NotificationApi.getNotifications()})
     const notifications = data?.items || []
+
+    const handleLogOut = () => {
+        deleteCookie('jwtToken', { secure: true, sameSite: 'strict' })
+            removeUserId()
+        router.push(GetPageUrl.login)
+    }
 
     // @ts-ignore
     return (
@@ -67,9 +76,7 @@ const NavBarLayout = ({ children }: Props) => {
                                     },
                                     {
                                         label: 'Log out',
-                                        onClick: () => {
-                                            router.push(getPageUrl.logout())
-                                        }
+                                        onClick: handleLogOut
                                     },
                                 ]}
                             />

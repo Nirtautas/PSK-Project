@@ -2,23 +2,24 @@
 
 import { useState } from 'react'
 
-import { 
-  FormControl, 
-  InputLabel, 
-  InputAdornment, 
-  OutlinedInput, 
-  IconButton, 
-  FormHelperText 
+import {
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  OutlinedInput,
+  IconButton,
+  FormHelperText
 } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 
 type PasswordInputProps = {
-  id?: string;
-  label?: string;
-  required?: boolean;
-  error?: boolean;
-  helperText?: string;
-  value?: string;
+  id?: string
+  label?: string
+  required?: boolean
+  error?: boolean
+  helperText?: string
+  value?: string
+  name?: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -29,6 +30,7 @@ const PasswordInput = ({
   error = false,
   helperText = "",
   value,
+  name,
   onChange
 }: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -50,6 +52,7 @@ const PasswordInput = ({
         id={id}
         type={showPassword ? 'text' : 'password'}
         value={value}
+        name={name}
         onChange={onChange}
         endAdornment={
           <InputAdornment position="end">

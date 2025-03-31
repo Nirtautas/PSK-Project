@@ -18,9 +18,24 @@ namespace WorthBoards.Business.AutoMapper
 
             //BoardTask
             CreateMap<BoardTask, BoardTaskResponse>();
-
             CreateMap<BoardTaskRequest, BoardTask>();
-            CreateMap<BoardTask, BoardTaskRequest>();
+
+            CreateMap<BoardTask, BoardTaskUpdateRequest>();
+            CreateMap<BoardTaskUpdateRequest, BoardTask>();
+
+            //Board
+            CreateMap<Board, BoardResponse>();
+            CreateMap<BoardRequest, Board>();
+
+            CreateMap<Board, BoardUpdateRequest>();
+            CreateMap<BoardUpdateRequest, Board>();
+
+            //Comment
+            CreateMap<Comment, CommentResponse>();
+            CreateMap<CommentRequest, Comment>();
+
+            CreateMap<Comment, CommentUpdateRequest>();
+            CreateMap<CommentUpdateRequest, Comment>();
         }
     }
 }

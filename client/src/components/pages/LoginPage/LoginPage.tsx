@@ -57,7 +57,7 @@ const LoginPage = () => {
                     <Button type="submit" variant="contained">Login</Button>
                     <div className={styles.horizontal}>
                         Don't have an account?
-                        <Link href="register">Register now</Link>
+                        <Link href="/register">Register now</Link>
                     </div>
                 </form>
             </Box>

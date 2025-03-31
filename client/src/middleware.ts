@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 import { verifyJwtToken } from './utils/jwtToken'
 import { publicRoutes, GetPageUrl } from './constants/route'
@@ -10,6 +10,10 @@ export async function middleware(request: NextRequest) {
     const currentRoute = request.nextUrl.pathname
 
     if (currentRoute.startsWith('/_next')) {
+        return NextResponse.next()
+    }
+
+    if (currentRoute.startsWith('/register')) {
         return NextResponse.next()
     }
 

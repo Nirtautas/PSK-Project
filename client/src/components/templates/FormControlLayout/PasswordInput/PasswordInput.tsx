@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 
-interface PasswordInputProps {
+type PasswordInputProps = {
   id?: string;
   label?: string;
   required?: boolean;

@@ -1,12 +1,11 @@
 import LoginPage from "@/components/pages/LoginPage"
-import NavBarLayout from "@/components/templates/NavBarLayout"
+import GuestNavBarLayout from "@/components/templates/GuestNavBarLayout"
 
 const Page = () => {
     return (
-        <NavBarLayout>
+        <GuestNavBarLayout>
             <LoginPage />
-        </NavBarLayout>
-        
+        </GuestNavBarLayout>
     )
 }
 

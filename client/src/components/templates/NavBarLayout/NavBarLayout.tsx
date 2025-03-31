@@ -28,7 +28,9 @@ const NavBarLayout = ({ children }: Props) => {
             <header>
                 <Paper className={styles.navbar}>
                     <div className={styles.start_container}>
-                        <Typography variant="h2">Worth Manager</Typography>
+                        <Box className={styles.notification_button_wrapper}>
+                            <Typography variant="h2">Worth Manager</Typography>
+                        </Box>
                     </div>
                     <div className={styles.end_container}>
                         <Box className={styles.notification_button_wrapper}>

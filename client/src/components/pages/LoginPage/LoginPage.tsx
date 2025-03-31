@@ -41,9 +41,17 @@ const LoginPage = () => {
                 border: '1px solid grey'}}>
                 <form onSubmit={onSubmit} className={styles.login_box_container}>
                     <Typography variant="h3">Login</Typography>
-                    <br />
-                    <TextField name="username" label="Username" variant="outlined" required/>
-                    <PasswordInput name="password" required />
+                    <TextField
+                        name="username"
+                        label="Username"
+                        variant="outlined"
+                        required
+                        error={errorMsg === "Unauthorized"} 
+                        helperText={errorMsg === "Unauthorized" ? "Invalid credentials" : ""}/>
+                    <PasswordInput
+                        name="password"
+                        error={errorMsg === "Unauthorized"}
+                        required />
                     <Link href="#">forgot password</Link>
                     <br />
                     <Button type="submit" variant="contained">Login</Button>

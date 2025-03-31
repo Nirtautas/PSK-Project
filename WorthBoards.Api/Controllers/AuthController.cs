@@ -18,8 +18,19 @@ namespace WorthBoards.Api.Controllers
         [HttpPost("/login")]
         public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest credentials)
         {
-            var response = await authService.LoginUserAsync(credentials);
-            return Ok(response);
+            try
+            {
+                var response = await authService.LoginUserAsync(credentials);
+                return Ok(response);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
     }
 }

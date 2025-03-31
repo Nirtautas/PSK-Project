@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
+using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Business.Services.Interfaces
 {
@@ -15,5 +16,7 @@ namespace WorthBoards.Business.Services.Interfaces
         Task<BoardResponse> UpdateBoard(int boardToUpdateId, BoardUpdateRequest boardDto, CancellationToken cancellationToken);
 
         Task<BoardResponse> PatchBoard(int boardToUpdateId, JsonPatchDocument<BoardUpdateRequest> boardPatchDoc, CancellationToken cancellationToken);
+
+        Task<UserRoleEnum?> GetUserRoleByBoardIdAndUserIdAsync(int boardId, int userId);
     }
 }

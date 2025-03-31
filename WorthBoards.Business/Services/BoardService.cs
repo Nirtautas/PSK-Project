@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
+using WorthBoards.Common.Exceptions;
+using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
@@ -60,6 +63,13 @@ namespace WorthBoards.Business.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return _mapper.Map<BoardResponse>(boardToPatch);
+        }
+
+        public async Task<UserRoleEnum?> GetUserRoleByBoardIdAndUserIdAsync(int boardId, int userId)
+        {
+            var board = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.UserId == userId && b.BoardId == boardId);
+
+            return board?.UserRole;
         }
     }
 }

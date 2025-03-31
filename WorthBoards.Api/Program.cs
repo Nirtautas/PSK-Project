@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 using Microsoft.AspNetCore.Diagnostics;
->>>>>>> 7701e0234a41a543a59bf45afdff968aabcc1278
 using WorthBoards.Api.Configurations;
 using WorthBoards.Api.Utils.ExceptionHandler;
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
 using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
@@ -12,6 +13,13 @@ namespace WorthBoards.Business.Services
 {
     public class BoardTaskService(IUnitOfWork _unitOfWork, IMapper _mapper) : IBoardTaskService
     {
+        public async Task<IEnumerable<BoardTaskResponse>> GetBoardTasks(int boardId, IEnumerable<TaskStatusEnum> taskStatuses, CancellationToken cancellationToken)
+        {
+            var boardTasks = await _unitOfWork.BoardTaskRepository.GetAllByExpressionAsync(t => t.BoardId == boardId && taskStatuses.Contains(t.TaskStatus));
+
+            return _mapper.Map<IEnumerable<BoardTaskResponse>>(boardTasks);
+        }
+
         public async Task<BoardTaskResponse> GetBoardTaskById(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
             var boardTask = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)

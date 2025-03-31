@@ -30,6 +30,7 @@ const LoginPage = () => {
         setCookie('jwtToken', jwtToken, { secure: true, sameSite: 'strict' })
         setUserId(id)
         // router.push(GetPageUrl.boards(0))
+        router.push('/boards')
     }
 
     return (

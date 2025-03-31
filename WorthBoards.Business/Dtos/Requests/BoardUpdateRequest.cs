@@ -1,6 +1,4 @@
-﻿using WorthBoards.Common.Enums;
-
-namespace WorthBoards.Business.Dtos.Requests
+﻿namespace WorthBoards.Business.Dtos.Requests
 {
     public record BoardUpdateRequest
     {

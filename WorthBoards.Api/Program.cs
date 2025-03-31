@@ -5,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder
     .ConfigureSwagger()
     .ConfigureAuthentication()
-    .ConfigureAuthorization();
+    .ConfigureAuthorization()
+    .ConfigureValidators();
 
 // Add services to the container.
 builder.Services.AddApiServices(builder.Configuration);

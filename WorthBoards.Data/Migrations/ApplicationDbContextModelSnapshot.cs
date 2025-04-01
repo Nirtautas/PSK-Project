@@ -326,7 +326,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("BoardTasks");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Comment", b =>

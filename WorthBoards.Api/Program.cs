@@ -1,22 +1,21 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.AspNetCore.Diagnostics;
 using WorthBoards.Api.Configurations;
+using WorthBoards.Api.Utils.ExceptionHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder
     .ConfigureSwagger()
     .ConfigureAuthentication()
-    .ConfigureAuthorization();
+    .ConfigureAuthorization()
+    .ConfigureValidators();
 
 // Add services to the container.
-
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddDataServices(builder.Configuration);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 var baseUrl = builder.Configuration.GetValue<string>("BaseUrl") ?? string.Empty;
 builder.WebHost.UseUrls(baseUrl);
@@ -39,6 +38,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseExceptionHandler(new ExceptionHandlerOptions
+{
+    ExceptionHandler = async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        if (exception != null)
+        {
+            var handler = context.RequestServices.GetRequiredService<GlobalExceptionHandler>();
+            await handler.TryHandleAsync(context, exception, CancellationToken.None);
+        }
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseRouting();

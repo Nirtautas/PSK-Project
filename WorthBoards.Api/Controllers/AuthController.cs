@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
 
@@ -8,6 +9,7 @@ namespace WorthBoards.Api.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
+        [AllowAnonymous]
         [HttpPost("/register")]
         public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
         {
@@ -15,6 +17,7 @@ namespace WorthBoards.Api.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("/login")]
         public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest credentials)
         {

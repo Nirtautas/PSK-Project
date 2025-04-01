@@ -1,18 +1,30 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
+using WorthBoards.Data.Identity;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Business.Services
 {
-    public class BoardService(IUnitOfWork _unitOfWork, IMapper _mapper) : IBoardService
+    public class BoardService(IUnitOfWork _unitOfWork, IMapper _mapper, UserManager<ApplicationUser> userManager) : IBoardService
     {
+        public async Task<IEnumerable<BoardResponse>> GetUserBoards(int userId, int pageNum, int pageSize, CancellationToken cancellationToken)
+        {
+            var boardTasks = await _unitOfWork.BoardOnUserRepository.GetAllByExpressionAsync(t => t.UserId == userId, cancellationToken);
+
+            return _mapper.Map<IEnumerable<BoardResponse>>(boardTasks);
+
+        }
+
         public async Task<BoardResponse> GetBoardById(int boardId, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)

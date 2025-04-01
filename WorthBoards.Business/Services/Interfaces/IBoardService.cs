@@ -7,6 +7,7 @@ namespace WorthBoards.Business.Services.Interfaces
 {
     public interface IBoardService
     {
+        Task<IEnumerable<BoardResponse>> GetUserBoards(int userId, int pageNum, int pageSize, CancellationToken cancellationToken);
         Task<BoardResponse> GetBoardById(int boardId, CancellationToken cancellationToken);
 
         Task<BoardResponse> CreateBoard(BoardRequest boardDto, CancellationToken cancellationToken);

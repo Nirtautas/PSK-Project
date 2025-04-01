@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
 
@@ -9,6 +10,20 @@ namespace WorthBoards.Api.Controllers
     [Route("api/boards")]
     public class BoardController(IBoardService _boardService) : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
+        {
+            string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Invalid user ID.");
+            }
+
+            var result = await _boardService.GetUserBoards(userId, pageNum, pageSize, cancellationToken);
+            return Ok(result);
+        }
+
         [HttpGet("{boardId}")]
         public async Task<IActionResult> GetBoardById(int boardId, CancellationToken cancellationToken)
         {

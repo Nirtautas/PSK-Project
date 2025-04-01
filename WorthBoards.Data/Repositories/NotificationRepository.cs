@@ -13,8 +13,7 @@ namespace WorthBoards.Data.Repositories
             var notifications = dbContext.Notifications
                 .Where(notification =>
                     notification.NotificationsOnUsers.Any(user => user.UserId == userId)
-                )
-                .Select(notification =>
+                ).Select(notification =>
                     new
                     {
                         Notification = notification,

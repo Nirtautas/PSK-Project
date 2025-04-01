@@ -30,9 +30,22 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         throw new NotImplementedException();
     }
 
-    public Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum taskStatus)
+    public async Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // TODO: replace with actual notification data from constants & stuff
+        var notification = new Notification()
+        {
+            Description = "",
+            NotificationType = NotificationTypeEnum.MESSAGE,
+            InvitationData = null,
+            Title = "",
+            SendDate = DateTime.UtcNow,
+            SenderId = responsibleUserId
+        };
+        await _unitOfWork.NotificationRepository.CreateAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
     public Task NotifyUserAdded(int boardId, int userId, int responsibleUserId)

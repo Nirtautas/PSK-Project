@@ -5,5 +5,6 @@ namespace WorthBoards.Data.Repositories.Interfaces
 {
     public interface INotificationOnUserRepository : IRepository<NotificationOnUser>
     {
+        Task AddNotificationToBoardUsers(int notificationId, int boardId, CancellationToken cancellationToken);
     }
 }

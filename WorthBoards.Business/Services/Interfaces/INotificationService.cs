@@ -9,7 +9,7 @@ namespace WorthBoards.Business.Services.Interfaces;
 public interface INotificationService {
     Task<List<NotificationResponse>> GetNotificationsByUserId(int userId);
 
-    Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum taskStatus);
+    Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken);
 
     Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId);
 

@@ -8,7 +8,7 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class BoardTaskController(IBoardTaskService _boardTaskService) : ControllerBase
+    public class BoardTaskController(IBoardTaskService _boardTaskService, INotificationService _notificationService) : ControllerBase
     {
         [HttpGet("{boardId}/tasks")]
         public async Task<IActionResult> GetAllActiveBoardTasks(int boardId, CancellationToken cancellationToken)
@@ -52,7 +52,19 @@ namespace WorthBoards.Api.Controllers
         [HttpPut("{boardId}/tasks/{boardTaskId}")]
         public async Task<IActionResult> UpdateBoardTask(int boardId, int boardTaskId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
         {
+            var oldTask = await _boardTaskService.GetBoardTaskById(boardId, boardTaskId, cancellationToken);
+            var oldStatus = oldTask.TaskStatus;
+            var newStatus = boardTaskRequest.TaskStatus;
+
             var boardTaskResponse = await _boardTaskService.UpdateBoardTask(boardId, boardTaskId, boardTaskRequest, cancellationToken);
+
+            if (oldStatus != newStatus)
+            {
+                int userId = 1; // TODO: replace with actual id of the user responsible for the change
+                await _notificationService.NotifyTaskStatusChange(boardId, boardTaskId, userId, oldStatus, newStatus, cancellationToken);
+                return Ok(boardTaskResponse);
+            }
+
             return Ok(boardTaskResponse);
         }
 

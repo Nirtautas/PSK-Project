@@ -14,5 +14,8 @@ namespace WorthBoards.Domain.Entities
         //Navigation properties
         public virtual Board Board { get; set; }
         public virtual Notification Notification { get; set; }
+
+        // Concurrency token
+        public required byte[] RowVersion { get; set; }
     }
 }

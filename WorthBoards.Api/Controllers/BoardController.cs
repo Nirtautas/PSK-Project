@@ -14,48 +14,53 @@ namespace WorthBoards.Api.Controllers
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
         {
             string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             {
                 return Unauthorized("Invalid user ID.");
             }
 
-            var result = await _boardService.GetUserBoards(userId, pageNum, pageSize, cancellationToken);
-            return Ok(result);
+            var (boards, totalCount) = await _boardService.GetUserBoardsAsync(userId, pageNum, pageSize, cancellationToken);
+            return Ok(new { TotalCount = totalCount, Boards = boards });
         }
 
         [HttpGet("{boardId}")]
         public async Task<IActionResult> GetBoardById(int boardId, CancellationToken cancellationToken)
         {
-            var boardResponse = await _boardService.GetBoardById(boardId, cancellationToken);
+            var boardResponse = await _boardService.GetBoardByIdAsync(boardId, cancellationToken);
             return Ok(boardResponse);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBoard([FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
         {
-            var boardResponse = await _boardService.CreateBoard(boardRequest, cancellationToken);
+            string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Invalid user ID.");
+            }
+
+            var boardResponse = await _boardService.CreateBoardAsync(userId, boardRequest, cancellationToken);
             return CreatedAtAction(nameof(GetBoardById), new { boardId = boardResponse.Id}, boardResponse);
         }
 
         [HttpDelete("{boardId}")]
         public async Task<IActionResult> DeleteBoard(int boardId, CancellationToken cancellationToken)
         {
-            await _boardService.DeleteBoard(boardId, cancellationToken);
+            await _boardService.DeleteBoardAsync(boardId, cancellationToken);
             return NoContent();
         }
 
         [HttpPut("{boardId}")]
         public async Task<IActionResult> UpdateBoard(int boardId, [FromBody] BoardUpdateRequest boardRequest, CancellationToken cancellationToken)
         {
-            var boardResponse = await _boardService.UpdateBoard(boardId, boardRequest, cancellationToken);
+            var boardResponse = await _boardService.UpdateBoardAsync(boardId, boardRequest, cancellationToken);
             return Ok(boardResponse);
         }
 
         [HttpPatch("{boardId}")]
         public async Task<IActionResult> PatchBoard(int boardId, [FromBody] JsonPatchDocument<BoardUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
-            var boardResponse = await _boardService.PatchBoard(boardId, taskBoardPatchDoc, cancellationToken);
+            var boardResponse = await _boardService.PatchBoardAsync(boardId, taskBoardPatchDoc, cancellationToken);
             return Ok(boardResponse);
         }
     }

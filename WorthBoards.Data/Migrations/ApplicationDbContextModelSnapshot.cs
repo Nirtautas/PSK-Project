@@ -265,7 +265,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Boards");
+                    b.ToTable("Boards", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardOnUser", b =>
@@ -288,7 +288,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BoardsOnUsers");
+                    b.ToTable("BoardsOnUsers", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardTask", b =>
@@ -326,7 +326,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("BoardTasks");
+                    b.ToTable("BoardTasks", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Comment", b =>
@@ -364,7 +364,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.InvitationData", b =>
@@ -388,7 +388,7 @@ namespace WorthBoards.Data.Migrations
                     b.HasIndex("NotificationId")
                         .IsUnique();
 
-                    b.ToTable("InvitationData");
+                    b.ToTable("InvitationData", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Notification", b =>
@@ -423,7 +423,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.NotificationOnUser", b =>
@@ -438,7 +438,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("NotificationsOnUsers");
+                    b.ToTable("NotificationsOnUsers", (string)null);
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.TaskOnUser", b =>
@@ -463,7 +463,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TasksOnUsers");
+                    b.ToTable("TasksOnUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -5,9 +5,10 @@ using System.Security.Claims;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
-using WorthBoards.Common.Enums;
 using WorthBoards.Data.Database;
 using WorthBoards.Data.Identity;
+using WorthBoards.Common.Exceptions.Custom;
+using System.Diagnostics;
 
 namespace WorthBoards.Business.Services
 {
@@ -23,15 +24,13 @@ namespace WorthBoards.Business.Services
         {
             var user = await userManager.FindByNameAsync(credentials.UserName);
 
-            // TODO: Add custom exception handle
             if (user is null)
-                throw new UnauthorizedAccessException("Invalid Login credentials.");
+                throw new NotFoundException("User not found.");
 
             var result = await signInManager.CheckPasswordSignInAsync(user, credentials.Password, false);
 
-            // TODO: Add custom exception handle
             if (!result.Succeeded)
-                throw new UnauthorizedAccessException("Invalid Login credentials.");
+                throw new UnauthorizedException("Invalid Login credentials.");
 
             var claims = new List<Claim>
             {
@@ -53,9 +52,13 @@ namespace WorthBoards.Business.Services
 
             var response = await userManager.CreateAsync(user, registerUser.Password);
 
-            // TODO: Add custom exception handle
             if (!response.Succeeded)
-                throw new DbUpdateException("Failed to register user");
+            {
+                var errors = response.Errors.Select(e => e.Description).ToList();
+                throw new BadRequestException(string.Join("; ", errors));
+            }
+
+            ArgumentNullException.ThrowIfNull(response);
 
             return mapper.Map<UserResponse>(user);
         }

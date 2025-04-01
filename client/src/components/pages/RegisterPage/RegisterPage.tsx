@@ -10,7 +10,7 @@ import { setCookie } from 'cookies-next'
 import { setUserId } from '@/utils/userId'
 
 const RegisterPage = () => {
-    const [errorMsg, setErrorMsg] = useState<string>('')
+    const [errorMsgs, setErrorMsgs] = useState<string[]>([])
     const router = useRouter()
 
     const onSubmit = async (event: React.FormEvent) => {
@@ -25,7 +25,8 @@ const RegisterPage = () => {
             password: password.value
         })
         if (regResponse.error) {
-            setErrorMsg(regResponse.error)
+            setErrorMsgs(regResponse.error)
+            console.log(regResponse.error)
             return
         }
 
@@ -34,7 +35,7 @@ const RegisterPage = () => {
             password: password.value
         })
         if (response.error) {
-            setErrorMsg(response.error)
+            setErrorMsgs([response.error])
             return
         }
         const { jwtToken, id } = response.result!
@@ -43,6 +44,15 @@ const RegisterPage = () => {
         // router.push(GetPageUrl.boards(0))
         router.push('/boards')
     }
+
+    const displayErrorMsgs = async () => {
+        errorMsgs.map(msg => {
+            return (
+                <div>hi</div>
+            )
+        })
+    }
+
     return (
         <div className={styles.content}>
             <Box component="section" sx={{
@@ -59,8 +69,14 @@ const RegisterPage = () => {
                     <TextField name="email" type="email" label="Email" variant="outlined" required/>
                     <TextField name="username" label="Username" variant="outlined" required/>
                     <PasswordInput name="password" required/>
+                    <ul className={styles.errors_container}>
+                        {errorMsgs.map(error => {
+                            return (
+                                <li key={styles.error_msg} className={styles.error_msg}>{error}</li>
+                            )
+                        })}
+                    </ul>
                     <br />
-                    {errorMsg}
                     <Button type="submit" variant="contained">Register</Button>
                     <br />
                     <div className={styles.horizontal} style={{

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Exceptions.Custom;
 
 namespace WorthBoards.Api.Controllers
 {
@@ -13,8 +14,19 @@ namespace WorthBoards.Api.Controllers
         [HttpPost("/register")]
         public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
         {
-            var response = await authService.RegisterUserAsync(request);
-            return Ok(response);
+            try
+            {
+                var response = await authService.RegisterUserAsync(request);
+                return Ok(response);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new { Error = ex.Message.Split("; ") });
+            }
+            catch (Exception)
+            {
+                return Problem();
+            }
         }
 
         [AllowAnonymous]
@@ -26,7 +38,11 @@ namespace WorthBoards.Api.Controllers
                 var response = await authService.LoginUserAsync(credentials);
                 return Ok(response);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedException)
+            {
+                return Unauthorized();
+            }
+            catch (NotFoundException)
             {
                 return Unauthorized();
             }

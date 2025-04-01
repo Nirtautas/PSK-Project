@@ -6,8 +6,8 @@ export enum HTTPMethod {
     DELETE = "DELETE"
 }
 
-export type FetchResponse<T> = {
-    error?: string
+export type FetchResponse<T, U = string> = {
+    error?: U
     result?: T
 }
 

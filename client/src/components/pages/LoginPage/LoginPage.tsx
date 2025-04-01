@@ -12,7 +12,7 @@ import PasswordInput from '@/components/templates/FormControlLayout/PasswordInpu
 import styles from './LoginPage.module.scss'
 
 const LoginPage = () => {
-    const [errorMsg, setErrorMsg] = useState<string>('')
+    const [errorMsg, setErrorMsg] = useState<string>()
     const router = useRouter()
 
     const onSubmit = async (event: React.FormEvent) => {
@@ -24,6 +24,7 @@ const LoginPage = () => {
         })
         if (response.error) {
             setErrorMsg(response.error)
+            console.log(errorMsg)
             return
         }
         const { jwtToken, id } = response.result!

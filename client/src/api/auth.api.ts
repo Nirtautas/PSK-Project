@@ -4,7 +4,7 @@ import { FetchResponse, HTTPMethod } from '@/types/fetch'
 import { fetch } from '@/utils/fetch'
 
 export default class AuthApi {
-    static login({ username, password }: { username: string, password: string }): Promise<FetchResponse<LoginResponse>> {
+    static login({ username, password }: { username: string, password: string }): Promise<FetchResponse<LoginResponse, string>> {
         return fetch({
             url: `${authApiBaseUrl}/login`,
             method: HTTPMethod.POST,
@@ -16,7 +16,7 @@ export default class AuthApi {
         })
     }
 
-    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse>> {
+    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse, string[]>> {
         return fetch({
             url: `${authApiBaseUrl}/register`,
             method: HTTPMethod.POST,

@@ -34,4 +34,20 @@
     display: flex;
     gap: 0.5rem;
 }
+
+.horizontal > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.errors_container {
+    display: block;
+    padding-left: 1rem;
+    color: red;
+}
+
+.error_msg {
+    width: 100%;
+    overflow-wrap: break-word;
+}
   

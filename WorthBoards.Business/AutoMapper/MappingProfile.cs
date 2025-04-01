@@ -36,6 +36,19 @@ namespace WorthBoards.Business.AutoMapper
 
             CreateMap<Comment, CommentUpdateRequest>();
             CreateMap<CommentUpdateRequest, Comment>();
+
+            //Notification
+            CreateMap<Notification, NotificationResponse>();
+            CreateMap<(Notification, string), NotificationResponse>()
+                .ConvertUsing(tuple => new NotificationResponse() {
+                    Description = tuple.Item1.Description,
+                    Id = tuple.Item1.Id,
+                    Title = tuple.Item1.Title,
+                    SendDate = tuple.Item1.SendDate,
+                    InvitationData = tuple.Item1.InvitationData,
+                    NotificationType = tuple.Item1.NotificationType,
+                    SenderUsername = tuple.Item2
+                });
         }
     }
 }

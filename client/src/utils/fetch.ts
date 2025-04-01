@@ -29,7 +29,7 @@ async function fetchWrapper({ url, method, headers, body }: FetchParams): Promis
             }
         }
         return {
-            error: response.statusText || 'Unknown error'
+            error: (await response.json()).error || 'Unknown error'
         }
     } catch (err) {
         console.log((err as Error).message)

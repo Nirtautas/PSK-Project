@@ -8,6 +8,7 @@ import TaskApi from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
+import { Padding } from '@mui/icons-material'
 
 type Props = {
     boardId: number
@@ -111,16 +112,16 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
 
     return (
         <Paper className={styles.container}>
-            <Button onClick={handleOpen}>Create new task</Button>
+            <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
             <Modal
                 open={open}
                 onClose={handleClose}
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        create a task
+                    <Typography id="modal-modal-title" variant="h5" component="h2">
+                        Create a task
                     </Typography>
-                    <CreateTaskForm handleClose={handleClose} boardId={boardId}></CreateTaskForm>
+                    <CreateTaskForm handleClose={handleClose} boardId={boardId} />
                 </Box>
             </Modal>
             <Box className={styles.tasks_container}>

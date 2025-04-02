@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using System.ComponentModel.Design;
+using System.Threading.Tasks;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
@@ -11,7 +12,12 @@ namespace WorthBoards.Business.Services
 {
     public class CommentService(IUnitOfWork _unitOfWork, IMapper _mapper) : ICommentService
     {
-        public async Task<CommentResponse> GetCommentById(int commentId, CancellationToken cancellationToken)
+        public async Task<CommentResponse> GetAllBoardTaskComments(int boardId, int taskId, CancellationToken cancellationToken)
+        {
+
+        }
+
+        public async Task<CommentResponse> GetCommentById(int boardId, int taskId, int commentId, CancellationToken cancellationToken)
         {
             var comment = await _unitOfWork.CommentRepository.GetByIdAsync(commentId, cancellationToken)
                 ?? throw new Exception($"Comment [id {commentId}] doesn't exist.");

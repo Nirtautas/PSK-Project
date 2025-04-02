@@ -25,9 +25,22 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         return notificationsMapped;
     }
 
-    public Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId)
+    public async Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // TODO: replace with actual notification data from constants & stuff
+        var notification = new Notification()
+        {
+            Description = "",
+            NotificationType = NotificationTypeEnum.MESSAGE,
+            InvitationData = null,
+            Title = $"Task with id: {taskId} was deleted.",
+            SendDate = DateTime.UtcNow,
+            SenderId = responsibleUserId
+        };
+        await _unitOfWork.NotificationRepository.CreateAsync(notification);
+        await _unitOfWork.SaveChangesAsync();
+
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
     public async Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken)
@@ -35,7 +48,7 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         // TODO: replace with actual notification data from constants & stuff
         var notification = new Notification()
         {
-            Description = "",
+            Description = "Task status was changed.",
             NotificationType = NotificationTypeEnum.MESSAGE,
             InvitationData = null,
             Title = "",

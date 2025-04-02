@@ -74,7 +74,6 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
@@ -91,7 +90,44 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+
+        var notificationForSubject = new Notification()
+        {
+            Description = $"You were removed from board {boardId} by user {responsibleUserId}.",
+            NotificationType = NotificationTypeEnum.MESSAGE,
+            InvitationData = null,
+            Title = "You were removed from a board.",
+            SendDate = DateTime.UtcNow,
+            SenderId = responsibleUserId
+        };
+    }
+
+    public async Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
+    {
+        var notification = new Notification()
+        {
+            Description = $"You were invited to board {boardId} by user {responsibleUserId}.",
+            NotificationType = NotificationTypeEnum.INVITATION,
+            InvitationData = null,
+            Title = "You were invited to join a board.",
+            SendDate = DateTime.UtcNow,
+            SenderId = responsibleUserId,
+            NotificationsOnUsers = new List<NotificationOnUser>()
+            {
+                new NotificationOnUser()
+                {
+                    UserId = userId
+                }
+            }
+        };
+
+        notification.InvitationData = new InvitationData()
+        {
+            BoardId = boardId,
+            NotificationId = notification.Id
+        };
+        await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

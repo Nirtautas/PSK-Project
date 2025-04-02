@@ -13,9 +13,9 @@ public class NotificationController(INotificationService _notificationService, I
 {
     [AllowAnonymous]
     [HttpGet("/{userId:int}")]
-    public async Task<List<NotificationResponse>> GetNotificationsByUserId(int userId)
+    public async Task<List<NotificationResponse>> GetNotificationsByUserId(int userId, CancellationToken cancellationToken = default)
     {
-        var notifications = await _notificationService.GetNotificationsByUserId(userId);
+        var notifications = await _notificationService.GetNotificationsByUserId(userId, cancellationToken);
 
         return notifications;
     }

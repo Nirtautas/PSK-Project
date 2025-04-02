@@ -8,9 +8,9 @@ namespace WorthBoards.Data.Repositories
 {
     public class NotificationRepository(ApplicationDbContext dbContext) : Repository<Notification>(dbContext), INotificationRepository
     {
-        public async Task<List<(Notification, string)>> GetNotificationsAndSenderUsernamesByUserIdAsync(int userId)
+        public async Task<List<(Notification, string)>> GetNotificationsAndSenderUsernamesByUserIdAsync(int userId, CancellationToken cancellationToken)
         {
-            var notifications = dbContext.Notifications
+            var notifications = await dbContext.Notifications
                 .Where(notification =>
                     notification.NotificationsOnUsers.Any(user => user.UserId == userId)
                 ).Select(notification =>
@@ -20,7 +20,7 @@ namespace WorthBoards.Data.Repositories
                         SenderName = dbContext.Users.Where(user => user.Id == notification.Id).Select(user => user.UserName).FirstOrDefault(),
                         InvitationData = notification.InvitationData
                     }
-                ).ToList();
+                ).ToListAsync(cancellationToken);
 
             // Cannot use .Select() to return tuple ;(
             var result = new List<(Notification, string)>();

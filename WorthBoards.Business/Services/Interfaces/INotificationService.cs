@@ -7,13 +7,13 @@ using WorthBoards.Domain.Entities;
 namespace WorthBoards.Business.Services.Interfaces;
 
 public interface INotificationService {
-    Task<List<NotificationResponse>> GetNotificationsByUserId(int userId);
+    Task<List<NotificationResponse>> GetNotificationsByUserId(int userId, CancellationToken cancellationToken);
 
     Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken);
 
     Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyUserAdded(int boardId, int userId, int responsibleUserId);
+    Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId);
+    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 }

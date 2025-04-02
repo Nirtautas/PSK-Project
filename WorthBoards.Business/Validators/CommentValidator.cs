@@ -7,14 +7,6 @@ namespace WorthBoards.Business.Validators
     {
         public CommentValidator()
         {
-            RuleFor(x => x.TaskId)
-                .GreaterThan(0)
-                .WithMessage(ValidationMessages.TaskIdInvalid);
-
-            RuleFor(x => x.UserId)
-                .GreaterThan(0)
-                .WithMessage(ValidationMessages.UserIdInvalid);
-
             RuleFor(x => x.Content)
                 .NotEmpty()
                 .WithMessage(ValidationMessages.ContentRequired)

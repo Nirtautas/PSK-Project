@@ -11,8 +11,6 @@
         public const string BoardIdInvalid = "Board ID must be greater than zero.";
         public const string DeadlineInvalid = "Deadline must be a future date.";
         public const string TaskStatusInvalid = "Invalid task status.";
-        public const string TaskIdInvalid = "Task ID must be greater than zero.";
-        public const string UserIdInvalid = "User ID must be greater than zero.";
         public const string ContentRequired = "Comment content is required.";
         public static readonly string ContentTooLong = $"Content cannot exceed {ValidationConstants.ContentMaxLength} characters.";
         public const string FirstNameRequired = "First name is required.";

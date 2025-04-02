@@ -265,7 +265,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Boards", (string)null);
+                    b.ToTable("Boards");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardOnUser", b =>
@@ -288,7 +288,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BoardsOnUsers", (string)null);
+                    b.ToTable("BoardsOnUsers");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardTask", b =>
@@ -326,7 +326,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("BoardTasks", (string)null);
+                    b.ToTable("BoardTasks");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Comment", b =>
@@ -336,9 +336,6 @@ namespace WorthBoards.Data.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BoardTaskId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -360,11 +357,11 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardTaskId");
+                    b.HasIndex("TaskId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.InvitationData", b =>
@@ -388,7 +385,7 @@ namespace WorthBoards.Data.Migrations
                     b.HasIndex("NotificationId")
                         .IsUnique();
 
-                    b.ToTable("InvitationData", (string)null);
+                    b.ToTable("InvitationData");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Notification", b =>
@@ -423,7 +420,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.NotificationOnUser", b =>
@@ -438,7 +435,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("NotificationsOnUsers", (string)null);
+                    b.ToTable("NotificationsOnUsers");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.TaskOnUser", b =>
@@ -463,7 +460,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TasksOnUsers", (string)null);
+                    b.ToTable("TasksOnUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -549,7 +546,7 @@ namespace WorthBoards.Data.Migrations
                 {
                     b.HasOne("WorthBoards.Domain.Entities.BoardTask", "BoardTask")
                         .WithMany("Comments")
-                        .HasForeignKey("BoardTaskId")
+                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

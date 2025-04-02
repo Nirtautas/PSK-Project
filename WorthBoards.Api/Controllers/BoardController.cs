@@ -34,15 +34,18 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBoard([FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBoard(int? userId, [FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
         {
-            string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            if (userId == null)
             {
-                return Unauthorized("Invalid user ID.");
+                string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int parsedUserId))
+                    return Unauthorized("Invalid user ID.");
+
+                userId = parsedUserId;
             }
 
-            var boardResponse = await _boardService.CreateBoardAsync(userId, boardRequest, cancellationToken);
+            var boardResponse = await _boardService.CreateBoardAsync(userId.Value, boardRequest, cancellationToken);
             return CreatedAtAction(nameof(GetBoardById), new { boardId = boardResponse.Id}, boardResponse);
         }
 

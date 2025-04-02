@@ -11,7 +11,7 @@ namespace WorthBoards.Api.Controllers
     public class BoardController(IBoardService _boardService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll(CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
+        public async Task<IActionResult> GetAllCurrentUserBoards(CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
         {
             string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
@@ -19,6 +19,13 @@ namespace WorthBoards.Api.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
+            var (boards, totalCount) = await _boardService.GetUserBoardsAsync(userId, pageNum, pageSize, cancellationToken);
+            return Ok(new { TotalCount = totalCount, Boards = boards });
+        }
+
+        [HttpGet("users/{userId}")]
+        public async Task<IActionResult> GetBoardsByUserID(int userId, CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
+        {
             var (boards, totalCount) = await _boardService.GetUserBoardsAsync(userId, pageNum, pageSize, cancellationToken);
             return Ok(new { TotalCount = totalCount, Boards = boards });
         }

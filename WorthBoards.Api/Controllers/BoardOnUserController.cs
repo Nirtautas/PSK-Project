@@ -5,6 +5,8 @@ using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Controllers
 {
+    [ApiController]
+    [Route("api/boards")]
     public class BoardOnUserController(IBoardOnUserService _boardOnUserService) : ControllerBase
     {
         [HttpGet("{boardId}/links")]

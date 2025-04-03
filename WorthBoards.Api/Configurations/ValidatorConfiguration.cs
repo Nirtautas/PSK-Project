@@ -13,8 +13,7 @@ public static class ValidatorConfiguration
         builder.Services
             .AddFluentValidationAutoValidation()
             .AddFluentValidationClientsideAdapters()
-            .AddValidatorsFromAssembly(Assembly.Load("WorthBoards.Business"))
-            .AddValidatorsFromAssemblyContaining<LinkUserToBoardRequest>();
+            .AddValidatorsFromAssembly(Assembly.Load("WorthBoards.Business"));
 
         return builder;
     }

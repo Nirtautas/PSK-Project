@@ -30,9 +30,6 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> LinkUserToBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
-            if (linkUserToBoardRequest.UserRole == UserRoleEnum.OWNER) //I wanted to this with fluent validation, but for the love of me it can't validate an enum for some reason
-                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
-
             var boardOnUser = _mapper.Map<BoardOnUser>(linkUserToBoardRequest);
             boardOnUser.BoardId = boardId;
             boardOnUser.UserId = userId;
@@ -57,9 +54,6 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> UpdateUserOnBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
-            if (linkUserToBoardRequest.UserRole == UserRoleEnum.OWNER)
-                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
-
             var boardOnUserToUpdate = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
@@ -75,9 +69,6 @@ namespace WorthBoards.Business.Services
 
             var boardTaskToPatchDto = _mapper.Map<LinkUserToBoardRequest>(boardTaskToPatch);
             linkUserToBoardPatchDoc.ApplyTo(boardTaskToPatchDto);
-
-            if (boardTaskToPatchDto.UserRole == UserRoleEnum.OWNER)
-                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
 
             _mapper.Map(boardTaskToPatchDto, boardTaskToPatch);
 

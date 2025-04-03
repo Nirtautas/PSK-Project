@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Api.Controllers
 {
     [ApiController]
-    [Route("boards/{boardId}/tasks/{taskId:int}/comments")]
+    [Route("api/boards/{boardId:int}/tasks/{taskId:int}/comments")]
     public class CommentController(ICommentService _commentService) : ControllerBase
     {
         [HttpGet]
@@ -25,14 +26,14 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateComment([FromRoute] int taskId, [FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateComment([FromRoute] int boardId, [FromRoute] int taskId, [FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
         {
             string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
                 return Unauthorized("Invalid user ID.");
 
             var commentResponse = await _commentService.CreateCommentAsync(userId, taskId, commentRequest, cancellationToken);
-            return CreatedAtAction(nameof(GetCommentById), new { taskId = taskId, commentId = commentResponse.Id }, commentResponse);
+            return CreatedAtAction(nameof(GetCommentById), new { boardId = boardId, taskId = taskId, commentId = commentResponse.Id }, commentResponse);
         }
 
         [HttpDelete("{commentId}")]

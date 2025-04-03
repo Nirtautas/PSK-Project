@@ -1,6 +1,6 @@
 ﻿namespace WorthBoards.Common.Exceptions
 {
-    public static class ExceptionFormater
+    public static class ExceptionFormatter
     {
         public static string NotFound(string entityName, int[] entityId)
         {

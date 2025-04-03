@@ -23,7 +23,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardTaskResponse> GetBoardTaskById(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
             var boardTask = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardTask), [boardTaskId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskId]));
 
             return _mapper.Map<BoardTaskResponse>(boardTask);
         }
@@ -34,7 +34,7 @@ namespace WorthBoards.Business.Services
             boardTask.BoardId = boardId;
 
             var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardTask.BoardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(Board), [boardId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
 
             await _unitOfWork.BoardTaskRepository.CreateAsync(boardTask, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -45,7 +45,7 @@ namespace WorthBoards.Business.Services
         public async Task DeleteBoardTask(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
             var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardTask), [boardTaskId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskId]));
 
             _unitOfWork.BoardTaskRepository.Delete(boardTaskToDelete); ;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -54,7 +54,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken)
         {
             var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
 
             _mapper.Map(boardTaskDto, boardTaskToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -64,7 +64,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardTaskResponse> PatchBoardTask(int boardId, int boardTaskToUpdateId, JsonPatchDocument<BoardTaskRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
             var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
 
             var boardTaskToUpdateDto = _mapper.Map<BoardTaskRequest>(boardTaskToPatch);
 

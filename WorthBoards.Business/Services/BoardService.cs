@@ -16,7 +16,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardResponse> GetBoardById(int boardId, CancellationToken cancellationToken)
         {
             var board = await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(Board), [boardId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
 
             return _mapper.Map<BoardResponse>(board);
         }
@@ -34,7 +34,7 @@ namespace WorthBoards.Business.Services
         public async Task DeleteBoard(int boardId, CancellationToken cancellationToken)
         {
             var boardToDelete = await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(Board), [boardId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
 
             _unitOfWork.BoardRepository.Delete(boardToDelete); ;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -43,7 +43,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardResponse> UpdateBoard(int boardToUpdateId, BoardUpdateRequest boardDto, CancellationToken cancellationToken)
         {
             var boardToUpdate = await _unitOfWork.BoardRepository.GetByIdAsync(boardToUpdateId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(Board), [boardToUpdateId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardToUpdateId]));
 
             _mapper.Map(boardDto, boardToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -53,7 +53,7 @@ namespace WorthBoards.Business.Services
         public async Task<BoardResponse> PatchBoard(int boardToUpdateId, JsonPatchDocument<BoardUpdateRequest> boardPatchDoc, CancellationToken cancellationToken)
         {
             var boardToPatch = await _unitOfWork.BoardRepository.GetByIdAsync(boardToUpdateId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(Board), [boardToUpdateId]));
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardToUpdateId]));
 
             var boardToUpdateDto = _mapper.Map<BoardUpdateRequest>(boardToPatch);
 

@@ -35,6 +35,7 @@ namespace WorthBoards.Business.Services
             var board = _mapper.Map<Board>(boardDto);
 
             await _unitOfWork.BoardRepository.CreateAsync(board, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var boardOnUser = new BoardOnUser
             {

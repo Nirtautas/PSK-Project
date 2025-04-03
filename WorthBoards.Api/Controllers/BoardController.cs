@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class BoardController(IBoardService _boardService) : ControllerBase
+    public class BoardController(IBoardService _boardService, IBoardOnUserService _boardOnUserService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllCurrentUserBoards(int? userId, CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
@@ -27,6 +30,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpGet("{boardId}")]
+        [Authorize]
         public async Task<IActionResult> GetBoardById(int boardId, CancellationToken cancellationToken)
         {
             var boardResponse = await _boardService.GetBoardByIdAsync(boardId, cancellationToken);
@@ -34,7 +38,9 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateBoard(int? userId, [FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBoard([FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
         {
             if (userId == null)
             {
@@ -50,6 +56,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpDelete("{boardId}")]
+        [AuthorizeRole(UserRoleEnum.OWNER)]
         public async Task<IActionResult> DeleteBoard(int boardId, CancellationToken cancellationToken)
         {
             await _boardService.DeleteBoardAsync(boardId, cancellationToken);
@@ -57,6 +64,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPut("{boardId}")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UpdateBoard(int boardId, [FromBody] BoardUpdateRequest boardRequest, CancellationToken cancellationToken)
         {
             var boardResponse = await _boardService.UpdateBoardAsync(boardId, boardRequest, cancellationToken);
@@ -64,6 +72,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPatch("{boardId}")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> PatchBoard(int boardId, [FromBody] JsonPatchDocument<BoardUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
             var boardResponse = await _boardService.PatchBoardAsync(boardId, taskBoardPatchDoc, cancellationToken);

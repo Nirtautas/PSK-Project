@@ -1,0 +1,36 @@
+@use "@/assets/styles/variables" as *;
+
+
+.navbar {
+  height: $navbar-height;
+  display: flex;
+}
+
+.start_container {
+  margin-right: auto;
+  display: flex;
+}
+
+.end_container {
+  margin-left: auto;
+  margin-right: 1rem;
+  display: flex;
+}
+
+.centered_wrapper {
+  margin: auto 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}

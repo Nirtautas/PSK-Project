@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
-using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Api.Controllers
 {
     [ApiController]
-    [Route("tasks/{taskId:int}/comments")]
+    [Route("boards/{boardId}/tasks/{taskId:int}/comments")]
     public class CommentController(ICommentService _commentService) : ControllerBase
     {
         [HttpGet]

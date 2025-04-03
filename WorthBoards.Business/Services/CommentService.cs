@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using System.ComponentModel.Design;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Exceptions;
+using WorthBoards.Common.Exceptions.Custom;
+using WorthBoards.Data.Identity;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
@@ -14,7 +16,7 @@ namespace WorthBoards.Business.Services
         public async Task<CommentResponse> GetCommentById(int commentId, CancellationToken cancellationToken)
         {
             var comment = await _unitOfWork.CommentRepository.GetByIdAsync(commentId, cancellationToken)
-                ?? throw new Exception($"Comment [id {commentId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Comment), [commentId]));
 
             return _mapper.Map<CommentResponse>(comment);
         }
@@ -24,10 +26,10 @@ namespace WorthBoards.Business.Services
             var comment = _mapper.Map<Comment>(commentDto);
 
             _ = await _unitOfWork.BoardRepository.GetByIdAsync(commentDto.UserId, cancellationToken)
-                ?? throw new Exception($"User [id {commentDto.UserId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(ApplicationUser), [commentDto.UserId]));
 
             _ = await _unitOfWork.BoardRepository.GetByIdAsync(commentDto.TaskId, cancellationToken) 
-                ?? throw new Exception($"Task [id {commentDto.TaskId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Task), [commentDto.TaskId]));
 
             await _unitOfWork.CommentRepository.CreateAsync(comment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -38,7 +40,7 @@ namespace WorthBoards.Business.Services
         public async Task DeleteComment(int commentId, CancellationToken cancellationToken)
         {
             var commentToDelete = await _unitOfWork.CommentRepository.GetByIdAsync(commentId, cancellationToken)
-                ?? throw new Exception($"Comment [id {commentId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Comment), [commentId]));
 
             _unitOfWork.CommentRepository.Delete(commentToDelete); ;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -47,7 +49,7 @@ namespace WorthBoards.Business.Services
         public async Task<CommentResponse> UpdateComment(int commentToUpdateId, CommentUpdateRequest commentDto, CancellationToken cancellationToken)
         {
             var commentToUpdate = await _unitOfWork.CommentRepository.GetByIdAsync(commentToUpdateId, cancellationToken)
-                ?? throw new Exception($"Comment [id {commentToUpdateId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Comment), [commentToUpdateId]));
 
             _mapper.Map(commentDto, commentToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -57,7 +59,7 @@ namespace WorthBoards.Business.Services
         public async Task<CommentResponse> PatchComment(int commentToUpdateId, JsonPatchDocument<CommentUpdateRequest> commentPatchDoc, CancellationToken cancellationToken)
         {
             var commentToPatch = await _unitOfWork.CommentRepository.GetByIdAsync(commentToUpdateId, cancellationToken)
-                ?? throw new Exception($"Comment [id {commentToUpdateId}] doesn't exist.");
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Comment), [commentToUpdateId]));
 
             var commentToUpdateDto = _mapper.Map<CommentUpdateRequest>(commentToPatch);
 

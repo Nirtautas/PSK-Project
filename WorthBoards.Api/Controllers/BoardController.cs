@@ -10,7 +10,7 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class BoardController(IBoardService _boardService) : ControllerBase
+    public class BoardController(IBoardService _boardService, IBoardOnUserService _boardOnUserService) : ControllerBase
     {
         [HttpGet("{boardId}")]
         [Authorize]

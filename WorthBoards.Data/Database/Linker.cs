@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 

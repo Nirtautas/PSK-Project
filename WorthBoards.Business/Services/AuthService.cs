@@ -5,7 +5,6 @@ using System.Security.Claims;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
-using WorthBoards.Common.Enums;
 using WorthBoards.Data.Database;
 using WorthBoards.Data.Identity;
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Configurations
 {

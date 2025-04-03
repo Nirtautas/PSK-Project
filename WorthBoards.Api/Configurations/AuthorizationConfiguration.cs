@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 using WorthBoards.Api.Utils;
 using WorthBoards.Common.Enums;
 

@@ -1,9 +1,4 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorthBoards.Business.Dtos.Identity;
 
 namespace WorthBoards.Business.Validators

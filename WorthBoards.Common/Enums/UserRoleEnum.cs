@@ -3,7 +3,7 @@
     public enum UserRoleEnum
     {
         OWNER = 0,
-        EDITOR,
-        VIEWER
+        EDITOR = 1,
+        VIEWER = 2
     }
 }

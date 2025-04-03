@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using System.Reflection;
 using WorthBoards.Business.Dtos.Requests;
-using WorthBoards.Business.Validators;
 namespace WorthBoards.Api.Configurations;
 
 public static class ValidatorConfiguration
@@ -12,13 +12,9 @@ public static class ValidatorConfiguration
 
         builder.Services
             .AddFluentValidationAutoValidation()
-        .AddFluentValidationClientsideAdapters()
-            .AddValidatorsFromAssemblyContaining<BoardRequest>()
-            .AddValidatorsFromAssemblyContaining<BoardUpdateRequest>()
-            .AddValidatorsFromAssemblyContaining<BoardTaskRequest>()
-            .AddValidatorsFromAssemblyContaining<BoardTaskUpdateRequest>()
-            .AddValidatorsFromAssemblyContaining<CommentRequest>()
-            .AddValidatorsFromAssemblyContaining<CommentUpdateRequest>();
+            .AddFluentValidationClientsideAdapters()
+            .AddValidatorsFromAssembly(Assembly.Load("WorthBoards.Business"))
+            .AddValidatorsFromAssemblyContaining<LinkUserToBoardRequest>();
 
         return builder;
     }

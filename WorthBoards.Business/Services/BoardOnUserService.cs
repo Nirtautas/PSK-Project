@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
 using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
@@ -29,7 +30,9 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> LinkUserToBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
-            //Check for multiple owners!
+            if (linkUserToBoardRequest.UserRole == UserRoleEnum.OWNER) //I wanted to this with fluent validation, but for the love of me it can't validate an enum for some reason
+                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
+
             var boardOnUser = _mapper.Map<BoardOnUser>(linkUserToBoardRequest);
             boardOnUser.BoardId = boardId;
             boardOnUser.UserId = userId;
@@ -42,10 +45,11 @@ namespace WorthBoards.Business.Services
 
         public async Task UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
         {
-            //Check if accidentally not unlinking owner!
-
             var boardOnUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
+
+            if (boardOnUser.UserRole == UserRoleEnum.OWNER)
+                throw new BadRequestException(ExceptionFormatter.BadRequestUnlinkOwner());
 
             _unitOfWork.BoardOnUserRepository.Delete(boardOnUser);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -53,10 +57,11 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> UpdateUserOnBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
+            if (linkUserToBoardRequest.UserRole == UserRoleEnum.OWNER)
+                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
+
             var boardOnUserToUpdate = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
-
-            //Check for multiple owners!
 
             _mapper.Map(linkUserToBoardRequest,boardOnUserToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -68,10 +73,12 @@ namespace WorthBoards.Business.Services
             var boardTaskToPatch = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
-            //Check for multiple owners!
-
             var boardTaskToPatchDto = _mapper.Map<LinkUserToBoardRequest>(boardTaskToPatch);
             linkUserToBoardPatchDoc.ApplyTo(boardTaskToPatchDto);
+
+            if (boardTaskToPatchDto.UserRole == UserRoleEnum.OWNER)
+                throw new BadRequestException(ExceptionFormatter.BadRequestOwnerDuplicate());
+
             _mapper.Map(boardTaskToPatchDto, boardTaskToPatch);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

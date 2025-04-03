@@ -30,6 +30,8 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> LinkUserToBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
+            //In the future check if user has invitation before allowing to link
+
             var boardOnUser = _mapper.Map<BoardOnUser>(linkUserToBoardRequest);
             boardOnUser.BoardId = boardId;
             boardOnUser.UserId = userId;

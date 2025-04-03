@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using WorthBoards.Business.Dtos.Requests;
 
-namespace WorthBoards.Business.Validators
+namespace WorthBoards.Business.Validators.Board
 {
     public class BoardUpdateValidator : AbstractValidator<BoardUpdateRequest>
     {

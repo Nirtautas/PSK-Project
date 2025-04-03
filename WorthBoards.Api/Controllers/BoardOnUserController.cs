@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Controllers
 {
+    [ApiController]
+    [Route("api/boards")]
     public class BoardOnUserController(IBoardOnUserService _boardOnUserService) : ControllerBase
     {
+
         [HttpGet("{boardId}/links")]
+        [AuthorizeRole(UserRoleEnum.VIEWER)]
         public async Task<IActionResult> GetAllBoardToUserLinks(int boardId, CancellationToken cancellationToken)
         {
             var linkResponse = await _boardOnUserService.GetAllBoardToUserLinks(boardId, cancellationToken);
@@ -15,6 +22,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpGet("{boardId}/link/{userId}")]
+        [AuthorizeRole(UserRoleEnum.VIEWER)]
         public async Task<IActionResult> GetBoardToUserLink(int boardId, int userId, CancellationToken cancellationToken)
         {
             var linkResponse = await _boardOnUserService.GetBoardToUserLink(boardId, userId, cancellationToken);
@@ -22,6 +30,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost("{boardId}/link/{userId}")]
+        [Authorize]
         public async Task<IActionResult> LinkUserToBoard(int boardId, int userId, [FromBody] LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
             var linkResponse = await _boardOnUserService.LinkUserToBoard(boardId, userId, linkUserToBoardRequest, cancellationToken);
@@ -29,6 +38,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpDelete("{boardId}/link/{userId}")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
         {
             await _boardOnUserService.UnlinkUserFromBoard(boardId, userId, cancellationToken);
@@ -36,6 +46,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPut("{boardId}/link/{userId}")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UpdateUserOnBoard(int boardId, int userId, [FromBody] LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
             var linkResponse = await _boardOnUserService.UpdateUserOnBoard(boardId, userId, linkUserToBoardRequest, cancellationToken);
@@ -43,6 +54,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPatch("{boardId}/link/{userId}")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> PatchUserOnBoard(int boardId, int userId, [FromBody] JsonPatchDocument<LinkUserToBoardRequest> linkUserToBoardPatchDoc, CancellationToken cancellationToken)
         {
             var linkResponse = await _boardOnUserService.PatchUserOnBoard(boardId, userId, linkUserToBoardPatchDoc, cancellationToken);

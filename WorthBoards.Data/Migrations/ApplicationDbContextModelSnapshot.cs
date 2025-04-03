@@ -326,7 +326,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("BoardTasks");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Comment", b =>
@@ -517,7 +517,7 @@ namespace WorthBoards.Data.Migrations
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardOnUser", b =>
                 {
                     b.HasOne("WorthBoards.Domain.Entities.Board", "Board")
-                        .WithMany()
+                        .WithMany("BoardUsers")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -624,6 +624,8 @@ namespace WorthBoards.Data.Migrations
             modelBuilder.Entity("WorthBoards.Domain.Entities.Board", b =>
                 {
                     b.Navigation("BoardTasks");
+
+                    b.Navigation("BoardUsers");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardTask", b =>

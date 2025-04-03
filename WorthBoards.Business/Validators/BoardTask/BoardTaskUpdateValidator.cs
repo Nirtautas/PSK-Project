@@ -2,7 +2,7 @@
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Common.Enums;
 
-namespace WorthBoards.Business.Validators
+namespace WorthBoards.Business.Validators.BoardTask
 {
     public class BoardTaskUpdateValidator : AbstractValidator<BoardTaskUpdateRequest>
     {
@@ -19,7 +19,7 @@ namespace WorthBoards.Business.Validators
                 .WithMessage(ValidationMessages.DescriptionRequired)
                 .MaximumLength(ValidationConstants.DescriptionMaxLength)
                 .WithMessage(ValidationMessages.DescriptionTooLong);
-            
+
             RuleFor(x => x.DeadlineEnd)
                 .GreaterThan(DateTime.UtcNow)
                 .WithMessage(ValidationMessages.DeadlineInvalid);

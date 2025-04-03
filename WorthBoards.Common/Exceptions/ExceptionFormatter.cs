@@ -8,5 +8,6 @@
             return $"{ErrorMessageConstants.NOT_FOUND_ERROR} Of type {entityName} with key(s) {keys}.";
         }
         public static string NotFound() => ErrorMessageConstants.NOT_FOUND_ERROR;
+        public static string BadRequestUnlinkOwner() => ErrorMessageConstants.BAD_REQUEST_UNLINK_OWNER;
     }
 }

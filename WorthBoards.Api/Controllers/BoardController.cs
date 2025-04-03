@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;

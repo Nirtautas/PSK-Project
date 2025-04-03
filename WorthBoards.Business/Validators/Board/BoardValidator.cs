@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 using WorthBoards.Business.Dtos.Requests;
-using WorthBoards.Common.Enums;
 
-namespace WorthBoards.Business.Validators
+namespace WorthBoards.Business.Validators.Board
 {
-    public class BoardTaskValidator : AbstractValidator<BoardTaskRequest>
+    public class BoardValidator : AbstractValidator<BoardRequest>
     {
-        public BoardTaskValidator()
+        public BoardValidator()
         {
             RuleFor(x => x.Title)
                 .NotEmpty()
@@ -20,13 +19,17 @@ namespace WorthBoards.Business.Validators
                 .MaximumLength(ValidationConstants.DescriptionMaxLength)
                 .WithMessage(ValidationMessages.DescriptionTooLong);
 
-            RuleFor(x => x.DeadlineEnd)
-                .GreaterThan(DateTime.UtcNow)
-                .WithMessage(ValidationMessages.DeadlineInvalid);
+            RuleFor(x => x.ImageURL)
+                .NotEmpty()
+                .WithMessage(ValidationMessages.ImageURLRequired)
+                .Must(IsValidUrl)
+                .WithMessage(ValidationMessages.ImageURLInvalid);
 
-            RuleFor(x => x.TaskStatus)
-                .Must(status => Enum.IsDefined(typeof(TaskStatusEnum), status))
-                .WithMessage(ValidationMessages.TaskStatusInvalid);
+            static bool IsValidUrl(string url)
+            {
+                return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
+                       && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            }
         }
     }
 }

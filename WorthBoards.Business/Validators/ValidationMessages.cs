@@ -1,4 +1,6 @@
-﻿namespace WorthBoards.Business.Validators
+﻿using WorthBoards.Common.Enums;
+
+namespace WorthBoards.Business.Validators
 {
     public static class ValidationMessages
     {
@@ -21,5 +23,7 @@
         public const string EmailInvalid = "Invalid email format.";
         public const string PasswordRequired = "Password is required.";
         public static readonly string PasswordTooShort = $"Password must be at least {ValidationConstants.PasswordMinLength} characters long.";
+        public const string UserRoleValueNotInEnum = "Provided UserRole value is not within enum bounds.";
+        public static readonly string UserRoleOwnerConflict = $"Provided UserTole value must not be equal to owner.";
     }
 }

@@ -24,18 +24,6 @@ namespace WorthBoards.Business.Validators
                 .WithMessage(ValidationMessages.UserNameRequired)
                 .MaximumLength(ValidationConstants.NameMaxLength)
                 .WithMessage(ValidationMessages.NameTooLong);
-
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.EmailRequired)
-                .EmailAddress()
-                .WithMessage(ValidationMessages.EmailInvalid);
-
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.PasswordRequired)
-                .MinimumLength(ValidationConstants.PasswordMinLength)
-                .WithMessage(ValidationMessages.PasswordTooShort);
         }
     }
 }

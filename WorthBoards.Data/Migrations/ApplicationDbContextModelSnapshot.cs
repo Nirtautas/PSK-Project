@@ -337,9 +337,6 @@ namespace WorthBoards.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BoardTaskId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
@@ -360,7 +357,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BoardTaskId");
+                    b.HasIndex("TaskId");
 
                     b.HasIndex("UserId");
 
@@ -549,7 +546,7 @@ namespace WorthBoards.Data.Migrations
                 {
                     b.HasOne("WorthBoards.Domain.Entities.BoardTask", "BoardTask")
                         .WithMany("Comments")
-                        .HasForeignKey("BoardTaskId")
+                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

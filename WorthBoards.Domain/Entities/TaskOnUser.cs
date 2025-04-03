@@ -9,7 +9,7 @@ namespace WorthBoards.Domain.Entities
     {
         public int TaskId { get; set; }
         public int UserId { get; set; }
-        public required DateTime AssignedAt { get; set; }
+        public DateTime AssignedAt { get; set; }
 
         //Navigation properties
         public virtual BoardTask BoardTask { get; set; }

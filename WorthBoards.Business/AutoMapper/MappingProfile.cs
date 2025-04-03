@@ -36,6 +36,13 @@ namespace WorthBoards.Business.AutoMapper
 
             CreateMap<Comment, CommentUpdateRequest>();
             CreateMap<CommentUpdateRequest, Comment>();
+
+            //BoardOnUser
+            CreateMap<BoardOnUser, LinkUserToBoardResponse>();
+            CreateMap<LinkUserToBoardRequest, BoardOnUser>();
+
+            CreateMap<LinkUserToBoardResponse, BoardOnUser>();
+            CreateMap<BoardOnUser, LinkUserToBoardRequest>();
         }
     }
 }

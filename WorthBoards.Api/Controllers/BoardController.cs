@@ -40,7 +40,6 @@ namespace WorthBoards.Api.Controllers
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateBoard(int? userId, [FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
-        public async Task<IActionResult> CreateBoard([FromBody] BoardRequest boardRequest, CancellationToken cancellationToken)
         {
             if (userId == null)
             {

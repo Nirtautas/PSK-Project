@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Identity;
 using WorthBoards.Data.Repositories.Interfaces;
@@ -39,7 +40,7 @@ namespace WorthBoards.Business.Services
             
             if (boardTask.Board == null)
             {
-                throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [{boardTask.BoardId]));
+                throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardTask.BoardId]));
             }
 
             comment.UserId = userId;

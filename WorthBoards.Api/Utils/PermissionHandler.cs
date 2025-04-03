@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Utils
 {
@@ -16,7 +17,7 @@ namespace WorthBoards.Api.Utils
                 return;
             }
 
-            var boardIdObj = routeValues.FirstOrDefault(kv => kv.Key.EndsWith("Id")).Value;
+            var boardIdObj = routeValues.FirstOrDefault(kv => kv.Key.ToLower().EndsWith("id")).Value;
             var boardId = boardIdObj?.ToString();
             if (string.IsNullOrEmpty(boardId))
             {
@@ -31,7 +32,7 @@ namespace WorthBoards.Api.Utils
 
             var userRole = await boardService.GetUserRoleByBoardIdAndUserIdAsync(int.Parse(boardId), int.Parse(userId));
 
-            if (userRole.ToString() == requirement.Role)
+            if (userRole <= Enum.Parse<UserRoleEnum>(requirement.Role))
                 context.Succeed(requirement);
         }
     }

@@ -18,8 +18,7 @@ public static class ValidatorConfiguration
             .AddValidatorsFromAssemblyContaining<BoardTaskRequest>()
             .AddValidatorsFromAssemblyContaining<BoardTaskUpdateRequest>()
             .AddValidatorsFromAssemblyContaining<CommentRequest>()
-            .AddValidatorsFromAssemblyContaining<CommentUpdateRequest>()
-            .AddValidatorsFromAssemblyContaining<UserValidator>();
+            .AddValidatorsFromAssemblyContaining<CommentUpdateRequest>();
 
         return builder;
     }

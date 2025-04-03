@@ -23,7 +23,7 @@ namespace WorthBoards.Business.Services
         public async Task<LinkUserToBoardResponse> GetBoardToUserLink(int boardId, int userId, CancellationToken cancellationToken)
         {
             var boardToUserLink = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
-                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
+                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             return _mapper.Map<LinkUserToBoardResponse>(boardToUserLink);
         }
@@ -43,8 +43,10 @@ namespace WorthBoards.Business.Services
 
         public async Task UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
         {
+            //Check if accidentally not unlinking owner!
+
             var boardOnUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
-                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
+                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             _unitOfWork.BoardOnUserRepository.Delete(boardOnUser);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -53,7 +55,7 @@ namespace WorthBoards.Business.Services
         public async Task<LinkUserToBoardResponse> UpdateUserOnBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
             var boardOnUserToUpdate = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
-                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
+                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             //Check for multiple owners!
 
@@ -65,7 +67,7 @@ namespace WorthBoards.Business.Services
         public async Task<LinkUserToBoardResponse> PatchUserOnBoard(int boardId, int userId, JsonPatchDocument<LinkUserToBoardRequest> linkUserToBoardPatchDoc, CancellationToken cancellationToken)
         {
             var boardTaskToPatch = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
-                ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
+                ?? throw new NotFoundException(ExceptionFormater.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             //Check for multiple owners!
 

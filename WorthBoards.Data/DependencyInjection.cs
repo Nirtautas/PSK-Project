@@ -12,7 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddDataServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") ?? configuration.GetConnectionString("WorthBoardsConnection");
+            var connectionStrAttempted = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var connectionString = connectionStrAttempted is null || connectionStrAttempted.Equals("")
+                ? configuration.GetConnectionString("WorthBoardsConnection")
+                : Environment.GetEnvironmentVariable("DATABASE_URL");
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.MigrationsAssembly("WorthBoards.Data")));

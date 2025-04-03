@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Domain.Entities;
@@ -28,11 +29,12 @@ namespace WorthBoards.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComment([FromRoute] int boardId, [FromRoute] int taskId, [FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
         {
-            string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
-                return Unauthorized("Invalid user ID.");
+          
+                var userId = UserHelper.GetUserId(User);
+                if (userId.Result is UnauthorizedObjectResult unauthorizedResult)
+                    return unauthorizedResult;
 
-            var commentResponse = await _commentService.CreateCommentAsync(userId, taskId, commentRequest, cancellationToken);
+            var commentResponse = await _commentService.CreateCommentAsync(userId.Value, taskId, commentRequest, cancellationToken);
             return CreatedAtAction(nameof(GetCommentById), new { boardId = boardId, taskId = taskId, commentId = commentResponse.Id }, commentResponse);
         }
 

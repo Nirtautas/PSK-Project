@@ -18,11 +18,11 @@ namespace WorthBoards.Api.Controllers
         {
             if (userId == null)
             {
-                string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int parsedUserId))
-                    return Unauthorized("Invalid user ID.");
+                var userID = UserHelper.GetUserId(User);
+                if (userID.Result is UnauthorizedObjectResult unauthorizedResult)
+                    return unauthorizedResult;
 
-                userId = parsedUserId;
+                userId = userID.Value;
             }
 
             var (boards, totalCount) = await _boardService.GetUserBoardsAsync(userId.Value, pageNum, pageSize, cancellationToken);
@@ -43,11 +43,11 @@ namespace WorthBoards.Api.Controllers
         {
             if (userId == null)
             {
-                string? userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int parsedUserId))
-                    return Unauthorized("Invalid user ID.");
+                var userID = UserHelper.GetUserId(User);
+                if (userID.Result is UnauthorizedObjectResult unauthorizedResult)
+                    return unauthorizedResult;
 
-                userId = parsedUserId;
+                userId = userID.Value;
             }
 
             var boardResponse = await _boardService.CreateBoardAsync(userId.Value, boardRequest, cancellationToken);

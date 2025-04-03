@@ -46,6 +46,17 @@ namespace WorthBoards.Business.Services
 
         public async Task<UserResponse> RegisterUserAsync(UserRegisterRequest registerUser)
         {
+            int maxNumOfCharsInName = 30;
+            if (registerUser.FirstName.Length > maxNumOfCharsInName || registerUser.LastName.Length > maxNumOfCharsInName)
+            {
+                throw new BadRequestException($"First Name and Last Name must be at most {maxNumOfCharsInName} characters long.");
+            }
+
+            if (registerUser.UserName.Length > maxNumOfCharsInName)
+            {
+                throw new BadRequestException($"Username must be at most {maxNumOfCharsInName} characters long.");
+            }
+
             var user = mapper.Map<ApplicationUser>(registerUser);
 
             user.CreationDate = DateTime.UtcNow;

@@ -2,7 +2,7 @@ import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
-import { Task } from '@/types/types'
+import { StatusString, Task } from '@/types/types'
 import { useEffect, useState } from 'react'
 import TaskApi from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
@@ -22,46 +22,36 @@ type TaskColumn = {
     id: string
     items: Task[]
 }
+
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
 const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
+    const [columns, setColumns] = useState<TaskColumn[]>([])
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    
     useEffect(() => {
+        //TODO: tasks should be sorted by status when loading in
         setColumns([
             {
                 label: 'Waiting',
-                id: 'waiting',
+                id: 'Waiting',
                 items: tasks
             },
             {
                 label: 'In Progress',
-                id: 'inProgress',
+                id: 'In progress',
                 items: []
             },
             {
                 label: 'Done',
-                id: 'done',
+                id: 'Done',
                 items: []
             }
         ])
     }, [tasks])
 
-    const [columns, setColumns] = useState<TaskColumn[]>([
-        {
-            label: 'Waiting',
-            id: 'waiting',
-            items: tasks
-        },
-        {
-            label: 'In Progress',
-            id: 'inProgress',
-            items: []
-        },
-        {
-            label: 'Done',
-            id: 'done',
-            items: []
-        }
-    ])
 
     const handleDrop = async (event: MouseEvent, droppedOn: Element | null, targetTask: Task) => {
         if (!droppedOn) {
@@ -72,7 +62,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
         if (!targetColumn || !targetTask) {
             return
         }
-        const newTask = { ...targetTask, status: targetColumn.id }
+        const newTask = { ...targetTask, status: targetColumn.id as StatusString }
         await TaskApi.update(newTask)
         const newColumns: TaskColumn[] = [
             ...columns.filter((column) => column.id !== targetColumn.id)
@@ -94,6 +84,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
         }
     })
 
+    //TODO: move this to a separate file
     const style = {
         position: 'absolute',
         top: '50%',
@@ -106,17 +97,11 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
         p: 4,
     };
 
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
     return (
         <Paper className={styles.container}>
             <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-            >
+            <Modal open={open} onClose={handleClose}>
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h5" component="h2">
                         Create a task

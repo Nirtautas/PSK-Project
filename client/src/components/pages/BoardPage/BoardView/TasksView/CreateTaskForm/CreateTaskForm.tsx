@@ -25,16 +25,15 @@ export default function CreateTaskForm({
         try {
             const newTask = {
                 title,
-                description: description || undefined,
-                boardId,
+                description: description || null,
                 status: 'waiting',
-                deadline: deadline ? deadline.toDate() : undefined,
+                deadline: deadline ? deadline.toDate() : null,
                 assignedUsers: selectedUsers
             };
-            console.log('data received: ', newTask);
             
-            const createdTask = await TaskApi.create({title: newTask.title, status: "Waiting"} as Omit<Task, 'id'>);
-            //refresh tasks here
+            const createdTask = await TaskApi.create(newTask as Omit<Task, 'id'>, boardId);
+            //refresh tasks here if needed
+            console.log('created task ', newTask);
 
             handleClose();
         } catch (error) {

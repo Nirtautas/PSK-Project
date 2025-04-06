@@ -65,8 +65,7 @@ export default function CreateTaskForm({
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <SelectUsersField 
-                    value={selectedUsers} 
-                    onChange={setSelectedUsers}
+                    setSelectedUsers={setSelectedUsers}
                 />
                 <Button type="submit" variant="contained">
                     Create Task

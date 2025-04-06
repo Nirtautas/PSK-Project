@@ -1,84 +1,72 @@
 import * as React from 'react';
-import { Theme, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+export default function CheckboxesTags({setSelectedUsers}: {setSelectedUsers: (value: any) => void})  {
+  //TODO: this should be replaced with the actual API call to get users
+  const users = [{
+      id: 1,
+      userRole: 'Owner',
+      firstName: 'Jonas',
+      lastName: 'Jonaitis'
   },
-};
-
-//TODO: Fetch valid users from the server
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
-
-function getStyles(name: string, selectedUsers: readonly string[], theme: Theme) {
-  return {
-    fontWeight: selectedUsers.includes(name)
-      ? theme.typography.fontWeightMedium
-      : theme.typography.fontWeightRegular,
-  };
-}
-
-export default function SelectUsersField({
-  value,
-  onChange,
-}: {
-  value: string[];
-  onChange: (selected: string[]) => void;
-}) {
-  const theme = useTheme();
-
-  const handleChange = (event: SelectChangeEvent<typeof value>) => {
-    const selectedValues = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
-    onChange(selectedValues);
-  };
+  {
+      id: 2,
+      userRole: 'Owner',
+      firstName: 'Petras',
+      lastName: 'Jonaitis'
+  },
+  {
+      id: 3,
+      userRole: 'Owner',
+      firstName: 'Eugenijus',
+      lastName: 'Jonaitis'
+  },
+  {
+      id: 4,
+      userRole: 'Owner',
+      firstName: 'Tomas',
+      lastName: 'Jonaitis'
+  },
+  {
+      id: 5,
+      userRole: 'Owner',
+      firstName: 'Tomas',
+      lastName: 'Jonaitis'
+  }];
 
   return (
-    <FormControl sx={{ m: 1, width: 300 }}>
-      <InputLabel id="select-users-label">Select Users</InputLabel>
-      <Select
-        labelId="select-users-label"
-        multiple
-        value={value}
-        onChange={handleChange}
-        input={<OutlinedInput label="Select Users" />}
-        renderValue={(selected) => (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {selected.map((user) => (
-              <Chip key={user} label={user} />
-            ))}
-          </Box>
-        )}
-        MenuProps={MenuProps}
-      >
-        {names.map((name) => (
-          <MenuItem key={name} value={name} style={getStyles(name, value, theme)}>
-            {name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      multiple
+      options={users}
+      disableCloseOnSelect
+      getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+      renderOption={(props, option, { selected }) => {
+        const { key, ...optionProps } = props;
+        return (
+          <li key={option.id} {...optionProps}>
+            <Checkbox
+              icon={icon}
+              checkedIcon={checkedIcon}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {`${option.firstName} ${option.lastName}`}
+          </li>
+        );
+      }}
+      renderInput={(params) => (
+        <TextField {...params} label="Users" placeholder="Assigned users" />
+      )}
+      onChange={(event, value) => setSelectedUsers(value)}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+    />
   );
 }
+

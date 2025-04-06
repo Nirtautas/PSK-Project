@@ -3,6 +3,7 @@ using WorthBoards.Domain.Entities;
 using WorthBoards.Data.Repositories.Base;
 using WorthBoards.Data.Database;
 using Microsoft.EntityFrameworkCore;
+using WorthBoards.Data.Identity;
 
 namespace WorthBoards.Data.Repositories
 {
@@ -30,6 +31,27 @@ namespace WorthBoards.Data.Repositories
                 .ToListAsync(cancellationToken);
 
             return (boards, totalCount);
+        }
+
+        public async Task<IEnumerable<(BoardOnUser, ApplicationUser)>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
+        {
+            var usersLinkedToBoardQuery =
+                _dbContext.BoardOnUsers
+                .Where(boardOnUser => boardOnUser.BoardId == boardId)
+                .Join(
+                    _dbContext.Users,
+                    boardOnUser => boardOnUser.UserId,
+                    user => user.Id,
+                    (boardOnUser, user) => new { BoardOnUser = boardOnUser, User = user }
+                );
+
+            var result = await usersLinkedToBoardQuery
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            var usersLinkedToBoard = result.Select(item => (item.BoardOnUser, item.User));
+
+            return usersLinkedToBoard;
         }
     }
 }

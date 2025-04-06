@@ -48,6 +48,14 @@ namespace WorthBoards.Business.AutoMapper
             //TaskOnUser
             CreateMap<LinkUserToTaskRequest, TaskOnUser>();
             CreateMap<TaskOnUser, LinkUserToTaskResponse>();
+
+            //LinkedUserToBoardResponse
+            CreateMap<(BoardOnUser, ApplicationUser), LinkedUserToBoardResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Item1.UserRole))
+                .ForMember(dest => dest.AddedAt, opt => opt.MapFrom(src => src.Item1.AddedAt));
         }
     }
 }

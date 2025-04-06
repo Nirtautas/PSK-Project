@@ -6,6 +6,7 @@ using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
+using WorthBoards.Data.Identity;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
@@ -76,6 +77,14 @@ namespace WorthBoards.Business.Services
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return _mapper.Map<LinkUserToBoardResponse>(boardTaskToPatch);
+        }
+
+        public async Task<IEnumerable<LinkedUserToBoardResponse>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
+        {
+            IEnumerable<(BoardOnUser, ApplicationUser)> links = await _unitOfWork.BoardOnUserRepository.GetUsersLinkedToBoardAsync(boardId, cancellationToken);
+            var linksDto = _mapper.Map<IEnumerable<LinkedUserToBoardResponse>>(links);
+
+            return linksDto;
         }
     }
 }

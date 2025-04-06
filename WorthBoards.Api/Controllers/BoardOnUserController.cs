@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 
@@ -59,6 +60,14 @@ namespace WorthBoards.Api.Controllers
         {
             var linkResponse = await _boardOnUserService.PatchUserOnBoard(boardId, userId, linkUserToBoardPatchDoc, cancellationToken);
             return Ok(linkResponse);
+        }
+
+        [HttpGet("{boardId}/users")]
+        [AuthorizeRole(UserRoleEnum.VIEWER)]
+        public async Task<IActionResult> GetUsersLinkedToBoard(int boardId, CancellationToken cancellationToken)
+        {
+            var boardResponse = await _boardOnUserService.GetUsersLinkedToBoardAsync(boardId, cancellationToken);
+            return Ok(boardResponse);
         }
     }
 }

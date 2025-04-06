@@ -43,6 +43,10 @@ namespace WorthBoards.Business.AutoMapper
 
             CreateMap<LinkUserToBoardResponse, BoardOnUser>();
             CreateMap<BoardOnUser, LinkUserToBoardRequest>();
+
+            //TaskOnUser
+            CreateMap<LinkUserToTaskRequest, TaskOnUser>();
+            CreateMap<TaskOnUser, LinkUserToTaskResponse>();
         }
     }
 }

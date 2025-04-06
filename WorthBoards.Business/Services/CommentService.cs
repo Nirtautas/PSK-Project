@@ -15,7 +15,7 @@ namespace WorthBoards.Business.Services
     {
         public async Task<(List<CommentResponse> Results, int TotalCount)> GetAllBoardTaskCommentsAsync(int taskId, CancellationToken cancellationToken, int pageNum, int pageSize)
         {
-            var (boardTasksComments, totalCount) = await _unitOfWork.CommentRepository.GetAllByExpressionWithPaginationAsync(c => c.TaskId == taskId, pageSize, pageNum, cancellationToken);
+            var (boardTasksComments, totalCount) = await _unitOfWork.CommentRepository.GetAllByExpressionWithPaginationAsync(c => c.BoardTaskId == taskId, pageSize, pageNum, cancellationToken);
 
             var commentResponses = _mapper.Map<List<CommentResponse>>(boardTasksComments);
             return (commentResponses, totalCount);
@@ -44,7 +44,7 @@ namespace WorthBoards.Business.Services
             }
 
             comment.UserId = userId;
-            comment.TaskId = taskId;
+            comment.BoardTaskId = taskId;
 
             await _unitOfWork.CommentRepository.CreateAsync(comment, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

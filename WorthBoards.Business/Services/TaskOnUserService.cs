@@ -13,11 +13,11 @@ namespace WorthBoards.Business.Services
 {
     public class TaskOnUserService(UserManager<ApplicationUser> _userManager, IUnitOfWork _unitOfWork, IMapper _mapper) : ITaskOnUserService
     {
-        public async Task<IEnumerable<LinkUserToTaskResponse>> LinkUsersToTaskAsync(int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LinkUserToTaskResponse>> LinkUsersToTaskAsync(int boardId, int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
         {
             ICollection<LinkUserToTaskResponse> successLinks = [];
 
-            var task = await _unitOfWork.BoardTaskRepository.GetByIdAsync(taskId, cancellationToken)
+            var task = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.BoardId == boardId && t.Id == taskId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [taskId]));
 
             foreach (var linkDto in linkList)
@@ -41,11 +41,11 @@ namespace WorthBoards.Business.Services
             return successLinks;
         }
 
-        public async Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int taskId, IEnumerable<int> userIds, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int boardId, int taskId, IEnumerable<int> userIds, CancellationToken cancellationToken)
         {
             ICollection<LinkUserToTaskResponse> successUnlinks = [];
 
-            var task = await _unitOfWork.BoardTaskRepository.GetByIdAsync(taskId, cancellationToken)
+            var task = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.BoardId == boardId && t.Id == taskId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [taskId]));
 
             foreach (var userId in userIds)
@@ -63,9 +63,9 @@ namespace WorthBoards.Business.Services
             return successUnlinks;
         }
 
-        public async Task<IEnumerable<LinkedUserToTaskResponse>> GetUsersLinkedToTaskAsync(int taskId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LinkedUserToTaskResponse>> GetUsersLinkedToTaskAsync(int boardId, int taskId, CancellationToken cancellationToken)
         {
-            var task = await _unitOfWork.BoardTaskRepository.GetByIdAsync(taskId, cancellationToken)
+            var task = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.BoardId == boardId && t.Id == taskId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [taskId]));
 
             var users = await _unitOfWork.TasksOnUserRepository.GetUsersLinkedToTaskAsync(taskId, cancellationToken);

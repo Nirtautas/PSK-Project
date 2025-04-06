@@ -15,7 +15,7 @@ namespace WorthBoards.Api.Controllers
         [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> LinkUsersToTask(int boardId, int taskId, [FromBody] IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
         {
-            var linkResponse = await _taskOnUserService.LinkUsersToTaskAsync(taskId, linkList, cancellationToken);
+            var linkResponse = await _taskOnUserService.LinkUsersToTaskAsync(boardId, taskId, linkList, cancellationToken);
             return Ok(linkResponse);
         }
 
@@ -23,7 +23,7 @@ namespace WorthBoards.Api.Controllers
         [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UnlinkUsersFromTask(int boardId, int taskId, [FromBody] IEnumerable<int> userIds, CancellationToken cancellationToken)
         {
-            var unlinkResponse = await _taskOnUserService.UnlinkUsersFromTaskAsync(taskId, userIds, cancellationToken);
+            var unlinkResponse = await _taskOnUserService.UnlinkUsersFromTaskAsync(boardId, taskId, userIds, cancellationToken);
             return Ok(unlinkResponse);
         }
 
@@ -31,7 +31,7 @@ namespace WorthBoards.Api.Controllers
         [AuthorizeRole(UserRoleEnum.VIEWER)]
         public async Task<IActionResult> GetUsersLinkedToTask(int boardId, int taskId, CancellationToken cancellationToken)
         {
-            var usersResponse = await _taskOnUserService.GetUsersLinkedToTaskAsync(taskId, cancellationToken);
+            var usersResponse = await _taskOnUserService.GetUsersLinkedToTaskAsync(boardId, taskId, cancellationToken);
             return Ok(usersResponse);
         }
     }

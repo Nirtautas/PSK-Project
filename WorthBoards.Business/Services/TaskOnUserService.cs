@@ -62,5 +62,16 @@ namespace WorthBoards.Business.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return successUnlinks;
         }
+
+        public async Task<IEnumerable<LinkedUserToTaskResponse>> GetUsersLinkedToTaskAsync(int taskId, CancellationToken cancellationToken)
+        {
+            var task = await _unitOfWork.BoardTaskRepository.GetByIdAsync(taskId, cancellationToken)
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [taskId]));
+
+            var users = await _unitOfWork.TasksOnUserRepository.GetUsersLinkedToTaskAsync(taskId, cancellationToken);
+            var usersDtos = _mapper.Map<IEnumerable<LinkedUserToTaskResponse>>(users);
+
+            return usersDtos;
+        }
     }
 }

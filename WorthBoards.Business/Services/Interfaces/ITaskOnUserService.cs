@@ -10,5 +10,7 @@ namespace WorthBoards.Business.Services.Interfaces
         Task<IEnumerable<LinkUserToTaskResponse>> LinkUsersToTaskAsync(int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken);
 
         Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int taskId, IEnumerable<int> userIds, CancellationToken cancellationToken);
+
+        Task<IEnumerable<LinkedUserToTaskResponse>> GetUsersLinkedToTaskAsync(int taskId, CancellationToken cancellationToken);
     }
 }

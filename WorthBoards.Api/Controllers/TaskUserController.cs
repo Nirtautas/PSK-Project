@@ -26,5 +26,13 @@ namespace WorthBoards.Api.Controllers
             var unlinkResponse = await _taskOnUserService.UnlinkUsersFromTaskAsync(taskId, userIds, cancellationToken);
             return Ok(unlinkResponse);
         }
+
+        [HttpGet("{boardId}/tasks/{taskId}/users")]
+        [AuthorizeRole(UserRoleEnum.VIEWER)]
+        public async Task<IActionResult> GetUsersLinkedToTask(int boardId, int taskId, CancellationToken cancellationToken)
+        {
+            var usersResponse = await _taskOnUserService.GetUsersLinkedToTaskAsync(taskId, cancellationToken);
+            return Ok(usersResponse);
+        }
     }
 }

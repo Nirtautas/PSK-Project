@@ -26,11 +26,10 @@ namespace WorthBoards.Business.Services
                 link.BoardTaskId = task.Id;
 
                 var user = await _userManager.FindByIdAsync(link.UserId.ToString());
+                var existingLink = await _unitOfWork.TasksOnUserRepository.GetByExpressionAsync(
+                    t => t.BoardTaskId == task.Id && t.UserId == link.UserId, cancellationToken);
 
-                //Is user in board?
-                //Link already exists?
-
-                if (user != null)
+                if (user != null && existingLink == null)
                 {
                     await _unitOfWork.TasksOnUserRepository.CreateAsync(link, cancellationToken);
                     successLinks.Add(_mapper.Map<LinkUserToTaskResponse>(link));

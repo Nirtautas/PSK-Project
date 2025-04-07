@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace WorthBoards.Domain.Entities
 {
     [Table("TasksOnUsers")]
-    [PrimaryKey(nameof(TaskId), nameof(UserId))]
+    [PrimaryKey(nameof(BoardTaskId), nameof(UserId))]
     public class TaskOnUser
     {
-        public int TaskId { get; set; }
+        public int BoardTaskId { get; set; }
         public int UserId { get; set; }
         public DateTime AssignedAt { get; set; }
 

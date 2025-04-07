@@ -8,7 +8,7 @@ namespace WorthBoards.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
-        public required int TaskId { get; set; }
+        public required int BoardTaskId { get; set; }
         public required int UserId { get; set; }
         public required string Content { get; set; }
         public required DateTime CreationDate { get; set; }

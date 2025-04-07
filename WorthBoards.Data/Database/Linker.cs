@@ -74,13 +74,11 @@ namespace POS_System.Data.Database
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.BoardTask)
                 .WithMany(bt => bt.Comments)
-                .HasForeignKey(c => c.TaskId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BoardTask>()
                 .HasMany(b => b.Comments)
                 .WithOne(c => c.BoardTask) 
-                .HasForeignKey(c => c.TaskId)
                 .IsRequired();
         }
     }

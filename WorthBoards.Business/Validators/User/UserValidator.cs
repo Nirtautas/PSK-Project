@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using WorthBoards.Business.Dtos.Identity;
 
-namespace WorthBoards.Business.Validators
+namespace WorthBoards.Business.Validators.User
 {
     public class UserValidator : AbstractValidator<UserRegisterRequest>
     {

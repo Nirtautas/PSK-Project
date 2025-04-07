@@ -81,7 +81,7 @@ namespace WorthBoards.Business.Services
 
         public async Task<IEnumerable<LinkedUserToBoardResponse>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
         {
-            IEnumerable<(BoardOnUser, ApplicationUser)> links = await _unitOfWork.BoardOnUserRepository.GetUsersLinkedToBoardAsync(boardId, cancellationToken);
+            var links = await _unitOfWork.BoardOnUserRepository.GetUsersLinkedToBoardAsync(boardId, cancellationToken);
             var linksDto = _mapper.Map<IEnumerable<LinkedUserToBoardResponse>>(links);
 
             return linksDto;

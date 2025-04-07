@@ -33,7 +33,7 @@ namespace WorthBoards.Data.Repositories
             return (boards, totalCount);
         }
 
-        public async Task<IEnumerable<(BoardOnUser, ApplicationUser)>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Tuple<BoardOnUser, ApplicationUser>>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
         {
             var usersLinkedToBoardQuery =
                 _dbContext.BoardOnUsers
@@ -42,16 +42,10 @@ namespace WorthBoards.Data.Repositories
                     _dbContext.Users,
                     boardOnUser => boardOnUser.UserId,
                     user => user.Id,
-                    (boardOnUser, user) => new { BoardOnUser = boardOnUser, User = user }
+                    (boardOnUser, user) => Tuple.Create(boardOnUser, user)
                 );
 
-            var result = await usersLinkedToBoardQuery
-                .ToListAsync(cancellationToken)
-                .ConfigureAwait(false);
-
-            var usersLinkedToBoard = result.Select(item => (item.BoardOnUser, item.User));
-
-            return usersLinkedToBoard;
+            return await usersLinkedToBoardQuery.ToListAsync(cancellationToken);
         }
     }
 }

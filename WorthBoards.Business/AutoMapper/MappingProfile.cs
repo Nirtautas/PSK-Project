@@ -38,10 +38,6 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Comment, CommentUpdateRequest>();
             CreateMap<CommentUpdateRequest, Comment>();
 
-            //BoardOnUser
-            CreateMap<BoardOnUser, LinkUserToBoardResponse>();
-            CreateMap<LinkUserToBoardRequest, BoardOnUser>();
-
             CreateMap<LinkUserToBoardResponse, BoardOnUser>();
             CreateMap<BoardOnUser, LinkUserToBoardRequest>();
 
@@ -49,8 +45,19 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<LinkUserToTaskRequest, TaskOnUser>();
             CreateMap<TaskOnUser, LinkUserToTaskResponse>();
 
+            //LinkedUserToTaskResponse
+            CreateMap<Tuple<TaskOnUser, ApplicationUser>, LinkedUserToTaskResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.Item1.AssignedAt));
+
+            //BoardOnUser
+            CreateMap<BoardOnUser, LinkUserToBoardResponse>();
+            CreateMap<LinkUserToBoardRequest, BoardOnUser>();
+
             //LinkedUserToBoardResponse
-            CreateMap<(BoardOnUser, ApplicationUser), LinkedUserToBoardResponse>()
+            CreateMap<Tuple<BoardOnUser, ApplicationUser>, LinkedUserToBoardResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
                 .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))

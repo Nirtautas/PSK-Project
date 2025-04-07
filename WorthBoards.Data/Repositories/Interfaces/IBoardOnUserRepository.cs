@@ -9,6 +9,6 @@ namespace WorthBoards.Data.Repositories.Interfaces
         Task<(List<Board> Results, int TotalCount)> GetUserBoardsAsync(
             int userId, int pageSize, int pageNumber, CancellationToken cancellationToken);
 
-        Task<IEnumerable<(BoardOnUser, ApplicationUser)>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken);
+        Task<IEnumerable<Tuple<BoardOnUser, ApplicationUser>>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken);
     }
 }

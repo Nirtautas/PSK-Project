@@ -6,6 +6,6 @@ namespace WorthBoards.Data.Repositories.Interfaces
 {
     public interface ITasksOnUserRepository : IRepository<TaskOnUser>
     {
-        Task<IEnumerable<ApplicationUser>> GetUsersLinkedToTaskAsync(int taskId, CancellationToken cancellationToken);
+        Task<IEnumerable<Tuple<TaskOnUser, ApplicationUser>>> GetUsersLinkedToTaskAsync(int taskId, CancellationToken cancellationToken);
     }
 }

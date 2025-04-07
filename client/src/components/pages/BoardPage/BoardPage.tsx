@@ -24,7 +24,7 @@ const BoardPage = ({ boardId }: Props) => {
                 <Typography variant="h3">{ !isLoading ? board?.name || '' : <Skeleton sx={{ width: '10em' }} />}</Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView tasks={board?.tasks} errorMsg={errorMsg} isLoading={isLoading}/>
+                <BoardView boardId={boardId} tasks={board?.tasks || []} errorMsg={errorMsg} isLoading={isLoading}/>
             </div>
         </div>
     )

@@ -12,34 +12,38 @@ export default class BoardApi {
                 name: 'test',
                 id: 1,
                 description: 'test description',
-                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                tasks: null
             },
             {
                 name: 'test',
                 id: 2,
                 description: 'test description',
-                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                tasks: null
             },
             {
                 name: 'test',
                 id: 3,
                 description: 'test description',
-                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                tasks: null
             },
             {
                 name: 'test',
                 id: 4,
                 description: 'test description',
-                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true'
+                imgUrl: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                tasks: null
             }
         ] satisfies Board[]
     }
 
     static async createBoard(board: CreateBoardDto): Promise<Board> {
+        //TODO: im guessing that tasks should be null on creation too
         return {
             ...board,
             id: 1,
-            // @ts-ignore
             imgUrl: null
         }
     }

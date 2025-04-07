@@ -5,6 +5,7 @@ using WorthBoards.Data.Database;
 
 namespace WorthBoards.Business.Utils
 {
+    // TODO: Add global user roles
     public class ClaimsTransformation(ApplicationDbContext context) : IClaimsTransformation
     {
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)

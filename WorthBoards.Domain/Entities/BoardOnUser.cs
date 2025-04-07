@@ -10,7 +10,7 @@ namespace WorthBoards.Domain.Entities
     {
         public int BoardId { get; set; }
         public int UserId { get; set; }
-        public required DateTime AddedAt { get; set; }
+        public DateTime AddedAt { get; set; }
         public required UserRoleEnum UserRole { get; set; }
 
         //Navigation properties

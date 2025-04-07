@@ -12,7 +12,7 @@ namespace WorthBoards.Domain.Entities
         public required int UserId { get; set; }
         public required string Content { get; set; }
         public required DateTime CreationDate { get; set; }
-        public required bool Edited { get; set; }
+        public required bool Edited { get; set; } = false;
 
         //Navigation properties
         public virtual BoardTask BoardTask { get; set; }

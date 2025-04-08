@@ -19,7 +19,6 @@ namespace WorthBoards.Api.Controllers
             if (userId == null)
             {
                 var userID = UserHelper.GetUserId(User);
-                Console.WriteLine(userID);
                 if (userID.Result is UnauthorizedObjectResult unauthorizedResult)
                     return unauthorizedResult;
 

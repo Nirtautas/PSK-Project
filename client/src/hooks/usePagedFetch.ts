@@ -26,7 +26,6 @@ const usePagedFetch = <T>({ resolver, pageNum, pageSize = 10, delayMs, deps = []
             try {
                 const raw = await resolver()
                 const result = raw.result
-                console.log('CIA' + raw.result[resultKey])
                 delayMs && await new Promise(resolve => setTimeout(resolve, delayMs))
 
                 const response: PagedResponse<T> = {

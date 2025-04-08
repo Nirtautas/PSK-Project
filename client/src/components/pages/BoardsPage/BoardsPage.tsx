@@ -13,6 +13,8 @@ import { Board } from '../../../types/types'
 import router, { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
+import image from 'next/image'
+import BoardManagementModal, { CreateBoardArgs } from './BoardManagemenModal/BoardManagementModal'
 
 type Props = {
     pageNum: number
@@ -20,10 +22,6 @@ type Props = {
 
 const BoardsPage = ({ pageNum }: Props) => {
     const router = useRouter()
-
-    const fetchBoards = useCallback(() => {
-        return BoardApi.getBoards(pageNum)
-    }, [pageNum])
 
     const {
         data,
@@ -38,20 +36,17 @@ const BoardsPage = ({ pageNum }: Props) => {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-    const totalPages = Math.ceil(data.totalCount / data.pageSize)
-    const isLastPage = pageNum >= totalPages - 1
-
-    /*
-    const handleBoardCreate = ({ boardName, image, description}: CreateBoardArgs)=> {
+    const handleBoardCreate = ({ title, description, imageURL}: CreateBoardArgs)=> {
         BoardApi.createBoard({
-            name: boardName, description, imageFile: image || undefined,
-            tasks: null
-        }).then((board) => {
-            setBoards([...boards, board])
+            title: title,
+            description: description,
+            imageURL: imageURL
         })
         setIsModalOpen(false)
     }
-    */
+
+    const totalPages = data ? Math.ceil(data.totalCount / data.pageSize) : 0
+    const isLastPage = data ? pageNum >= totalPages - 1 : false
 
     return (
         <div className={styles.content}>
@@ -59,6 +54,11 @@ const BoardsPage = ({ pageNum }: Props) => {
                 <Typography variant="h3">Your Boards</Typography>
                 <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>
             </Box>
+            <BoardManagementModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleBoardCreate}
+            />
             <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
             <PageChanger
                 onClickNext={() => router.push(GetPageUrl.boards(pageNum + 1))}
@@ -70,12 +70,5 @@ const BoardsPage = ({ pageNum }: Props) => {
         </div>
     )
 }
-/*
-<BoardManagementModal
-    open={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    onSubmit={handleBoardCreate}
-/>
-*/
 
 export default BoardsPage

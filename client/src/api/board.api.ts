@@ -4,7 +4,7 @@ import { FetchResponse, HTTPMethod, PagedResponse } from '../types/fetch'
 import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'imgUrl'> & {
+export type CreateBoardDto = Omit<Board, 'id' | 'creationDate'> & {
     imageFile?: File
 }
 
@@ -17,13 +17,13 @@ export default class BoardApi {
         })
     }
 
-    static async createBoard(board: CreateBoardDto): Promise<Board> {
-        //TODO: im guessing that tasks should be null on creation too
-        return {
-            ...board,
-            id: 1,
-            imageURL: null
-        }
+    static async createBoard(board: CreateBoardDto): Promise<FetchResponse<Board>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards`,
+            method: HTTPMethod.POST,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(board)
+        })
     }
 
     static async getBoardById(id: number): Promise<Board> {

@@ -10,12 +10,17 @@ import { useCallback } from 'react'
 import { useBoards } from '../../../hooks/boards.hook'
 import usePagedFetch from '../../../hooks/usePagedFetch'
 import { Board } from '../../../types/types'
+import router, { useRouter } from 'next/navigation'
+import { GetPageUrl } from '../../../constants/route'
+import PageChanger from '../../shared/PageChanger'
 
 type Props = {
     pageNum: number
 }
 
 const BoardsPage = ({ pageNum }: Props) => {
+    const router = useRouter()
+
     const fetchBoards = useCallback(() => {
         return BoardApi.getBoards(pageNum)
     }, [pageNum])
@@ -33,7 +38,8 @@ const BoardsPage = ({ pageNum }: Props) => {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-    console.log(data?.results)
+    const totalPages = Math.ceil(data.totalCount / data.pageSize)
+    const isLastPage = pageNum >= totalPages - 1
 
     /*
     const handleBoardCreate = ({ boardName, image, description}: CreateBoardArgs)=> {
@@ -54,7 +60,13 @@ const BoardsPage = ({ pageNum }: Props) => {
                 <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>
             </Box>
             <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
-
+            <PageChanger
+                onClickNext={() => router.push(GetPageUrl.boards(pageNum + 1))}
+                onClickPrevious={() => router.push(GetPageUrl.boards(pageNum - 1))}
+                disabledPrevious={pageNum <= 0}
+                disabledNext={isLastPage}
+                pageNumber={pageNum}
+            />
         </div>
     )
 }

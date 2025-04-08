@@ -2,10 +2,10 @@
 
 export type Board = {
     id: number
-    name: string
+    title: string
     description: string
-    imgUrl: string | null
-    tasks: Task[] | null
+    imageURL: string | null
+    creationDate: Date 
 }
 
 export type StatusString = 'Waiting' | 'In progress' | 'Done'

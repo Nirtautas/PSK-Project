@@ -1,26 +1,41 @@
 'use client'
 
 import { useState } from 'react'
-import BoardManagementModal from '@/components/pages/BoardsPage/BoardManagemenModal'
-import { CreateBoardArgs } from '@/components/pages/BoardsPage/BoardManagemenModal/BoardManagementModal'
 import { Box, Button, Typography } from '@mui/material'
-import useFetch from '@/hooks/useFetch'
 import BoardApi from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
 
 import styles from './BoardsPage.module.scss'
+import { useCallback } from 'react'
+import { useBoards } from '../../../hooks/boards.hook'
+import usePagedFetch from '../../../hooks/usePagedFetch'
+import { Board } from '../../../types/types'
 
-const BoardsPage = () => {
+type Props = {
+    pageNum: number
+}
+
+const BoardsPage = ({ pageNum }: Props) => {
+    const fetchBoards = useCallback(() => {
+        return BoardApi.getBoards(pageNum)
+    }, [pageNum])
+
     const {
-        data: boards,
-        setData: setBoards,
+        data,
+        setData,
         isLoading,
         errorMsg
-    } = useFetch({
-        resolver: () => BoardApi.getBoards()
+    } = usePagedFetch<Board>({
+        resolver: () => BoardApi.getBoards(pageNum),
+        pageNum: pageNum,
+        resultKey: 'boards'
     })
+
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
+    console.log(data?.results)
+
+    /*
     const handleBoardCreate = ({ boardName, image, description}: CreateBoardArgs)=> {
         BoardApi.createBoard({
             name: boardName, description, imageFile: image || undefined,
@@ -30,6 +45,7 @@ const BoardsPage = () => {
         })
         setIsModalOpen(false)
     }
+    */
 
     return (
         <div className={styles.content}>
@@ -37,14 +53,17 @@ const BoardsPage = () => {
                 <Typography variant="h3">Your Boards</Typography>
                 <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>
             </Box>
-            <BoardsView boards={boards} isLoading={isLoading} errorMsg={errorMsg} />
-            <BoardManagementModal
-                open={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSubmit={handleBoardCreate}
-            />
+            <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
+
         </div>
     )
 }
+/*
+<BoardManagementModal
+    open={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    onSubmit={handleBoardCreate}
+/>
+*/
 
 export default BoardsPage

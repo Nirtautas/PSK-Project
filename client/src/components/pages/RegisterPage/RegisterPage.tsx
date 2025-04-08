@@ -70,11 +70,11 @@ const RegisterPage = () => {
                     <TextField name="username" label="Username" variant="outlined" required/>
                     <PasswordInput name="password" required/>
                     <ul className={styles.errors_container}>
-                        {errorMsgs.map(error => {
+                        {errorMsgs ? errorMsgs.map(error => {
                             return (
                                 <li key={styles.error_msg} className={styles.error_msg}>{error}</li>
                             )
-                        })}
+                        }) : null}
                     </ul>
                     <br />
                     <Button type="submit" variant="contained">Register</Button>

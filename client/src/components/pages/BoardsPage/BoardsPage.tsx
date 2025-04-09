@@ -66,6 +66,7 @@ const BoardsPage = ({ pageNum }: Props) => {
                 disabledPrevious={pageNum <= 0}
                 disabledNext={isLastPage}
                 pageNumber={pageNum}
+                totalPages={totalPages}
             />
         </div>
     )

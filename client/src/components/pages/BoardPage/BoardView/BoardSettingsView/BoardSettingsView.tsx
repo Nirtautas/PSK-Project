@@ -61,7 +61,6 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
                     color="error"
                     onClick={handleDelete}
                     disabled={isDeleting || isLoading}
-                    className={styles.delete_button}
                 >
                     {isDeleting ? 'Deleting...' : 'Delete Board'}
                 </Button>

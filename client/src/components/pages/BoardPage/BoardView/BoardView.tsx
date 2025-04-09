@@ -6,6 +6,7 @@ import TasksView from '@/components/pages/BoardPage/BoardView/TasksView'
 
 import styles from './BoardView.module.scss'
 import { Task } from '@/types/types'
+import BoardSettingsView from './BoardSettingsView'
 
 type Props = {
     boardId: number
@@ -21,7 +22,7 @@ const BoardView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
         if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} />
         if (tab === 'Collaborators') return <div>Collaborators</div>
         if (tab === 'Archives') return <div>Archives</div>
-        return <div>Settings</div>
+        return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} />
     }
 
     return (

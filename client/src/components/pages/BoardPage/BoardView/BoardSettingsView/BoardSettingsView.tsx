@@ -39,8 +39,21 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
             {errorMsg && <Typography color="error">{errorMsg}</Typography>}
             {deleteError && <Typography color="error">{deleteError}</Typography>}
 
+            <Box className={styles.info_box}>
+                <Typography variant="body2" className={styles.info_text}>
+                    Selecting this option will allow you to edit board information.
+                </Typography>
+                {/* Add a white button for "Edit" without any functionality yet */}
+                <Button
+                    variant="outlined"
+                    color="primary"
+                >
+                    Edit Board
+                </Button>
+            </Box>
+
             <Box className={styles.warning_box}>
-                <Typography variant="body2" className={styles.delete_warning_text}>
+                <Typography variant="body2" className={styles.info_text}>
                     Selecting this option will delete the board including tasks, linked users, and comments!
                 </Typography>
                 <Button

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
@@ -85,6 +86,15 @@ namespace WorthBoards.Business.Services
             var linksDto = _mapper.Map<IEnumerable<LinkedUserToBoardResponse>>(links);
 
             return linksDto;
+        }
+
+        public async Task<List<UserResponse>> GetUsersByUserNameAsync(int boardId, string userName, CancellationToken cancellationToken)
+        {
+            _ = await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)
+                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
+            
+            var users = await _unitOfWork.BoardOnUserRepository.GetUsersByUserNameAsync(userName, cancellationToken);
+            return _mapper.Map<List<UserResponse>>(users);
         }
     }
 }

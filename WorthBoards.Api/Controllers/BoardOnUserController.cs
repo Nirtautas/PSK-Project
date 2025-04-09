@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WorthBoards.Api.Utils;
+using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
+using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Api.Controllers
 {
@@ -68,6 +71,13 @@ namespace WorthBoards.Api.Controllers
         {
             var boardResponse = await _boardOnUserService.GetUsersLinkedToBoardAsync(boardId, cancellationToken);
             return Ok(boardResponse);
+        }
+
+        [HttpGet("{boardId}/collaborators")]
+        public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersByUserName([FromRoute] int boardId, [FromQuery] string userName, CancellationToken cancellationToken)
+        {
+            var userResponse = await _boardOnUserService.GetUsersByUserNameAsync(boardId, userName, cancellationToken);
+            return Ok(userResponse);
         }
     }
 }

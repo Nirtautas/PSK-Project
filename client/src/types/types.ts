@@ -45,3 +45,10 @@ export type Comment = {
     createdAt: Date
     createdBy: User
 }
+
+export type BoardOnUser = {
+    boardId: number
+    userId: number
+    addedAt: Date
+    userRole: RoleString
+}

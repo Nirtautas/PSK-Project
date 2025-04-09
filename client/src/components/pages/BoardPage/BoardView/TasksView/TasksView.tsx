@@ -15,6 +15,7 @@ type Props = {
     tasks: Task[]
     isLoading: boolean
     errorMsg: string
+    handleRefresh: () => void
 }
 
 type TaskColumn = {
@@ -25,7 +26,7 @@ type TaskColumn = {
 
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
+const TasksView = ({ boardId, tasks, isLoading, errorMsg, handleRefresh }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -106,7 +107,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
                     <Typography id="modal-modal-title" variant="h5" component="h2">
                         Create a task
                     </Typography>
-                    <CreateTaskForm handleClose={handleClose} boardId={boardId} />
+                    <CreateTaskForm handleClose={handleClose} boardId={boardId} handleRefresh={handleRefresh} />
                 </Box>
             </Modal>
             <Box className={styles.tasks_container}>

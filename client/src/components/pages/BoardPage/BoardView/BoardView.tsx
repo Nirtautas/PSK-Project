@@ -12,13 +12,14 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     tasks: Task[] | undefined
+    handleRefresh: () => void
 }
 
-const BoardView = ({ boardId, tasks, isLoading, errorMsg }: Props) => {
+const BoardView = ({ boardId, tasks, isLoading, errorMsg, handleRefresh }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} />
+        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} handleRefresh={handleRefresh} />
         if (tab === 'Collaborators') return <div>Collaborators</div>
         if (tab === 'Archives') return <div>Archives</div>
         return <div>Settings</div>

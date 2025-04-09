@@ -3,6 +3,8 @@ import { FetchResponse, HTTPMethod } from '@/types/fetch';
 import { apiBaseUrl } from '@/constants/api';
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 
+export type CreateTaskDto = Omit<Task, 'id | creationDate | boardId'>
+
 export default class TaskApi {
     static async getTasks(boardId: number): Promise<FetchResponse<Task[]>> {
         return await fetch({
@@ -16,11 +18,13 @@ export default class TaskApi {
         return task
     }
 
-    public static async create(task: Omit<Task, 'id'>, boardId: Board['id']): Promise<Task> {
-        return {
-            ...task,
-            id: 1
-        }
+    static async create(task: CreateTaskDto, boardId: number): Promise<FetchResponse<Task>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks`,
+            method: HTTPMethod.POST,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(task)
+        })
     }
 
     //TODO: probably needs to be paginated and taken out to a seperate API file

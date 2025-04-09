@@ -33,7 +33,7 @@ export default class BoardApi {
             description: 'test description',
             imageURL: 'https://preview.colorkit.co/color/ff0000.png?static=true',
             creationDate: new Date(Date.now()),
-            tasks: (await TaskApi.getTasks(id)).items
+            tasks: (await TaskApi.getTasks(id)).result ?? []
         }
     }
 }

@@ -6,6 +6,7 @@ export type Board = {
     description: string
     imageURL: string | null
     creationDate: Date 
+    tasks: Task[]
 }
 
 export type StatusString = 'Waiting' | 'In progress' | 'Done'
@@ -17,7 +18,7 @@ export type Task = {
     status: StatusString
     description: string | null
     creationDate: Date
-    deadline: Date | null
+    deadlineEnd: Date | null
     //TODO: make assigned users get passed by id (number[]) instead of string[]
     assignedUsers: string[] | string | null
 }

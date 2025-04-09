@@ -1,49 +1,59 @@
 import { Board, Task, Comment } from '@/types/types'
-import { Paginated } from '@/types/api'
+import { FetchResponse, HTTPMethod } from '@/types/fetch';
+import { authApiBaseUrl } from '@/constants/api';
+import { getAuthorizedHeaders } from '@/utils/fetch';
 
 export default class TaskApi {
     
-    public static async getTasks(boardId: Board['id']): Promise<Paginated<Task>> {
-        return {
-            pageNumber: 1,
-            pageCount: 123,
-            pageSize: 10,
-            items: [
-                {
-                    id: 1,
-                    title: 'Task 1',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: "Jonas"
-                },
-                {
-                    id: 2,
-                    title: 'Task 2',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: ["Jonas", "Petras"]
-                },
-                {
-                    id: 3,
-                    title: 'Task 3',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: null
-                },
-                {
-                    id: 4,
-                    title: 'Task 4',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: null
-                }
-            ]
-        }
+    static async getTasks(boardId: Board['id']): Promise<FetchResponse<Task[]>> {
+        return await fetch({
+            url: `${authApiBaseUrl}/boards/${boardId}/tasks`,
+            method: HTTPMethod.GET,
+            headers: getAuthorizedHeaders()
+        })
     }
+
+    // public static async getTasks(boardId: Board['id']): Promise<Paginated<Task>> {
+    //     return {
+    //         pageNumber: 1,
+    //         pageCount: 123,
+    //         pageSize: 10,
+    //         items: [
+    //             {
+    //                 id: 1,
+    //                 title: 'Task 1',
+    //                 status: 'Waiting',
+    //                 description: null,
+    //                 deadline: null,
+    //                 assignedUsers: "Jonas"
+    //             },
+    //             {
+    //                 id: 2,
+    //                 title: 'Task 2',
+    //                 status: 'Waiting',
+    //                 description: null,
+    //                 deadline: null,
+    //                 assignedUsers: ["Jonas", "Petras"]
+    //             },
+    //             {
+    //                 id: 3,
+    //                 title: 'Task 3',
+    //                 status: 'Waiting',
+    //                 description: null,
+    //                 deadline: null,
+    //                 assignedUsers: null
+    //             },
+    //             {
+    //                 id: 4,
+    //                 title: 'Task 4',
+    //                 status: 'Waiting',
+    //                 description: null,
+    //                 deadline: null,
+    //                 assignedUsers: null
+    //             }
+    //         ]
+    //     }
+    // }
 
     public static async update(task: Task): Promise<Task> {
         return task

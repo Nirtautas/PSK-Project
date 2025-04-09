@@ -12,9 +12,11 @@ export type StatusString = 'Waiting' | 'In progress' | 'Done'
 
 export type Task = {
     id: number
+    boardId: number
     title: string
     status: StatusString
     description: string | null
+    creationDate: Date
     deadline: Date | null
     //TODO: make assigned users get passed by id (number[]) instead of string[]
     assignedUsers: string[] | string | null

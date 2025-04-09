@@ -13,18 +13,25 @@ type Props = {
 
 const BoardPage = ({ boardId }: Props) => {
     const {
-        data: board,
+        data,
         errorMsg,
         isLoading
-    } = useFetch({ resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000 })
+    } = useFetch({
+        resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000
+    })
+
+    //Fetch board tasks with separate api call.
 
     return (
         <div className={styles.content}>
             <Box className={styles.toolbar}>
-                <Typography variant="h3">{ !isLoading ? board?.name || '' : <Skeleton sx={{ width: '10em' }} />}</Typography>
+                <img src={data?.result?.imageURL ?? undefined} alt="Board Image" className={styles.board_image} />
+                <Typography variant="h3" className={styles.board_title}>
+                    {!isLoading ? data?.result?.title || '' : <Skeleton sx={{ width: '10em' }} />}
+                </Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={board?.tasks || []} errorMsg={errorMsg} isLoading={isLoading}/>
+                <BoardView boardId={boardId} tasks={[]} errorMsg={errorMsg} isLoading={isLoading}/>
             </div>
         </div>
     )

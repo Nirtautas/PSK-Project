@@ -6,19 +6,33 @@
 }
 
 .toolbar {
-  display: flex;
-  flex-direction: row;
-  padding-bottom: 0.5rem;
-  margin: 1rem 0;
-  max-width: 80%;
-  border-bottom: 2px solid lightgrey;
-  @media screen and (prefers-color-scheme: dark) {
-    border-bottom: 2px solid darkgray;
-  }
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 0.5rem;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    max-width: 80%;
+    border-bottom: 2px solid lightgrey;
 
-  > button {
-    margin: auto 0 auto auto;
-  }
+    @media screen and (prefers-color-scheme: dark) {
+        border-bottom: 2px solid darkgray;
+    }
+
+    > button {
+        margin: auto 0 auto auto;
+    }
+}
+
+.board_title {
+    flex: 1;
+}
+
+.board_image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .board_view_container {

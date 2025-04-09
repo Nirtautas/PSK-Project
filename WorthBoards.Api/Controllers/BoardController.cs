@@ -13,7 +13,8 @@ namespace WorthBoards.Api.Controllers
     public class BoardController(IBoardService _boardService, IBoardOnUserService _boardOnUserService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllCurrentUserBoards(int? userId, CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
+        [Authorize]
+        public async Task<IActionResult> GetAllCurrentUserBoards([FromQuery] int? userId, CancellationToken cancellationToken, [FromQuery] int pageNum = 0, [FromQuery] int pageSize = 10)
         {
             if (userId == null)
             {

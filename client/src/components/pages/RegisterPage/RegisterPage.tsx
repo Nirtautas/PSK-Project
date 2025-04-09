@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import AuthApi from '@/api/auth.api'
 import { setCookie } from 'cookies-next'
 import { setUserId } from '@/utils/userId'
+import { GetPageUrl } from '../../../constants/route'
 
 const RegisterPage = () => {
     const [errorMsgs, setErrorMsgs] = useState<string[]>([])
@@ -41,8 +42,7 @@ const RegisterPage = () => {
         const { jwtToken, id } = response.result!
         setCookie('jwtToken', jwtToken, { secure: true, sameSite: 'strict' })
         setUserId(id)
-        // router.push(GetPageUrl.boards(0))
-        router.push('/boards')
+        router.push(GetPageUrl.boards(0))
     }
 
     return (

@@ -6,6 +6,7 @@ import TaskCard from '@/components/pages/BoardPage/BoardView/TasksView/TaskList/
 import ErrorDisplay from '@/components/shared/ErrorDisplay'
 
 type Props = {
+    id: string
     isLoading: boolean
     errorMsg: string
     tasks: Task[]

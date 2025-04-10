@@ -22,7 +22,10 @@ const BoardsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
     const handleBoardCreate = ({ boardName, image, description}: CreateBoardArgs)=> {
-        BoardApi.createBoard({ name: boardName, description, imageFile: image || undefined }).then((board) => {
+        BoardApi.createBoard({
+            name: boardName, description, imageFile: image || undefined,
+            tasks: null
+        }).then((board) => {
             setBoards([...boards, board])
         })
         setIsModalOpen(false)

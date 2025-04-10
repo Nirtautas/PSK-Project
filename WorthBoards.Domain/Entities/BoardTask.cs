@@ -4,7 +4,7 @@ using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Domain.Entities
 {
-    [Table("BoardTasks")]
+    [Table("Tasks")]
     public class BoardTask
     {
         [Key]

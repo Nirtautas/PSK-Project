@@ -326,7 +326,7 @@ namespace WorthBoards.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("BoardTasks");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.Comment", b =>
@@ -351,9 +351,6 @@ namespace WorthBoards.Data.Migrations
 
                     b.Property<bool>("Edited")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -443,7 +440,7 @@ namespace WorthBoards.Data.Migrations
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.TaskOnUser", b =>
                 {
-                    b.Property<int>("TaskId")
+                    b.Property<int>("BoardTaskId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -454,12 +451,7 @@ namespace WorthBoards.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("BoardTaskId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("TaskId", "UserId");
-
-                    b.HasIndex("BoardTaskId");
+                    b.HasKey("BoardTaskId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -520,7 +512,7 @@ namespace WorthBoards.Data.Migrations
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardOnUser", b =>
                 {
                     b.HasOne("WorthBoards.Domain.Entities.Board", "Board")
-                        .WithMany()
+                        .WithMany("BoardUsers")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -627,6 +619,8 @@ namespace WorthBoards.Data.Migrations
             modelBuilder.Entity("WorthBoards.Domain.Entities.Board", b =>
                 {
                     b.Navigation("BoardTasks");
+
+                    b.Navigation("BoardUsers");
                 });
 
             modelBuilder.Entity("WorthBoards.Domain.Entities.BoardTask", b =>

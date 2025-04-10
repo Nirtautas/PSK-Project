@@ -4,7 +4,6 @@ using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
 using WorthBoards.Business.Utils;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -12,7 +11,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddScoped<IAuthService, AuthService>();
@@ -22,11 +20,12 @@ namespace Microsoft.Extensions.DependencyInjection
             // TODO: Add global user roles
             //services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
-            services.AddScoped<IBoardTaskService, BoardTaskService>();
-
-            services.AddScoped<IBoardTaskService, BoardTaskService>();
-            services.AddScoped<IBoardService, BoardService>();
-            services.AddScoped<ICommentService, CommentService>();
+            services
+                .AddScoped<IBoardTaskService, BoardTaskService>()
+                .AddScoped<IBoardService, BoardService>()
+                .AddScoped<ICommentService, CommentService>()
+                .AddScoped<IBoardOnUserService, BoardOnUserService>()
+                .AddScoped<ITaskOnUserService, TaskOnUserService>();
 
             return services;
         }

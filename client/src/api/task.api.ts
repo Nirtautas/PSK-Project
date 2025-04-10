@@ -1,59 +1,35 @@
 import { Board, Task, Comment } from '@/types/types'
-import { Paginated } from '@/types/api'
+import { FetchResponse, HTTPMethod } from '@/types/fetch';
+import { apiBaseUrl } from '@/constants/api';
+import { fetch, getAuthorizedHeaders } from '../utils/fetch'
+
+export type CreateTaskDto = Omit<Task, 'id' | 'creationDate' | 'boardId' | 'assignedUsers'>
 
 export default class TaskApi {
-    
-    public static async getTasks(boardId: Board['id']): Promise<Paginated<Task>> {
-        return {
-            pageNumber: 1,
-            pageCount: 123,
-            pageSize: 10,
-            items: [
-                {
-                    id: 1,
-                    title: 'Task 1',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: "Jonas"
-                },
-                {
-                    id: 2,
-                    title: 'Task 2',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: ["Jonas", "Petras"]
-                },
-                {
-                    id: 3,
-                    title: 'Task 3',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: null
-                },
-                {
-                    id: 4,
-                    title: 'Task 4',
-                    status: 'Waiting',
-                    description: null,
-                    deadline: null,
-                    assignedUsers: null
-                }
-            ]
-        }
+    static async getTasks(boardId: number): Promise<FetchResponse<Task[]>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks`,
+            method: HTTPMethod.GET,
+            headers: getAuthorizedHeaders()
+        })
     }
 
-    public static async update(task: Task): Promise<Task> {
-        return task
+    public static async update(boardId: number, boardTaskId: number, task: CreateTaskDto): Promise<FetchResponse<Task>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks/${boardTaskId}`,
+            method: HTTPMethod.PUT,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(task)
+        })
     }
 
-    public static async create(task: Omit<Task, 'id'>, boardId: Board['id']): Promise<Task> {
-        return {
-            ...task,
-            id: 1
-        }
+    static async create(task: CreateTaskDto, boardId: number): Promise<FetchResponse<Task>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks`,
+            method: HTTPMethod.POST,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(task)
+        })
     }
 
     //TODO: probably needs to be paginated and taken out to a seperate API file

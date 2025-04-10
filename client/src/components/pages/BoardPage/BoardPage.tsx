@@ -7,21 +7,26 @@ import BoardView from '@/components/pages/BoardPage/BoardView'
 import useFetch from '@/hooks/useFetch'
 import BoardApi from '@/api/board.api'
 import { useState } from 'react'
+import { Task } from '@/types/types'
 
 type Props = {
     boardId: number
 }
 
 const BoardPage = ({ boardId }: Props) => {
-    const [refreshKey, setRefreshKey] = useState(0);
-    
     const {
         data: board,
         errorMsg,
-        isLoading
-    } = useFetch({ resolver: () => BoardApi.getBoardById(boardId), deps: [refreshKey] })
+        isLoading,
+        setData: setBoard
+    } = useFetch({ resolver: () => BoardApi.getBoardById(boardId) })
 
-    const refreshTasks = () => setRefreshKey(prev => prev + 1)
+    const handleTaskCreate = (task: Task) => { 
+        setBoard({
+            ...board,
+            tasks: [...board.tasks, task]
+        })
+    }
 
     return (
         <div className={styles.content}>
@@ -29,7 +34,7 @@ const BoardPage = ({ boardId }: Props) => {
                 <Typography variant="h3">{ !isLoading ? board?.name || '' : <Skeleton sx={{ width: '10em' }} />}</Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={board?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} handleRefresh={refreshTasks}/>
+                <BoardView boardId={boardId} tasks={board?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={handleTaskCreate}/>
             </div>
         </div>
     )

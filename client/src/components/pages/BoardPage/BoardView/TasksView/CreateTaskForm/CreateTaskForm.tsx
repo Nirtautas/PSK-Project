@@ -10,10 +10,10 @@ import { Task } from "@/types/types";
 type Props = {
     handleClose: () => void
     boardId: number
-    handleRefresh: () => void
+    onCreate: (t: Task) => void
 }
 
-const CreateTaskForm = ({ handleClose, boardId, handleRefresh }: Props) => {
+const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState<dayjs.Dayjs | null>(null);
@@ -30,8 +30,10 @@ const CreateTaskForm = ({ handleClose, boardId, handleRefresh }: Props) => {
                 deadlineEnd: deadline ? deadline.toDate() : null
             };
             
-            await TaskApi.create(newTask as CreateTaskDto, boardId);
-            handleRefresh()
+            const response = await TaskApi.create(newTask as CreateTaskDto, boardId);
+            if (response.result) {
+                onCreate(response.result)
+            }
             handleClose()
         } catch (error) {
             console.error('Task creation failed:', error);

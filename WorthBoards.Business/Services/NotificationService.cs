@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using System.ComponentModel.Design;
 using WorthBoards.Business.Dtos.Requests;
@@ -103,14 +104,19 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
     }
 
     // TODO: Create endpoint for creating invitations
-    public async Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
+    public async Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
+        if (role == UserRoleEnum.OWNER)
+        {
+            throw new BadHttpRequestException($"Cannot invite user as {UserRoleEnum.OWNER}.");
+        }
         var notification = new Notification()
         {
             NotificationType = NotificationEventTypeEnum.INVITATION,
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId,
             BoardId = boardId,
+            InvitationRole = role,
             NotificationsOnUsers = new List<NotificationOnUser>()
             {
                 new NotificationOnUser()
@@ -121,5 +127,34 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task AcceptInvitation(int notificationId, int userId, CancellationToken cancellationToken)
+    {
+        var invitationNotification = await _unitOfWork.NotificationRepository.GetByIdAsync(notificationId, cancellationToken);
+        if (invitationNotification is null)
+        {
+            throw new ArgumentNullException(nameof (invitationNotification));
+        }
+        if (invitationNotification.BoardId is null)
+        {
+            throw new ArgumentNullException(nameof (invitationNotification.BoardId));
+        }
+        if (invitationNotification.NotificationsOnUsers.Where(nou => nou.UserId == userId).First() is null)
+        {
+            throw new UnauthorizedAccessException("You cannot accept an invitation that wasn't for you.");
+        }
+
+        await _unitOfWork.BoardOnUserRepository.CreateAsync(
+            new BoardOnUser()
+            {
+                AddedAt = DateTime.UtcNow,
+                UserRole = UserRoleEnum.VIEWER,
+                BoardId = (int)invitationNotification.BoardId,
+                UserId = userId,
+            },
+            cancellationToken
+        );
+        await _unitOfWork.SaveChangesAsync();
     }
 }

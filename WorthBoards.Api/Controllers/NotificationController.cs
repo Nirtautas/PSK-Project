@@ -9,7 +9,7 @@ namespace WorthBoards.Api.Controllers;
 
 [Route("api/notifications")]
 [ApiController]
-public class NotificationController(INotificationService _notificationService, IMapper _mapper) : ControllerBase
+public class NotificationController(INotificationService _notificationService) : ControllerBase
 {
     [AllowAnonymous]
     [HttpGet("/{userId:int}")]
@@ -18,15 +18,5 @@ public class NotificationController(INotificationService _notificationService, I
         var notifications = await _notificationService.GetNotificationsByUserId(userId, cancellationToken);
 
         return notifications;
-    }
-
-    [AllowAnonymous]
-    [HttpGet("/test")]
-    public async Task GetNotificationsByUserId(CancellationToken cancellationToken = default)
-    {
-        int boardId = 1;
-        int userId = 1;
-        int responsibleUserId = 1;
-        await _notificationService.NotifyBoardInvitation(boardId, userId, responsibleUserId, cancellationToken);
     }
 }

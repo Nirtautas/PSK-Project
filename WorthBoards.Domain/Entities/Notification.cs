@@ -17,6 +17,7 @@ namespace WorthBoards.Domain.Entities
         public required NotificationEventTypeEnum NotificationType { get; set; }
 
         // Event type derived properties
+        public UserRoleEnum? InvitationRole { get; set; }
         public int? SubjectUserId { get; set; }
         public int? BoardId { get; set; }
         public int? TaskId { get; set; }

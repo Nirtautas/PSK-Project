@@ -13,9 +13,11 @@ public interface INotificationService {
 
     Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
-
     Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
     Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
+
+    Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken);
+
+    Task AcceptInvitation(int notificationId, int userId, CancellationToken cancellationToken);
 }

@@ -9,6 +9,7 @@ public interface IUnitOfWork
     ITasksOnUserRepository TasksOnUserRepository { get; }
     IBoardOnUserRepository BoardOnUserRepository { get; }   
     INotificationOnUserRepository NotificationOnUserRepository { get; }
+    IUserRepository UserRepository { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

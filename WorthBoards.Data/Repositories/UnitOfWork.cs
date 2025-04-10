@@ -10,7 +10,8 @@ public class UnitOfWork(ApplicationDbContext dbContext,
                         INotificationRepository notificationRepository,
                         ITasksOnUserRepository tasksOnUserRepository,
                         IBoardOnUserRepository boardOnUserRepository,
-                        INotificationOnUserRepository notificationOnUserRepository) : IUnitOfWork
+                        INotificationOnUserRepository notificationOnUserRepository,
+                        IUserRepository userRepository) : IUnitOfWork
 {
     public IBoardRepository BoardRepository { get; } = boardRepository;
     public IBoardTaskRepository BoardTaskRepository { get; } = boardTaskRepository;
@@ -19,6 +20,7 @@ public class UnitOfWork(ApplicationDbContext dbContext,
     public ITasksOnUserRepository TasksOnUserRepository { get; } = tasksOnUserRepository;
     public IBoardOnUserRepository BoardOnUserRepository { get; } = boardOnUserRepository;
     public INotificationOnUserRepository NotificationOnUserRepository { get; } = notificationOnUserRepository;
+    public IUserRepository UserRepository { get; } = userRepository;
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

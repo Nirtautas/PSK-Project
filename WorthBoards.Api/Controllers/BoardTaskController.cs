@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using WorthBoards.Api.Helpers;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
@@ -39,7 +40,7 @@ namespace WorthBoards.Api.Controllers
         [HttpPost("{boardId}/tasks")]
         public async Task<IActionResult> CreateBoardTask(int boardId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
         {
-            int userId = 1; // TODO: replace with actual id of the user responsible for the change
+            int userId = ClaimsHelper.GetUserIdFromToken(User);
             var boardTaskResponse = await _boardTaskService.CreateBoardTask(boardId, boardTaskRequest, cancellationToken);
             await _notificationService.NotifyTaskCreated(boardId, boardTaskResponse.Id, userId, cancellationToken);
             return CreatedAtAction(nameof(GetBoardTaskById), new { boardId = boardId, boardTaskId = boardTaskResponse.Id}, boardTaskResponse);
@@ -48,7 +49,7 @@ namespace WorthBoards.Api.Controllers
         [HttpDelete("{boardId}/tasks/{boardTaskId}")]
         public async Task<IActionResult> DeleteBoardTask(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
-            int userId = 1; // TODO: replace with actual id of the user responsible for the change
+            int userId = ClaimsHelper.GetUserIdFromToken(User);
             await _boardTaskService.DeleteBoardTask(boardId, boardTaskId, cancellationToken);
             return NoContent();
         }
@@ -64,7 +65,7 @@ namespace WorthBoards.Api.Controllers
 
             if (oldStatus != newStatus)
             {
-                int userId = 1; // TODO: replace with actual id of the user responsible for the change
+                int userId = ClaimsHelper.GetUserIdFromToken(User);
                 await _notificationService.NotifyTaskStatusChange(boardId, boardTaskId, userId, oldStatus, newStatus, cancellationToken);
                 return Ok(boardTaskResponse);
             }

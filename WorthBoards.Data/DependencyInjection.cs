@@ -48,7 +48,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ITasksOnUserRepository, TasksOnUserRepository>()
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IBoardOnUserRepository, BoardOnUserRepository>()
-                .AddScoped<INotificationOnUserRepository, NotificationOnUserRepository>();
+                .AddScoped<INotificationOnUserRepository, NotificationOnUserRepository>()
+                .AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }

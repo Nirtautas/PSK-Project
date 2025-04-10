@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorthBoards.Api.Helpers;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
@@ -15,7 +16,7 @@ public class InvitationController(INotificationService _notificationService) : C
     [HttpPost]
     public async Task<IActionResult> InviteUser([FromBody] InvitationRequest invitationRequest, CancellationToken cancellationToken)
     {
-        var responsibleUserId = 1; // TODO: Replace with actual invitation sender id
+        var responsibleUserId = ClaimsHelper.GetUserIdFromToken(User);
         await _notificationService.NotifyBoardInvitation(invitationRequest.BoardId, invitationRequest.UserId, responsibleUserId, invitationRequest.Role, cancellationToken);
         return NoContent();
     }
@@ -23,7 +24,7 @@ public class InvitationController(INotificationService _notificationService) : C
     [HttpPost("{notificationId}/accept")]
     public async Task<IActionResult> AcceptInvitation(int notificationId, CancellationToken cancellationToken)
     {
-        var userId = 2; // TODO: Replace with actual invitation receiver id
+        var userId = ClaimsHelper.GetUserIdFromToken(User);
         await _notificationService.AcceptInvitation(notificationId, userId, cancellationToken);
         return NoContent();
     }

@@ -105,7 +105,6 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         }
     }
 
-
     public async Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
         if (role == UserRoleEnum.OWNER)
@@ -160,5 +159,29 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             cancellationToken
         );
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
+    {
+        if (role == UserRoleEnum.OWNER)
+        {
+            throw new BadHttpRequestException($"Cannot invite user as {UserRoleEnum.OWNER}.");
+        }
+        var notification = new Notification()
+        {
+            NotificationType = NotificationEventTypeEnum.INVITATION,
+            SenderId = responsibleUserId,
+            BoardId = boardId,
+            InvitationRole = role,
+            NotificationsOnUsers = new List<NotificationOnUser>()
+            {
+                new NotificationOnUser()
+                {
+                    UserId = userId
+                }
+            }
+        };
+        await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

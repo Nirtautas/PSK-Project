@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import BoardApi from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
+import BoardManagementModal, { CreateBoardArgs } from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
+import { GetPageUrl } from '../../../../../constants/route'
 
 type Props = {
     boardId: number
@@ -13,9 +15,41 @@ type Props = {
 }
 
 const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editData, setEditData] = useState<CreateBoardArgs | null>(null)
+    const [editError, setEditError] = useState<string>('')
+
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string>('')
+
     const router = useRouter()
+
+    const handleOpenEdit = async () => {
+        try {
+            const { result } = await BoardApi.getBoardById(boardId)
+            if (result == null) throw new Error('Board not found.')
+
+            const boardData: CreateBoardArgs = {
+                title: result.title,
+                description: result.description,
+                imageURL: result.imageURL || null
+            }
+            setEditData(boardData)
+            setIsEditOpen(true)
+        } catch (err: any) {
+            setEditError(err?.message || 'Failed to fetch latest board data.')
+        }
+    }
+
+    const handleUpdateBoard = async (updatedData: CreateBoardArgs) => {
+        try {
+            await BoardApi.updateBoard(boardId, updatedData)
+            setIsEditOpen(false)
+            
+        } catch (err: any) {
+            setEditError(err?.message || 'Failed to update board')
+        }
+    }
 
     const handleDelete = async () => {
         if (!confirm('Are you sure you want to delete this board?'))
@@ -37,20 +71,24 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
             <Typography variant="h5">Board Settings</Typography>
 
             {errorMsg && <Typography color="error">{errorMsg}</Typography>}
-            {deleteError && <Typography color="error">{deleteError}</Typography>}
+            {editError && <Typography color="error">{editError}</Typography>}
 
             <Box className={styles.info_box}>
                 <Typography variant="body2" className={styles.info_text}>
                     Selecting this option will allow you to edit board information.
                 </Typography>
-                {/* Add a white button for "Edit" without any functionality yet */}
                 <Button
                     variant="outlined"
                     color="primary"
+                    onClick={handleOpenEdit}
+                    disabled={isLoading}
                 >
                     Edit Board
                 </Button>
             </Box>
+
+            {errorMsg && <Typography color="error">{errorMsg}</Typography>}
+            {deleteError && <Typography color="error">{deleteError}</Typography>}
 
             <Box className={styles.warning_box}>
                 <Typography variant="body2" className={styles.info_text}>
@@ -65,6 +103,13 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
                     {isDeleting ? 'Deleting...' : 'Delete Board'}
                 </Button>
             </Box>
+            <BoardManagementModal
+                open={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                onSubmit={handleUpdateBoard}
+                initialData={editData ?? undefined}
+                mode="edit"
+            />
         </div>
     )
 }

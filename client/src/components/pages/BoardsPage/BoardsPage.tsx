@@ -66,6 +66,7 @@ const BoardsPage = ({ pageNum }: Props) => {
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleBoardCreate}
+                mode="create"
             />
             <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
             <PageChanger

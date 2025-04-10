@@ -6,6 +6,8 @@ using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
+using WorthBoards.Common.Enums;
+using WorthBoards.Data.Repositories.Interfaces;
 
 namespace WorthBoards.Api.Controllers;
 
@@ -26,6 +28,14 @@ public class InvitationController(INotificationService _notificationService) : C
     {
         var userId = ClaimsHelper.GetUserIdFromToken(User);
         await _notificationService.AcceptInvitation(notificationId, userId, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost("/remove-from-board/")]
+    public async Task<IActionResult> RemoveUser([FromBody] RemoveUserFromBoardRequest request, CancellationToken cancellationToken)
+    {
+        var responsibleUserId = ClaimsHelper.GetUserIdFromToken(User);
+        await _notificationService.NotifyUserRemoved(request.BoardId, request.UserId, responsibleUserId, UserRoleEnum.OWNER, cancellationToken);
         return NoContent();
     }
 }

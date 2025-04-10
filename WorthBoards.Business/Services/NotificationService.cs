@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using System.ComponentModel.Design;
 using WorthBoards.Business.Dtos.Requests;
@@ -74,20 +75,6 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
-    {
-        var notification = new Notification()
-        {
-            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
-            SenderId = responsibleUserId,
-            SubjectUserId = userId,
-            BoardId = boardId,
-        };
-        await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-
     public async Task NotifyTaskAssigned(int boardId, int taskId, int userId, int responsibleUserId, CancellationToken cancellationToken)
     {
         {
@@ -109,7 +96,17 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
     {
         if (role == UserRoleEnum.OWNER)
         {
-            throw new BadHttpRequestException($"Cannot invite user as {UserRoleEnum.OWNER}.");
+            throw new BadHttpRequestException($"Cannot invite user as {role}.");
+        }
+        var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
+        var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
+        if (boardOnSender is not null && !boardOnSender.UserRole.CanSendInvitations())
+        {
+            throw new UnauthorizedAccessException("You are unauthorized to send invitations to this board.");
+        }
+        if (boardOnInvitee is not null)
+        {
+            throw new BadHttpRequestException("Cannot invite a user that has already joined this board.");
         }
         var notification = new Notification()
         {
@@ -132,13 +129,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
     public async Task AcceptInvitation(int notificationId, int userId, CancellationToken cancellationToken)
     {
         var invitationNotification = await _unitOfWork.NotificationRepository.GetByIdAsync(notificationId, cancellationToken);
-        if (invitationNotification is null)
+        if (invitationNotification is null || invitationNotification.NotificationType != NotificationEventTypeEnum.INVITATION)
         {
-            throw new ArgumentNullException(nameof(invitationNotification));
-        }
-        if (invitationNotification.BoardId is null)
-        {
-            throw new ArgumentNullException(nameof(invitationNotification.BoardId));
+            throw new NotFoundException($"Cannot find invitation notification with id: '{notificationId}'.");
         }
         if ((await _unitOfWork.NotificationOnUserRepository.GetByExpressionWithIncludesAsync(
             nou => nou.UserId == userId,
@@ -153,23 +146,33 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             {
                 AddedAt = DateTime.UtcNow,
                 UserRole = UserRoleEnum.VIEWER,
-                BoardId = (int)invitationNotification.BoardId,
+                BoardId = (int) invitationNotification.BoardId,
                 UserId = userId,
             },
             cancellationToken
         );
+
+        _unitOfWork.NotificationRepository.Delete(invitationNotification);
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
-        if (role == UserRoleEnum.OWNER)
+        // TODO: fix this method later
+        if (role != UserRoleEnum.OWNER)
         {
-            throw new BadHttpRequestException($"Cannot invite user as {UserRoleEnum.OWNER}.");
+            throw new BadHttpRequestException($"Cannot remove user as {role}.");
+        }
+        var boardOnUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
+        if (boardOnUser is null) throw new NotFoundException($"User with id: '{userId}' is not part of board: '{boardId}.");
+        if (!boardOnUser.UserRole.CanRemoveUsers()
+            && userId != responsibleUserId)
+        {
+            throw new UnauthorizedAccessException("You are unauthorized to remove users from this board.");
         }
         var notification = new Notification()
         {
-            NotificationType = NotificationEventTypeEnum.INVITATION,
+            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
             SenderId = responsibleUserId,
             BoardId = boardId,
             InvitationRole = role,
@@ -182,6 +185,8 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             }
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+        var bou = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId, cancellationToken);
+        _unitOfWork.BoardOnUserRepository.Delete(bou);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

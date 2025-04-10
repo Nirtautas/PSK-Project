@@ -20,5 +20,5 @@ public interface INotificationService {
 
     Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
+    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken);
 }

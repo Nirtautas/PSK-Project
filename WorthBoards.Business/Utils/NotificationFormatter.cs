@@ -45,7 +45,6 @@ public class NotificationFormatter
             NotificationEventTypeEnum.INVITATION => NotificationTextTemplates.Invitation(notification, senderUsername),
             NotificationEventTypeEnum.TASK_CREATED => NotificationTextTemplates.TaskCreated(notification, senderUsername),
             NotificationEventTypeEnum.TASK_STATUS_CHANGE => NotificationTextTemplates.TaskStatusChange(notification, senderUsername),
-            NotificationEventTypeEnum.TASK_DELETED => NotificationTextTemplates.TaskDeleted(notification, senderUsername),
             NotificationEventTypeEnum.TASK_UPDATED => NotificationTextTemplates.TaskUpdated(notification, senderUsername),
             NotificationEventTypeEnum.TASK_ASSIGNED => isSubjectReceiving
                 ? NotificationTextTemplates.TaskAssignedToYou(notification, senderUsername)

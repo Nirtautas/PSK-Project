@@ -14,12 +14,11 @@ public interface INotificationService {
 
     Task NotifyTaskCreated(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken);
+    Task NotifyTaskAssigned(int boardId, int taskId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
-    Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken);
+    Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken);
 
     Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
     Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
-
 }

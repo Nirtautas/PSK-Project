@@ -12,7 +12,7 @@ namespace WorthBoards.Domain.Entities
 
         public required int SenderId { get; set; }
 
-        public required DateTime SendDate { get; set; }
+        public DateTime SendDate { get; set; }
 
         public required NotificationEventTypeEnum NotificationType { get; set; }
 

@@ -39,15 +39,13 @@ namespace WorthBoards.Business.AutoMapper
 
             //Notification
             CreateMap<Notification, NotificationResponse>();
-            CreateMap<(Notification, string), NotificationResponse>()
-                .ConvertUsing(tuple => new NotificationResponse() {
-                    Description = tuple.Item1.Description,
-                    Id = tuple.Item1.Id,
-                    Title = tuple.Item1.Title,
-                    SendDate = tuple.Item1.SendDate,
-                    NotificationType = tuple.Item1.NotificationType,
-                    SenderUsername = tuple.Item2
-                });
+            // CreateMap<(Notification, string), NotificationResponse>()
+            //     .ConvertUsing(tuple => new NotificationResponse() {
+            //         Id = tuple.Item1.Id,
+            //         SendDate = tuple.Item1.SendDate,
+            //         NotificationType = tuple.Item1.NotificationType,
+            //         SenderUsername = tuple.Item2
+            //     });
         }
     }
 }

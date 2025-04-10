@@ -30,9 +30,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         // TODO: replace with actual notification data from constants & stuff
         var notification = new Notification()
         {
-            Description = "",
-            NotificationType = NotificationTypeEnum.MESSAGE,
-            Title = $"Task with id: {taskId} was deleted.",
+            // Description = "",
+            NotificationType = NotificationEventTypeEnum.TASK_DELETED,
+            // Title = $"Task with id: {taskId} was deleted.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
@@ -47,9 +47,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
         // TODO: replace with actual notification data from constants & stuff
         var notification = new Notification()
         {
-            Description = "",
-            NotificationType = NotificationTypeEnum.MESSAGE,
-            Title = "Task status was changed.",
+            // Description = "",
+            NotificationType = NotificationEventTypeEnum.TASK_STATUS_CHANGE,
+            // Title = "Task status was changed.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
@@ -63,9 +63,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            Description = $"User with id '{userId}' was added to board '{boardId}' by user '{responsibleUserId}'.",
-            NotificationType = NotificationTypeEnum.MESSAGE,
-            Title = "User added to board.",
+            // Description = $"User with id '{userId}' was added to board '{boardId}' by user '{responsibleUserId}'.",
+            NotificationType = NotificationEventTypeEnum.USER_ADDED_TO_BOARD,
+            // Title = "User added to board.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
@@ -78,9 +78,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            Description = $"User with id '{userId}' was removed from board '{boardId}' by user '{responsibleUserId}'.",
-            NotificationType = NotificationTypeEnum.MESSAGE,
-            Title = "User removed from board.",
+            // Description = $"User with id '{userId}' was removed from board '{boardId}' by user '{responsibleUserId}'.",
+            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
+            // Title = "User removed from board.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
@@ -90,9 +90,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
 
         var notificationForSubject = new Notification()
         {
-            Description = $"You were removed from board {boardId} by user {responsibleUserId}.",
-            NotificationType = NotificationTypeEnum.MESSAGE,
-            Title = "You were removed from a board.",
+            // Description = $"You were removed from board {boardId} by user {responsibleUserId}.",
+            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
+            // Title = "You were removed from a board.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
@@ -103,9 +103,9 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            Description = $"You were invited to board {boardId} by user {responsibleUserId}.",
-            NotificationType = NotificationTypeEnum.INVITATION,
-            Title = "You were invited to join a board.",
+            // Description = $"You were invited to board {boardId} by user {responsibleUserId}.",
+            NotificationType = NotificationEventTypeEnum.INVITATION,
+            // Title = "You were invited to join a board.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId,
             NotificationsOnUsers = new List<NotificationOnUser>()

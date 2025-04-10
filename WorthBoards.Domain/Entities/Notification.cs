@@ -9,14 +9,23 @@ namespace WorthBoards.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
+
         public required int SenderId { get; set; }
-        [MaxLength(100)]
-        public required string Title { get; set; }
-        public required string Description { get; set; }
+
         public required DateTime SendDate { get; set; }
-        public required NotificationTypeEnum NotificationType { get; set; }
+
+        public required NotificationEventTypeEnum NotificationType { get; set; }
+
+        // Event type derived properties
+        public int? BoardId { get; set; }
+        public int? TaskId { get; set; }
+        public TaskStatusEnum OldTaskStatus { get; set; }
+        public TaskStatusEnum NewTaskStatus { get; set; }
+        
 
         //Navigation properties
         public virtual ICollection<NotificationOnUser> NotificationsOnUsers { get; set; }
+        public virtual Board Board { get; set;}
+        public virtual BoardTask Task { get; set;}
     }
 }

@@ -20,7 +20,6 @@ namespace WorthBoards.Data.Repositories
                 ).ToList();
 
             await dbContext.NotificationsOnUsers.AddRangeAsync(entries, cancellationToken);
-            await dbContext.SaveChangesAsync();
         }
     }
 }

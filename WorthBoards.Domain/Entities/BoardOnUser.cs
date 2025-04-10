@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WorthBoards.Common.Enums;
 
@@ -10,10 +11,14 @@ namespace WorthBoards.Domain.Entities
     {
         public int BoardId { get; set; }
         public int UserId { get; set; }
-        public required DateTime AddedAt { get; set; }
+        public DateTime AddedAt { get; set; }
         public required UserRoleEnum UserRole { get; set; }
 
         //Navigation properties
         public virtual Board Board { get; set; }
+
+        // Concurrency token
+        [Timestamp]
+        public uint Version { get; set; }
     }
 }

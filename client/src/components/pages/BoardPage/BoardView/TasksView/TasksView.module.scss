@@ -1,11 +1,18 @@
 
-.container {
+.tasks_container {
   flex: 1;
   display: flex;
   justify-content: flex-start;
   align-items: start;
+  width: 100%;
 }
-
+.container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: start;
+  flex-direction: column;
+}
 .tasks_list {
   display: flex;
   flex: 1;

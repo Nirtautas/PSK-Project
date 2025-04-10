@@ -8,16 +8,18 @@ import styles from './BoardView.module.scss'
 import { Task } from '@/types/types'
 
 type Props = {
+    boardId: number
     isLoading: boolean
     errorMsg: string
     tasks: Task[] | undefined
+    onCreate: (t: Task) => void
 }
 
-const BoardView = ({ tasks, isLoading, errorMsg }: Props) => {
+const BoardView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} />
+        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} />
         if (tab === 'Collaborators') return <div>Collaborators</div>
         if (tab === 'Archives') return <div>Archives</div>
         return <div>Settings</div>

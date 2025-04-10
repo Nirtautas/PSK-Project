@@ -4,7 +4,7 @@ using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Domain.Entities
 {
-    [Table("BoardTasks")]
+    [Table("Tasks")]
     public class BoardTask
     {
         [Key]
@@ -21,5 +21,9 @@ namespace WorthBoards.Domain.Entities
         public virtual Board Board { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<TaskOnUser> TasksOnUsers { get; set; }
+
+        // Concurrency token
+        [Timestamp]
+        public uint Version { get; set; }
     }
 }

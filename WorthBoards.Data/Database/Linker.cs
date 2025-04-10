@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 
@@ -70,6 +69,16 @@ namespace POS_System.Data.Database
                 .HasMany<Comment>()
                 .WithOne()
                 .HasForeignKey(b => b.UserId)
+                .IsRequired();
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.BoardTask)
+                .WithMany(bt => bt.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BoardTask>()
+                .HasMany(b => b.Comments)
+                .WithOne(c => c.BoardTask) 
                 .IsRequired();
         }
     }

@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorthBoards.Api.Helpers;
-using WorthBoards.Business.Dtos.Identity;
+using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 
@@ -16,7 +14,7 @@ public class NotificationController(INotificationService _notificationService) :
     [HttpGet]
     public async Task<List<NotificationResponse>> GetNotificationsByUserId(CancellationToken cancellationToken = default)
     {
-        var userId = ClaimsHelper.GetUserIdFromToken(User);
+        var userId = UserHelper.GetUserId(User).Value;
         var notifications = await _notificationService.GetNotificationsByUserId(userId, cancellationToken);
 
         return notifications;

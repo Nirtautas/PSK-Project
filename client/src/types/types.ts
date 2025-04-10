@@ -2,22 +2,47 @@
 
 export type Board = {
     id: number
-    name: string
+    title: string
     description: string
-    imgUrl: string
-    tasks?: Task[]
+    imageURL: string | null
+    creationDate: Date 
+    tasks: Task[]
+}
+
+export type StatusString = 'Pending' | 'In_Progress' | 'Completed'
+
+export enum TaskStatus {
+    PENDING,
+    IN_PROGRESS,
+    COMPLETED
 }
 
 export type Task = {
     id: number
+    boardId: number
     title: string
-    status: string
+    taskStatus: TaskStatus
+    description: string | null
+    creationDate: Date
+    deadlineEnd: Date | null
+    //TODO: make assigned users get passed by id (number[]) instead of string[]
+    assignedUsers: string[] | string | null
 }
 export const sortTasksByTitle = (a: Task, b: Task) => b.title.localeCompare(a.title)
 
+export type RoleString = 'Owner' | 'Editor' | 'Viewer' | null
+
+export enum Role {
+    OWNER,
+    EDITOR,
+    VIEWER
+}
+
 export type User = {
     id: number
-    name: string
+    userRole: RoleString
+    firstName: string
+    lastName: string
 }
 
 export type Notification = {
@@ -25,4 +50,18 @@ export type Notification = {
     title: string
     description: string
     date: Date
+}
+
+export type Comment = {
+    id: number
+    text: string
+    createdAt: Date
+    createdBy: User
+}
+
+export type BoardOnUser = {
+    boardId: number
+    userId: number
+    addedAt: Date
+    userRole: RoleString
 }

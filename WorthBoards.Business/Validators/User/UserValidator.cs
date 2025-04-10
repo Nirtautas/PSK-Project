@@ -1,12 +1,7 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorthBoards.Business.Dtos.Identity;
 
-namespace WorthBoards.Business.Validators
+namespace WorthBoards.Business.Validators.User
 {
     public class UserValidator : AbstractValidator<UserRegisterRequest>
     {
@@ -29,18 +24,6 @@ namespace WorthBoards.Business.Validators
                 .WithMessage(ValidationMessages.UserNameRequired)
                 .MaximumLength(ValidationConstants.NameMaxLength)
                 .WithMessage(ValidationMessages.NameTooLong);
-
-            RuleFor(x => x.Email)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.EmailRequired)
-                .EmailAddress()
-                .WithMessage(ValidationMessages.EmailInvalid);
-
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.PasswordRequired)
-                .MinimumLength(ValidationConstants.PasswordMinLength)
-                .WithMessage(ValidationMessages.PasswordTooShort);
         }
     }
 }

@@ -19,8 +19,5 @@ namespace WorthBoards.Domain.Entities
         //Navigation properties
         public virtual InvitationData? InvitationData { get; set; }
         public virtual ICollection<NotificationOnUser> NotificationsOnUsers { get; set; }
-
-        // Concurrency token
-        public required byte[] RowVersion { get; set; }
     }
 }

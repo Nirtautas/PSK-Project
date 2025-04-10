@@ -6,6 +6,8 @@ import styles from './BoardPage.module.scss'
 import BoardView from '@/components/pages/BoardPage/BoardView'
 import useFetch from '@/hooks/useFetch'
 import BoardApi from '@/api/board.api'
+import { Board } from '../../../types/types'
+import { FetchResponse } from '../../../types/fetch'
 
 type Props = {
     boardId: number
@@ -14,6 +16,7 @@ type Props = {
 const BoardPage = ({ boardId }: Props) => {
     const {
         data,
+        setData,
         errorMsg,
         isLoading
     } = useFetch({
@@ -21,6 +24,11 @@ const BoardPage = ({ boardId }: Props) => {
     })
 
     //Fetch board tasks with separate api call.
+
+    const onUpdate = (updatedBoard: FetchResponse<Board>) =>
+    {
+        setData(updatedBoard)
+    }
 
     return (
         <div className={styles.content}>
@@ -31,7 +39,7 @@ const BoardPage = ({ boardId }: Props) => {
                 </Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={[]} errorMsg={errorMsg} isLoading={isLoading}/>
+                <BoardView boardId={boardId} tasks={[]} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate}/>
             </div>
         </div>
     )

@@ -6,15 +6,17 @@ import BoardApi from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
 import BoardManagementModal, { CreateBoardArgs } from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
-import { GetPageUrl } from '../../../../../constants/route'
+import { Board } from '../../../../../types/types'
+import { FetchResponse } from '../../../../../types/fetch'
 
 type Props = {
     boardId: number
     isLoading: boolean
     errorMsg: string
+    onUpdate: (updatedBoard: FetchResponse<Board>) => void
 }
 
-const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
+const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) => {
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [editData, setEditData] = useState<CreateBoardArgs | null>(null)
     const [editError, setEditError] = useState<string>('')
@@ -43,9 +45,9 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg }: Props) => {
 
     const handleUpdateBoard = async (updatedData: CreateBoardArgs) => {
         try {
-            await BoardApi.updateBoard(boardId, updatedData)
+            const result = await BoardApi.updateBoard(boardId, updatedData)
             setIsEditOpen(false)
-            
+            onUpdate(result)
         } catch (err: any) {
             setEditError(err?.message || 'Failed to update board')
         }

@@ -15,5 +15,8 @@ namespace WorthBoards.Domain.Entities
 
         //Navigation properties
         public virtual Board Board { get; set; }
+
+        // Concurrency token
+        public required byte[] Version { get; set; }
     }
 }

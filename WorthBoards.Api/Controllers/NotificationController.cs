@@ -19,4 +19,14 @@ public class NotificationController(INotificationService _notificationService, I
 
         return notifications;
     }
+
+    [AllowAnonymous]
+    [HttpGet("/test")]
+    public async Task GetNotificationsByUserId(CancellationToken cancellationToken = default)
+    {
+        int boardId = 1;
+        int userId = 1;
+        int responsibleUserId = 1;
+        await _notificationService.NotifyBoardInvitation(boardId, userId, responsibleUserId, cancellationToken);
+    }
 }

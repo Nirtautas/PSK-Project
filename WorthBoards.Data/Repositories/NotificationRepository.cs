@@ -18,7 +18,6 @@ namespace WorthBoards.Data.Repositories
                     {
                         Notification = notification,
                         SenderName = dbContext.Users.Where(user => user.Id == notification.Id).Select(user => user.UserName).FirstOrDefault(),
-                        InvitationData = notification.InvitationData
                     }
                 ).ToListAsync(cancellationToken);
 
@@ -26,10 +25,6 @@ namespace WorthBoards.Data.Repositories
             var result = new List<(Notification, string)>();
             foreach (var pair in notifications)
             {
-                if (pair.InvitationData is not null) {
-                    pair.InvitationData.Notification = null;
-                    pair.Notification.InvitationData = pair.InvitationData;
-                }
                 result.Add((pair.Notification, pair.SenderName ?? ""));
             }
 

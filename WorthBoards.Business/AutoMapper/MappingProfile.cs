@@ -45,7 +45,6 @@ namespace WorthBoards.Business.AutoMapper
                     Id = tuple.Item1.Id,
                     Title = tuple.Item1.Title,
                     SendDate = tuple.Item1.SendDate,
-                    InvitationData = tuple.Item1.InvitationData,
                     NotificationType = tuple.Item1.NotificationType,
                     SenderUsername = tuple.Item2
                 });

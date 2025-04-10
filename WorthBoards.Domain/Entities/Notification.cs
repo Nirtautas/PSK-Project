@@ -17,7 +17,6 @@ namespace WorthBoards.Domain.Entities
         public required NotificationTypeEnum NotificationType { get; set; }
 
         //Navigation properties
-        public virtual InvitationData? InvitationData { get; set; }
         public virtual ICollection<NotificationOnUser> NotificationsOnUsers { get; set; }
     }
 }

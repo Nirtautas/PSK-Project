@@ -11,7 +11,5 @@ namespace WorthBoards.Business.Dtos.Responses
         public required string Description { get; set; }
         public required DateTime SendDate { get; set; }
         public required NotificationTypeEnum NotificationType { get; set; }
-
-        public virtual InvitationData? InvitationData { get; set; }
     }
 }

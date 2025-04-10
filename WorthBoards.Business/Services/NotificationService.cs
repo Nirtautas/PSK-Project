@@ -5,18 +5,22 @@ using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
+using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Business.Services;
 
-public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INotificationService
+public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
 {
     public async Task<List<NotificationResponse>> GetNotificationsByUserId(int userId, CancellationToken cancellationToken)
     {
-        var notifications = await _unitOfWork.NotificationRepository.GetNotificationsAndSenderUsernamesByUserIdAsync(userId, cancellationToken);
+        var notifications = await _unitOfWork.NotificationRepository.GetNotificationsWithSenderAndSubjectUsernamesByUserIdAsync(userId, cancellationToken);
 
-        var notificationsMapped = _mapper.Map<List<(Notification, string)>, List<NotificationResponse>>(notifications);
+        var notificationsMapped = notifications.Select(notification => NotificationFormatter.FormatNotification(
+            notification.Item1, notification.Item2, notification.Item3, userId 
+        )).ToList();
+
         if (notificationsMapped is null)
         {
             return new List<NotificationResponse>();
@@ -27,31 +31,40 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
 
     public async Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken)
     {
-        // TODO: replace with actual notification data from constants & stuff
+        if ((await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)) is null)
+        {
+            throw new NotFoundException($"Board with id: '{boardId}' does not exist.");
+        }
+        if ((await _unitOfWork.BoardTaskRepository.GetByIdAsync(taskId, cancellationToken)) is null) {
+            throw new NotFoundException($"Task with id: '{taskId}' does not exist.");
+        }
+
         var notification = new Notification()
         {
-            // Description = "",
+            BoardId = boardId,
+            TaskId = taskId,
             NotificationType = NotificationEventTypeEnum.TASK_DELETED,
-            // Title = $"Task with id: {taskId} was deleted.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+    
 
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
     public async Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken)
     {
-        // TODO: replace with actual notification data from constants & stuff
         var notification = new Notification()
         {
-            // Description = "",
             NotificationType = NotificationEventTypeEnum.TASK_STATUS_CHANGE,
-            // Title = "Task status was changed.",
             SendDate = DateTime.UtcNow,
-            SenderId = responsibleUserId
+            SenderId = responsibleUserId,
+            OldTaskStatus = oldStatus,
+            NewTaskStatus = newStatus,
+            BoardId = boardId,
+            TaskId = taskId,
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -63,11 +76,11 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            // Description = $"User with id '{userId}' was added to board '{boardId}' by user '{responsibleUserId}'.",
             NotificationType = NotificationEventTypeEnum.USER_ADDED_TO_BOARD,
-            // Title = "User added to board.",
             SendDate = DateTime.UtcNow,
-            SenderId = responsibleUserId
+            SenderId = responsibleUserId,
+            SubjectUserId = userId,
+            BoardId = boardId,
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -78,24 +91,15 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            // Description = $"User with id '{userId}' was removed from board '{boardId}' by user '{responsibleUserId}'.",
             NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
-            // Title = "User removed from board.",
             SendDate = DateTime.UtcNow,
-            SenderId = responsibleUserId
+            SenderId = responsibleUserId,
+            SubjectUserId = userId,
+            BoardId = boardId,
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
-
-        var notificationForSubject = new Notification()
-        {
-            // Description = $"You were removed from board {boardId} by user {responsibleUserId}.",
-            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
-            // Title = "You were removed from a board.",
-            SendDate = DateTime.UtcNow,
-            SenderId = responsibleUserId
-        };
     }
 
     // TODO: Create endpoint for creating invitations
@@ -103,11 +107,10 @@ public class NotificationService(IUnitOfWork _unitOfWork, IMapper _mapper) : INo
     {
         var notification = new Notification()
         {
-            // Description = $"You were invited to board {boardId} by user {responsibleUserId}.",
             NotificationType = NotificationEventTypeEnum.INVITATION,
-            // Title = "You were invited to join a board.",
             SendDate = DateTime.UtcNow,
             SenderId = responsibleUserId,
+            BoardId = boardId,
             NotificationsOnUsers = new List<NotificationOnUser>()
             {
                 new NotificationOnUser()

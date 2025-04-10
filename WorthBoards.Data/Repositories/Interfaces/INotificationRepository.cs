@@ -5,6 +5,6 @@ namespace WorthBoards.Data.Repositories.Interfaces
 {
     public interface INotificationRepository : IRepository<Notification>
     {
-        Task<List<(Notification, string)>> GetNotificationsAndSenderUsernamesByUserIdAsync(int userId, CancellationToken cancellationToken);
+        Task<List<(Notification, string, string)>> GetNotificationsWithSenderAndSubjectUsernamesByUserIdAsync(int userId, CancellationToken cancellationToken);
     }
 }

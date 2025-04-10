@@ -7,8 +7,9 @@
         TASK_STATUS_CHANGE,
         TASK_DELETED,
         TASK_UPDATED,
-        NOTIFY_TASK_ASSIGNED,
+        TASK_ASSIGNED,
         USER_ADDED_TO_BOARD,
         USER_REMOVED_FROM_BOARD,
+        USER_LEFT_BOARD,
     }
 }

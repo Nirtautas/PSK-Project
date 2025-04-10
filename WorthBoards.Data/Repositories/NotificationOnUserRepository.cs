@@ -17,7 +17,7 @@ namespace WorthBoards.Data.Repositories
                         UserId = boardOnUser.UserId,
                         NotificationId = notificationId
                     }
-                );
+                ).ToList();
 
             await dbContext.NotificationsOnUsers.AddRangeAsync(entries, cancellationToken);
             await dbContext.SaveChangesAsync();

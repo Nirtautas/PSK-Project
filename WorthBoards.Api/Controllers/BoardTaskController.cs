@@ -45,9 +45,10 @@ namespace WorthBoards.Api.Controllers
         [HttpDelete("{boardId}/tasks/{boardTaskId}")]
         public async Task<IActionResult> DeleteBoardTask(int boardId, int boardTaskId, CancellationToken cancellationToken)
         {
-            await _boardTaskService.DeleteBoardTask(boardId, boardTaskId, cancellationToken);
             int userId = 1; // TODO: replace with actual id of the user responsible for the change
+            // FIXME: when deleting the task, the notification loses the refference to the task.
             await _notificationService.NotifyTaskDeleted(boardId, boardTaskId, userId, cancellationToken);
+            await _boardTaskService.DeleteBoardTask(boardId, boardTaskId, cancellationToken);
             return NoContent();
         }
 

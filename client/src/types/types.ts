@@ -9,13 +9,19 @@ export type Board = {
     tasks: Task[]
 }
 
-export type StatusString = 'Waiting' | 'In progress' | 'Done'
+export type StatusString = 'Pending' | 'In_Progress' | 'Completed'
+
+export enum TaskStatus {
+    PENDING,
+    IN_PROGRESS,
+    COMPLETED
+}
 
 export type Task = {
     id: number
     boardId: number
     title: string
-    status: StatusString
+    taskStatus: TaskStatus
     description: string | null
     creationDate: Date
     deadlineEnd: Date | null

@@ -4,9 +4,9 @@ import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
-import { Role, RoleString, StatusString, Task } from '@/types/types'
+import { Role, RoleString, StatusString, Task, TaskStatus } from '@/types/types'
 import { useEffect, useState } from 'react'
-import TaskApi from '@/api/task.api'
+import TaskApi, { CreateTaskDto } from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
@@ -26,6 +26,7 @@ type Props = {
 type TaskColumn = {
     label: string
     id: string
+    enumId: TaskStatus
     items: Task[]
 }
 
@@ -46,22 +47,24 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
     const { data: userRole } = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
     
     useEffect(() => {
-        //TODO: tasks should be sorted by status when loading in
         setColumns([
             {
-                label: 'Waiting',
-                id: 'Waiting',
-                items: tasks
+                label: 'Pending',
+                id: 'Pending',
+                enumId: TaskStatus.PENDING,
+                items: tasks.filter(task => task.taskStatus === TaskStatus.PENDING)
             },
             {
                 label: 'In Progress',
-                id: 'In progress',
-                items: []
+                id: 'In_Progress',
+                enumId: TaskStatus.IN_PROGRESS,
+                items: tasks.filter(task => task.taskStatus === TaskStatus.IN_PROGRESS)
             },
             {
-                label: 'Done',
-                id: 'Done',
-                items: []
+                label: 'Completed',
+                id: 'Completed',
+                enumId: TaskStatus.COMPLETED,
+                items: tasks.filter(task => task.taskStatus === TaskStatus.COMPLETED)
             }
         ])
     }, [tasks])
@@ -76,8 +79,13 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
         if (!targetColumn || !targetTask) {
             return
         }
-        const newTask = { ...targetTask, status: targetColumn.id as StatusString }
-        await TaskApi.update(newTask)
+        const newTask: CreateTaskDto = {
+            title: targetTask.title,
+            description: targetTask.description,
+            deadlineEnd: targetTask.deadlineEnd,
+            taskStatus: targetColumn.enumId
+        }
+        await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
         const newColumns: TaskColumn[] = [
             ...columns.filter((column) => column.id !== targetColumn.id)
                 .map((column) => ({

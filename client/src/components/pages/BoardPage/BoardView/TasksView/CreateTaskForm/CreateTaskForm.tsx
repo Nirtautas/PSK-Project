@@ -5,7 +5,7 @@ import TaskApi, { CreateTaskDto } from "@/api/task.api";
 import SelectUsersField from "./SelectUsersField";
 import dayjs from "dayjs";
 import { useState, FormEvent } from "react";
-import { Task } from "@/types/types";
+import { Task, TaskStatus } from "@/types/types";
 
 type Props = {
     handleClose: () => void
@@ -26,7 +26,7 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
             const newTask = {
                 title,
                 description: description || null,
-                status: 'waiting',
+                taskStatus: TaskStatus.PENDING,
                 deadlineEnd: deadline ? deadline.toDate() : null
             };
             

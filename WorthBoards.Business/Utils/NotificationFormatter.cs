@@ -28,7 +28,7 @@ public class NotificationFormatter
         };
     }
 
-    public static string GetNotificationResponseText(Notification notification,
+    private static string GetNotificationResponseText(Notification notification,
         string senderUsername,
         string? subjectUsername,
         bool isSubjectReceiving = false)
@@ -55,11 +55,11 @@ public class NotificationFormatter
                 ? NotificationTextTemplates.YouWereRemovedFromBoard(notification, senderUsername)
                 : NotificationTextTemplates.UserRemovedFromBoard(notification, senderUsername, subjectUsername),
             NotificationEventTypeEnum.USER_LEFT_BOARD => NotificationTextTemplates.UserLeftBoard(notification, subjectUsername),
-            _ => throw new ArgumentOutOfRangeException(nameof(notification.NotificationType), $"Not expected notification type: {notification.NotificationType}"),
+            _ => throw new ArgumentOutOfRangeException(nameof(notification.NotificationType), $"Unexpected notification type: {notification.NotificationType}"),
         };
     }
 
-    public static class NotificationTextTemplates
+    private static class NotificationTextTemplates
     {
         public static string Invitation(Notification notification, string senderUsername) => $"You were invited to join board \"{notification.Board.Title}\" by {senderUsername}.";
 

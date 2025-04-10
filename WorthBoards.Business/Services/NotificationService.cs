@@ -185,8 +185,6 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             }
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        var bou = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId, cancellationToken);
-        _unitOfWork.BoardOnUserRepository.Delete(bou);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

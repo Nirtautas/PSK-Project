@@ -31,6 +31,7 @@ public class InvitationController(INotificationService _notificationService) : C
         return NoContent();
     }
 
+    // TODO: make this actually remove users from board
     [HttpPost("/remove-from-board/")]
     public async Task<IActionResult> RemoveUser([FromBody] RemoveUserFromBoardRequest request, CancellationToken cancellationToken)
     {

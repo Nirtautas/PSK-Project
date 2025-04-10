@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 
@@ -38,7 +39,9 @@ namespace WorthBoards.Api.Controllers
         [HttpPost("{boardId}/tasks")]
         public async Task<IActionResult> CreateBoardTask(int boardId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
         {
+            int userId = 1; // TODO: replace with actual id of the user responsible for the change
             var boardTaskResponse = await _boardTaskService.CreateBoardTask(boardId, boardTaskRequest, cancellationToken);
+            await _notificationService.NotifyTaskCreated(boardId, boardTaskResponse.Id, userId, cancellationToken);
             return CreatedAtAction(nameof(GetBoardTaskById), new { boardId = boardId, boardTaskId = boardTaskResponse.Id}, boardTaskResponse);
         }
 

@@ -4,8 +4,8 @@
     {
         INVITATION = 0,
         TASK_CREATED,
-        TASK_STATUS_CHANGE,
         TASK_DELETED,
+        TASK_STATUS_CHANGE,
         TASK_UPDATED,
         TASK_ASSIGNED,
         USER_ADDED_TO_BOARD,

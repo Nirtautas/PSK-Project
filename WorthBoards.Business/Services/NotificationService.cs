@@ -30,6 +30,22 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         return notificationsMapped;
     }
 
+    public async Task NotifyTaskCreated(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken)
+    {
+        var notification = new Notification()
+        {
+            BoardId = boardId,
+            TaskId = taskId,
+            NotificationType = NotificationEventTypeEnum.TASK_CREATED,
+            SendDate = DateTime.UtcNow,
+            SenderId = responsibleUserId
+        };
+        await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+    }
+
     public async Task NotifyTaskDeleted(int boardId, int taskId, int responsibleUserId, CancellationToken cancellationToken)
     {
         if ((await _unitOfWork.BoardRepository.GetByIdAsync(boardId, cancellationToken)) is null)
@@ -51,7 +67,6 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     
-
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
@@ -103,7 +118,6 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
     }
 
-    // TODO: Create endpoint for creating invitations
     public async Task NotifyBoardInvitation(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
         if (role == UserRoleEnum.OWNER)

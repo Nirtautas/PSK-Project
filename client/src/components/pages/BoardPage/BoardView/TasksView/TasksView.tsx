@@ -1,14 +1,19 @@
+'use client'
+
 import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
-import { StatusString, Task } from '@/types/types'
+import { Role, RoleString, StatusString, Task } from '@/types/types'
 import { useEffect, useState } from 'react'
 import TaskApi from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
 import { Padding } from '@mui/icons-material'
+import { getUserId } from '@/utils/userId'
+import BoardOnUserApi from '@/api/boardOnUser.api'
+import useFetch from '@/hooks/useFetch'
 
 type Props = {
     boardId: number
@@ -28,9 +33,17 @@ const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => 
 
 const TasksView = ({ boardId, tasks, isLoading, errorMsg, handleRefresh }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
+    const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    
+    useEffect(() => {
+        const userId = getUserId()
+        setUserId(userId)
+    }, []);
+
+    const { data: userRole } = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
     
     useEffect(() => {
         //TODO: tasks should be sorted by status when loading in
@@ -101,15 +114,19 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, handleRefresh }: Props
 
     return (
         <Paper className={styles.container}>
-            <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
-            <Modal open={open} onClose={handleClose}>
-                <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h5" component="h2">
-                        Create a task
-                    </Typography>
-                    <CreateTaskForm handleClose={handleClose} boardId={boardId} handleRefresh={handleRefresh} />
-                </Box>
-            </Modal>
+            { userRole && userRole.result !== Role.VIEWER && (
+                <>
+                    <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
+                    <Modal open={open} onClose={handleClose}>
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h5" component="h2">
+                                Create a task
+                            </Typography>
+                            <CreateTaskForm handleClose={handleClose} boardId={boardId} handleRefresh={handleRefresh} />
+                        </Box>
+                    </Modal>
+                </>
+            )}
             <Box className={styles.tasks_container}>
             {
                 columns.map((column, index) => (

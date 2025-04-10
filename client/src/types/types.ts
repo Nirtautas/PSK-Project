@@ -24,7 +24,14 @@ export type Task = {
 }
 export const sortTasksByTitle = (a: Task, b: Task) => b.title.localeCompare(a.title)
 
-export type RoleString = 'Owner' | 'Editor' | 'Viewer'
+export type RoleString = 'Owner' | 'Editor' | 'Viewer' | null
+
+export enum Role {
+    OWNER,
+    EDITOR,
+    VIEWER
+}
+
 export type User = {
     id: number
     userRole: RoleString

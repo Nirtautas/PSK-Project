@@ -36,7 +36,7 @@ namespace WorthBoards.Business.Services
             var board = _mapper.Map<Board>(boardDto);
             board.BoardUsers = new List<BoardOnUser>
             {
-                new BoardOnUser { UserId = userId, UserRole = UserRoleEnum.OWNER }
+                new BoardOnUser { UserId = userId, UserRole = UserRoleEnum.OWNER, Version = new byte[0] }
             };
 
             await _unitOfWork.BoardRepository.CreateAsync(board, cancellationToken);

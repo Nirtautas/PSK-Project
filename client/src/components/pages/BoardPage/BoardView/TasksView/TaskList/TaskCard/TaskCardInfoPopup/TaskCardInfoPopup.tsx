@@ -12,6 +12,7 @@ import AssignedUsersView from './AssignedUsersView';
 import { Task } from '@/types/types';
 import TaskApi from '@/api/task.api';
 import { Comment } from '@/types/types';
+import CommentApi from '@/api/comment.api';
 
 export default function TaskCardInfoPopup({
     open,
@@ -26,6 +27,10 @@ export default function TaskCardInfoPopup({
     const handleClose = () => setOpen(false);
 
     useEffect(() => {
+            CommentApi.createComment(1, 'test', 1);
+            // CommentApi.getAllBoardTaskComments(1, 1);
+            // CommentApi.deleteComment(1, 1, 1);
+            
             TaskApi.getCommentsByTask(1).then((comments) => {
                 setComments(comments);
             }).catch((error) => {

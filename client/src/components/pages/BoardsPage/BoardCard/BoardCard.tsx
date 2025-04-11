@@ -5,7 +5,7 @@ import styles from './BoardCard.module.scss'
 type Props = {
     name: string
     description: string
-    imgUrl: string
+    imgUrl: string | undefined
     onClick: () => void
     isLoading: boolean
 } | { isLoading: true }

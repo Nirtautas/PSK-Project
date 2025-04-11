@@ -13,25 +13,26 @@ type Props = {
 }
 
 export type CreateBoardArgs = {
-    boardName: string,
+    title: string,
     description: string,
-    image: File | null
+    imageURL: string | null
 }
 
 const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
-    const [boardName, setBoardName] = useState('')
+    const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
-    const [image, setImage] = useState<File | null>(null)
-    const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
+    const [imageURL, setImageURL] = useState<string | null>('')
+    //const [image, setImage] = useState<File | null>(null)
+    //const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            setImage(event.target.files[0])
-        }
-    }
+    //const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //    if (event.target.files && event.target.files.length > 0) {
+    //        setImage(event.target.files[0])
+    //    }
+    //}
 
     const handleSubmit = () => {
-        onSubmit({ boardName, description, image })
+        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
     }
 
     return (
@@ -42,11 +43,11 @@ const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
 
                     <Stack spacing={2} sx={{ maxWidth: 400 }} className={styles.form}>
                         <TextField
-                            label="Board Name"
+                            label="Board Title"
                             variant="outlined"
                             fullWidth
-                            value={boardName}
-                            onChange={(e) => setBoardName(e.target.value)}
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                         />
                         <TextField
                             label="Description"
@@ -57,16 +58,13 @@ const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        <div className={styles.image_section}>
-                            <div className={styles.upload}>
-                                <img src={imageUrl} alt="img"/>
-                                <Button variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
-                                    Upload Image
-                                    <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
-                                </Button>
-                            </div>
-                            {image && <p>{image.name}</p>}
-                        </div>
+                        <TextField
+                            label="Image URL"
+                            variant="outlined"
+                            fullWidth
+                            value={imageURL ?? ''}
+                            onChange={(e) => setImageURL(e.target.value)}
+                        />
                     </Stack>
 
                     <div className={styles.buttons}>
@@ -82,5 +80,19 @@ const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
         </Modal>
     )
 }
+
+/*
+<div className={styles.image_section}>
+    <div className={styles.upload}>
+        <img src={imageUrl} alt="img"/>
+        <Button variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
+            Upload Image
+            <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
+        </Button>
+    </div>
+    {image && <p>{image.name}</p>}
+</div>
+*/
+
 
 export default BoardManagementModal

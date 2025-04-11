@@ -34,18 +34,12 @@ namespace WorthBoards.Business.Services
         public async Task<BoardResponse> CreateBoardAsync(int userId, BoardRequest boardDto, CancellationToken cancellationToken)
         {
             var board = _mapper.Map<Board>(boardDto);
+            board.BoardUsers = new List<BoardOnUser>
+            {
+                new BoardOnUser { UserId = userId, UserRole = UserRoleEnum.OWNER }
+            };
 
             await _unitOfWork.BoardRepository.CreateAsync(board, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            var boardOnUser = new BoardOnUser
-            {
-                BoardId = board.Id, 
-                UserId = userId,    
-                UserRole = UserRoleEnum.OWNER 
-            };
-          
-            await _unitOfWork.BoardOnUserRepository.CreateAsync(boardOnUser, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return _mapper.Map<BoardResponse>(board);

@@ -6,7 +6,7 @@ import styles from './BoardsView.module.scss'
 import { getPageUrl } from '@/constants/urls'
 
 type Props = {
-    boards: Board[]
+    boards: Board[] | undefined
     isLoading: boolean
     errorMsg: string
 }
@@ -39,12 +39,12 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
 
     return (
         <div>
-            {boards.map((board, index) => (
+            {boards?.map((board, index) => (
                 <div className={styles.card_wrapper} key={index}>
                     <BoardCard
-                        name={board.name}
+                        name={board.title}
                         description={board.description}
-                        imgUrl={board.imgUrl}
+                        imgUrl={board.imageURL ?? undefined}
                         onClick={() => router.push(getPageUrl.board(board.id))}
                         isLoading={false}
                     />

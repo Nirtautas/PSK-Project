@@ -17,5 +17,8 @@ namespace WorthBoards.Domain.Entities
 
         //Navigation properties
         public virtual ICollection<BoardTask> BoardTasks { get; set; }
+
+        // Concurrency token
+        public required byte[] Version { get; set; }
     }
 }

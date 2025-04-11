@@ -3,6 +3,7 @@ using WorthBoards.Domain.Entities;
 using WorthBoards.Data.Repositories.Base;
 using WorthBoards.Data.Database;
 using Microsoft.EntityFrameworkCore;
+using WorthBoards.Data.Identity;
 
 namespace WorthBoards.Data.Repositories
 {
@@ -30,6 +31,30 @@ namespace WorthBoards.Data.Repositories
                 .ToListAsync(cancellationToken);
 
             return (boards, totalCount);
+        }
+
+        public async Task<IEnumerable<Tuple<BoardOnUser, ApplicationUser>>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken)
+        {
+            var usersLinkedToBoardQuery =
+                _dbContext.BoardOnUsers
+                .Where(boardOnUser => boardOnUser.BoardId == boardId)
+                .Join(
+                    _dbContext.Users,
+                    boardOnUser => boardOnUser.UserId,
+                    user => user.Id,
+                    (boardOnUser, user) => Tuple.Create(boardOnUser, user)
+                );
+
+            return await usersLinkedToBoardQuery.ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<ApplicationUser>> GetUsersByUserNameAsync(string userName, CancellationToken cancellationToken)
+        {
+            var usersByUserNameQuery =
+                _dbContext.Users
+                .Where(u => EF.Functions.ILike(u.UserName, $"%{userName}%"));
+
+            return await usersByUserNameQuery.ToListAsync(cancellationToken);
         }
     }
 }

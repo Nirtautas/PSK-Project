@@ -1,19 +1,19 @@
 import { Box, Button, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import TaskApi from "@/api/task.api";
+import TaskApi, { CreateTaskDto } from "@/api/task.api";
 import SelectUsersField from "./SelectUsersField";
 import dayjs from "dayjs";
 import { useState, FormEvent } from "react";
-import { Task } from "@/types/types";
+import { Task, TaskStatus } from "@/types/types";
 
-export default function CreateTaskForm({ 
-  handleClose, 
-  boardId 
-}: { 
-  handleClose: () => void, 
-  boardId: number 
-}) {
+type Props = {
+    handleClose: () => void
+    boardId: number
+    onCreate: (t: Task) => void
+}
+
+const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState<dayjs.Dayjs | null>(null);
@@ -26,16 +26,15 @@ export default function CreateTaskForm({
             const newTask = {
                 title,
                 description: description || null,
-                status: 'waiting',
-                deadline: deadline ? deadline.toDate() : null,
-                assignedUsers: selectedUsers
+                taskStatus: TaskStatus.PENDING,
+                deadlineEnd: deadline ? deadline.toDate() : null
             };
             
-            const createdTask = await TaskApi.create(newTask as Omit<Task, 'id'>, boardId);
-            //refresh tasks here if needed
-            console.log('created task ', newTask);
-
-            handleClose();
+            const response = await TaskApi.create(newTask as CreateTaskDto, boardId);
+            if (response.result) {
+                onCreate(response.result)
+            }
+            handleClose()
         } catch (error) {
             console.error('Task creation failed:', error);
         }
@@ -74,3 +73,5 @@ export default function CreateTaskForm({
         </form>
     )
 }
+
+export default CreateTaskForm

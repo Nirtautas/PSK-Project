@@ -21,5 +21,8 @@ namespace WorthBoards.Domain.Entities
         public virtual Board Board { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<TaskOnUser> TasksOnUsers { get; set; }
+
+        // Concurrency token
+        public required byte[] Version { get; set; }
     }
 }

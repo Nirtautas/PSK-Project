@@ -1,7 +1,10 @@
 import { Comment } from "@/types/types";
+import { getUserId } from "@/utils/userId";
 import { Button, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { use, useEffect } from "react";
+import CommentDisplay from "./CommentDisplay";
 
 export default function CommentsView
 ({
@@ -13,6 +16,11 @@ export default function CommentsView
     comments: Comment[] | Comment | null,
     taskId: number
 }) {
+    const userId = getUserId();
+    useEffect(() => {
+        console.log("user id"+userId);
+    }, []);
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -34,19 +42,9 @@ export default function CommentsView
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '60%' }}>
                 {Array.isArray(comments) ? comments.map((comment: Comment, index: number) => (
-                    <Box key={index} sx={{ padding: 1, borderBottom: '1px solid #ccc' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                            <Typography variant="body1">{comment.createdBy.firstName}: {comment.text}</Typography>
-                            <Typography variant="body2" sx={{ marginLeft: 2, color: 'gray' }}>{comment.createdAt.toLocaleString()}</Typography>
-                        </Box>
-                    </Box>
+                    <CommentDisplay commentData={comment} />
                 )) : comments && (
-                    <Box sx={{ padding: 1, borderBottom: '1px solid #ccc' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                            <Typography variant="body1">{comments.createdBy.firstName}: {comments.text}</Typography>
-                            <Typography variant="body2" sx={{ marginLeft: 2, color: 'gray' }}>{comments.createdAt.toLocaleString()}</Typography>
-                        </Box>
-                    </Box>
+                    <CommentDisplay commentData={comments} />
                 )}
             </Box>
             <form onSubmit={handleSubmit}>

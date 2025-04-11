@@ -15,6 +15,7 @@ import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
 import TaskOnUserApi from '@/api/taskOnUser.api';
+import CommentApi from '@/api/comment.api';
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -83,6 +84,10 @@ export default function TaskCardInfoPopup({
     }
     
     useEffect(() => {
+            CommentApi.createComment(1, 'test', 1);
+            // CommentApi.getAllBoardTaskComments(1, 1);
+            // CommentApi.deleteComment(1, 1, 1);
+            
         TaskApi.getCommentsByTask(1).then((comments) => {
             setComments(comments)
         }).catch((error) => {

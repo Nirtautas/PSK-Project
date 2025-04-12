@@ -10,9 +10,6 @@ import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
 import { Task } from '@/types/types';
-import TaskApi from '@/api/task.api';
-import { Comment } from '@/types/types';
-import CommentApi from '@/api/comment.api';
 
 export default function TaskCardInfoPopup({
     open,
@@ -21,23 +18,10 @@ export default function TaskCardInfoPopup({
 }: {
     open: boolean, 
     setOpen: (open: boolean) => void,
-    task: Task
+    task: Task,
 }) {
-    const [comments, setComments] = React.useState<Comment[]>([]);
     const handleClose = () => setOpen(false);
 
-    useEffect(() => {
-            CommentApi.createComment(1, 'test', 1);
-            // CommentApi.getAllBoardTaskComments(1, 1);
-            // CommentApi.deleteComment(1, 1, 1);
-            
-            TaskApi.getCommentsByTask(1).then((comments) => {
-                setComments(comments);
-            }).catch((error) => {
-                console.error("Failed to fetch comments:", error);
-            });
-        }, [open]);
-    
     //TODO: move this to a separate file
     const modalContainer = {
         position: 'absolute',
@@ -84,8 +68,8 @@ export default function TaskCardInfoPopup({
                     <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 2}} >
                         <Grid size={8} sx={{height: '100%'}}>
                             <Stack spacing={2} sx={{height: '100%'}}>
-                                <DeadlineDescriptionView deadline={task.deadline} description={task.description}/>
-                                <CommentsView comments={comments} taskId={task.id}/>
+                                <DeadlineDescriptionView deadline={task.deadlineEnd} description={task.description}/>
+                                <CommentsView boardId={task.boardId} taskId={task.id}/>
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>

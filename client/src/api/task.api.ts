@@ -31,43 +31,4 @@ export default class TaskApi {
             body: JSON.stringify(task)
         })
     }
-
-    //TODO: probably needs to be paginated and taken out to a seperate API file
-    public static async getCommentsByTask(taskId: Task['id']): Promise<Comment[]> {
-        return [
-            {
-                id: 1,
-                text: 'test',
-                createdAt: new Date(),
-                createdBy: {
-                    id: 1,
-                    userRole: 'Owner',
-                    firstName: 'Jonas',
-                    lastName: 'Jonaitis'
-                }
-            },
-            {
-                id: 2,
-                text: 'test',
-                createdAt: new Date(),
-                createdBy: {
-                    id: 1,
-                    userRole: 'Owner',
-                    firstName: 'Petras',
-                    lastName: 'Jonaitis'
-                }
-            },
-            {
-                id: 3,
-                text: 'test',
-                createdAt: new Date(),
-                createdBy: {
-                    id: 2,
-                    userRole: 'Owner',
-                    firstName: 'Eugenijus',
-                    lastName: 'Jonaitis'
-                }
-            }
-        ];
-    }
 }

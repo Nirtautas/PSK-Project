@@ -54,9 +54,10 @@ export type Notification = {
 
 export type Comment = {
     id: number
-    text: string
-    createdAt: Date
-    createdBy: User
+    taskId: number
+    userId: number
+    content: string
+    creationDate: Date
 }
 
 export type BoardOnUser = {

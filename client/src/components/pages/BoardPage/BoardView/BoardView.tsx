@@ -18,8 +18,7 @@ type Props = {
     onCreate: (t: Task) => void
 }
 
-const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate }: Props) => {
-const BoardView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => {
+const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {

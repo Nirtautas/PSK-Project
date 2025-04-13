@@ -8,7 +8,6 @@ import useFetch from '@/hooks/useFetch'
 import BoardApi from '@/api/board.api'
 import { Board } from '../../../types/types'
 import { FetchResponse } from '../../../types/fetch'
-import { useState } from 'react'
 import { Task } from '@/types/types'
 
 type Props = {
@@ -25,20 +24,20 @@ const BoardPage = ({ boardId }: Props) => {
         resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000
     })
 
-    //Fetch board tasks with separate api call.
-
     const onUpdate = (updatedBoard: FetchResponse<Board>) =>
     {
         setData(updatedBoard)
     }
-        isLoading,
-        setData: setBoard
-    } = useFetch({ resolver: () => BoardApi.getBoardById(boardId) })
 
     const handleTaskCreate = (task: Task) => { 
-        setBoard({
-            ...board,
-            tasks: [...board.tasks, task]
+        if (!data?.result) return
+
+        setData({
+            ...data,
+            result: {
+                ...data.result,
+                tasks: [...data.result.tasks, task]
+            }
         })
     }
 
@@ -51,8 +50,7 @@ const BoardPage = ({ boardId }: Props) => {
                 </Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={[]} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate}/>
-                <BoardView boardId={boardId} tasks={board?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={handleTaskCreate}/>
+                <BoardView boardId={boardId} tasks={data?.result?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={handleTaskCreate} onUpdate={onUpdate} />
             </div>
         </div>
     )

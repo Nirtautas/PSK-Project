@@ -40,7 +40,8 @@ const BoardsPage = ({ pageNum }: Props) => {
         const res = await BoardApi.createBoard({
             title,
             description,
-            imageURL
+            imageURL,
+            version: null
         })
 
         setIsModalOpen(false)

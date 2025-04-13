@@ -2,8 +2,10 @@ import {Board} from '@/types/types'
 import { FetchResponse, HTTPMethod, PagedResponse } from '../types/fetch'
 import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
+import TaskApi from './task.api'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'creationDate'>
+export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'>
+export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'>
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<PagedResponse<Board>>> {
@@ -15,11 +17,26 @@ export default class BoardApi {
     }
 
     static async getBoardById(id: number): Promise<FetchResponse<Board>> {
-        return await fetch({
+        const boardResponse = await fetch({
             url: `${apiBaseUrl}/boards/${id}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
         })
+
+        const boardData = boardResponse.result
+
+        const taskResponse = await TaskApi.getTasks(id)
+        const tasks = taskResponse.result ?? []
+
+        boardResponse.result.tasks = tasks
+
+        return {
+            ...boardResponse,
+            result: {
+                ...boardData,
+                tasks
+            }
+        }
     }
 
     static async createBoard(board: CreateBoardDto): Promise<FetchResponse<Board>> {
@@ -31,7 +48,7 @@ export default class BoardApi {
         })
     }
 
-    static async updateBoard(id: number, board: CreateBoardDto): Promise<FetchResponse<Board>> {
+    static async updateBoard(id: number, board: UpdateBoardDto): Promise<FetchResponse<Board>> {
         return await fetch({
             url: `${apiBaseUrl}/boards/${id}`,
             method: HTTPMethod.PUT,

@@ -11,13 +11,13 @@ namespace WorthBoards.Domain.Entities
         public required int BoardTaskId { get; set; }
         public required int UserId { get; set; }
         public required string Content { get; set; }
-        public required DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
         public required bool Edited { get; set; } = false;
 
         //Navigation properties
         public virtual BoardTask BoardTask { get; set; }
 
         // Concurrency token
-        public required byte[] Version { get; set; }
+        public byte[]? Version { get; set; }
     }
 }

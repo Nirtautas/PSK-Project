@@ -18,6 +18,7 @@ export type CreateBoardArgs = {
     title: string,
     description: string,
     imageURL: string | null
+    version: string | null
 }
 
 const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Props) => {
@@ -43,7 +44,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     }, [initialData, open])
 
     const handleSubmit = () => {
-        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
+        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl, version: null })
     }
 
     return (

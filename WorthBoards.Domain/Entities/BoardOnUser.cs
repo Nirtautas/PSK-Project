@@ -17,6 +17,6 @@ namespace WorthBoards.Domain.Entities
         public virtual Board Board { get; set; }
 
         // Concurrency token
-        public required byte[] Version { get; set; }
+        public byte[]? Version { get; set; }
     }
 }

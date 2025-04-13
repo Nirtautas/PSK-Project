@@ -34,7 +34,8 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             const boardData: CreateBoardArgs = {
                 title: result.title,
                 description: result.description,
-                imageURL: result.imageURL || null
+                imageURL: result.imageURL || null,
+                version: result.version
             }
             setEditData(boardData)
             setIsEditOpen(true)

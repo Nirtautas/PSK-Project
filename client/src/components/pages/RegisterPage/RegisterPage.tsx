@@ -45,14 +45,6 @@ const RegisterPage = () => {
         router.push(GetPageUrl.boards(0))
     }
 
-    const displayErrorMsgs = async () => {
-        errorMsgs.map(msg => {
-            return (
-                <div>hi</div>
-            )
-        })
-    }
-
     return (
         <div className={styles.content}>
             <Box component="section" sx={{

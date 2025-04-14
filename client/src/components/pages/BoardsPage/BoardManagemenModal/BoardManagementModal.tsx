@@ -5,20 +5,14 @@ import { Button, Modal, Paper, Stack, TextField, Typography } from '@mui/materia
 import styles from './BoardManagemenModal.module.scss'
 import { useEffect, useState } from 'react'
 import { placeholderImageUrl } from '@/constants/placeholders'
+import { CreateBoardDto } from '../../../../api/board.api'
 
 type Props = {
     open: boolean
     onClose: () => void
-    onSubmit: (args: CreateBoardArgs) => void
-    initialData?: CreateBoardArgs
+    onSubmit: (args: CreateBoardDto) => void
+    initialData?: CreateBoardDto
     mode: 'create' | 'edit'
-}
-
-export type CreateBoardArgs = {
-    title: string,
-    description: string,
-    imageURL: string | null
-    version: string | null
 }
 
 const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Props) => {
@@ -44,7 +38,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     }, [initialData, open])
 
     const handleSubmit = () => {
-        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl, version: null })
+        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
     }
 
     return (

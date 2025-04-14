@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import BoardApi from '@/api/board.api'
+import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
-import BoardManagementModal, { CreateBoardArgs } from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
 import { Board } from '../../../../../types/types'
 import { FetchResponse } from '../../../../../types/fetch'
 
@@ -18,7 +18,7 @@ type Props = {
 
 const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) => {
     const [isEditOpen, setIsEditOpen] = useState(false)
-    const [editData, setEditData] = useState<CreateBoardArgs | null>(null)
+    const [editData, setEditData] = useState<UpdateBoardDto | null>(null)
     const [editError, setEditError] = useState<string>('')
 
     const [isDeleting, setIsDeleting] = useState(false)
@@ -31,7 +31,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             const { result } = await BoardApi.getBoardById(boardId)
             if (result == null) throw new Error('Board not found.')
 
-            const boardData: CreateBoardArgs = {
+            const boardData: UpdateBoardDto = {
                 title: result.title,
                 description: result.description,
                 imageURL: result.imageURL || null,
@@ -44,9 +44,14 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         }
     }
 
-    const handleUpdateBoard = async (updatedData: CreateBoardArgs) => {
+    const handleUpdateBoard = async (updatedData: CreateBoardDto) => {
         try {
-            const result = await BoardApi.updateBoard(boardId, updatedData)
+            const updatedDataWithVersion: UpdateBoardDto = {
+                ...updatedData,
+                version: editData?.version ?? 0
+            }
+
+            const result = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
             setIsEditOpen(false)
             onUpdate(result)
         } catch (err: any) {

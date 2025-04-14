@@ -9,11 +9,8 @@ namespace WorthBoards.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
-
         public required int SenderId { get; set; }
-
         public DateTime SendDate { get; set; }
-
         public required NotificationEventTypeEnum NotificationType { get; set; }
 
         // Event type derived properties

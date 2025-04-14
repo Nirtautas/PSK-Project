@@ -4,8 +4,8 @@ export type Board = {
     description: string
     imageURL: string | null
     creationDate: Date
-    tasks: Task[]
     version: number
+    tasks: Task[]
 }
 
 export type StatusString = 'Pending' | 'In_Progress' | 'Completed'

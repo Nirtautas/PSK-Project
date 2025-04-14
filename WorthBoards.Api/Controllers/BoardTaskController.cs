@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 
@@ -9,7 +10,7 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class BoardTaskController(IBoardTaskService _boardTaskService) : ControllerBase
+    public class BoardTaskController(IBoardTaskService _boardTaskService, INotificationService _notificationService) : ControllerBase
     {
         [HttpGet("{boardId}/tasks")]
         [AuthorizeRole(UserRoleEnum.VIEWER)]
@@ -43,7 +44,9 @@ namespace WorthBoards.Api.Controllers
         [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> CreateBoardTask(int boardId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
         {
+            int userId = UserHelper.GetUserId(User).Value;
             var boardTaskResponse = await _boardTaskService.CreateBoardTask(boardId, boardTaskRequest, cancellationToken);
+            await _notificationService.NotifyTaskCreated(boardId, boardTaskResponse.Id, userId, cancellationToken);
             return CreatedAtAction(nameof(GetBoardTaskById), new { boardId = boardId, boardTaskId = boardTaskResponse.Id}, boardTaskResponse);
         }
 
@@ -59,7 +62,19 @@ namespace WorthBoards.Api.Controllers
         [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UpdateBoardTask(int boardId, int boardTaskId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
         {
+            var oldTask = await _boardTaskService.GetBoardTaskById(boardId, boardTaskId, cancellationToken);
+            var oldStatus = oldTask.TaskStatus;
+            var newStatus = boardTaskRequest.TaskStatus;
+
             var boardTaskResponse = await _boardTaskService.UpdateBoardTask(boardId, boardTaskId, boardTaskRequest, cancellationToken);
+
+            if (oldStatus != newStatus)
+            {
+                int userId = UserHelper.GetUserId(User).Value;
+                await _notificationService.NotifyTaskStatusChange(boardId, boardTaskId, userId, oldStatus, newStatus, cancellationToken);
+                return Ok(boardTaskResponse);
+            }
+
             return Ok(boardTaskResponse);
         }
 

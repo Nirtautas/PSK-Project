@@ -18,6 +18,7 @@ namespace WorthBoards.Domain.Entities
         public virtual BoardTask BoardTask { get; set; }
 
         // Concurrency token
-        public byte[]? Version { get; set; }
+        [Timestamp]
+        public uint Version { get; set; }
     }
 }

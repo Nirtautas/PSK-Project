@@ -30,6 +30,7 @@ const BoardsPage = ({ pageNum }: Props) => {
         pageNum: pageNum,
         resultKey: 'boards'
     })
+    console.log(data)
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
@@ -40,8 +41,7 @@ const BoardsPage = ({ pageNum }: Props) => {
         const res = await BoardApi.createBoard({
             title,
             description,
-            imageURL,
-            version: null
+            imageURL
         })
 
         setIsModalOpen(false)

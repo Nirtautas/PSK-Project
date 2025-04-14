@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WorthBoards.Common.Enums;
 
@@ -17,6 +18,7 @@ namespace WorthBoards.Domain.Entities
         public virtual Board Board { get; set; }
 
         // Concurrency token
-        public byte[]? Version { get; set; }
+        [Timestamp]
+        public uint Version { get; set; }
     }
 }

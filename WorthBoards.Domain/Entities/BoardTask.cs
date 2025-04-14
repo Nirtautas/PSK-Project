@@ -23,6 +23,7 @@ namespace WorthBoards.Domain.Entities
         public virtual ICollection<TaskOnUser> TasksOnUsers { get; set; }
 
         // Concurrency token
-        public byte[]? Version { get; set; }
+        [Timestamp]
+        public uint Version { get; set; }
     }
 }

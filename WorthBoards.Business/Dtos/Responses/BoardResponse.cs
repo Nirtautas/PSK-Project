@@ -7,6 +7,6 @@
         public string Description { get; set; }
         public string ImageURL { get; set; }
         public DateTime CreationDate { get; set; }
-        public byte[]? Version { get; set; }
+        public uint Version { get; set; }
     }
 }

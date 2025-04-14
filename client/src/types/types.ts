@@ -4,8 +4,8 @@ export type Board = {
     description: string
     imageURL: string | null
     creationDate: Date
-    version: string | null
     tasks: Task[]
+    version: number
 }
 
 export type StatusString = 'Pending' | 'In_Progress' | 'Completed'
@@ -24,7 +24,7 @@ export type Task = {
     description: string | null
     creationDate: Date
     deadlineEnd: Date | null
-    version: string | null
+    version: number
     //TODO: make assigned users get passed by id (number[]) instead of string[]
     assignedUsers: string[] | string | null
 }
@@ -57,7 +57,7 @@ export type Comment = {
     text: string
     createdAt: Date
     createdBy: User
-    version: string | null
+    version: number
 }
 
 export type BoardOnUser = {
@@ -65,5 +65,5 @@ export type BoardOnUser = {
     userId: number
     addedAt: Date
     userRole: RoleString
-    version: string | null
+    version: number
 }

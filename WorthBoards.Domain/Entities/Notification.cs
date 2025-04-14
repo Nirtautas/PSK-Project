@@ -13,7 +13,7 @@ namespace WorthBoards.Domain.Entities
         [MaxLength(100)]
         public required string Title { get; set; }
         public required string Description { get; set; }
-        public required DateTime SendDate { get; set; }
+        public DateTime SendDate { get; set; }
         public required NotificationTypeEnum NotificationType { get; set; }
 
         //Navigation properties

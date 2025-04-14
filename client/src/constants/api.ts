@@ -1,5 +1,5 @@
 export const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json"
+    "Content-Type": 'application/json'
 }
 
 export const apiBaseUrl = "http://localhost:5000/api"

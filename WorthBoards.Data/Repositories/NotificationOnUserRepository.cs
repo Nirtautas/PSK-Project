@@ -8,18 +8,20 @@ namespace WorthBoards.Data.Repositories
 {
     public class NotificationOnUserRepository(ApplicationDbContext dbContext) : Repository<NotificationOnUser>(dbContext), INotificationOnUserRepository
     {
-        public async Task AddNotificationToBoardUsers(int notificationId, int boardId, CancellationToken cancellationToken)
+        public async Task AddNotificationToBoardUsers(Notification notification, int boardId, CancellationToken cancellationToken)
         {
             var entries = dbContext.BoardOnUsers
                 .Where(boardOnUser => boardOnUser.BoardId == boardId)
-                .Select(boardOnUser => new NotificationOnUser()
-                    {
-                        UserId = boardOnUser.UserId,
-                        NotificationId = notificationId
-                    }
-                ).ToList();
+                .Select(boardOnUser => boardOnUser.UserId)
+                .ToList();
 
-            await dbContext.NotificationsOnUsers.AddRangeAsync(entries, cancellationToken);
+            notification.NotificationsOnUsers = entries.Select(userId => new NotificationOnUser()
+            {
+                NotificationId = notification.Id,
+                UserId = userId
+            }).ToList();
+
+            // await dbContext.NotificationsOnUsers.AddRangeAsync(entries, cancellationToken);
         }
     }
 }

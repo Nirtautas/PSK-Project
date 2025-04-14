@@ -41,7 +41,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             SenderId = responsibleUserId
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -57,7 +57,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             TaskId = taskId,
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -71,7 +71,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             BoardId = boardId,
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -87,7 +87,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 BoardId = boardId,
             };
             await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification.Id, boardId, cancellationToken);
+            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }

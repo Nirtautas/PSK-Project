@@ -1,11 +1,10 @@
-
-
 export type Board = {
     id: number
     title: string
     description: string
     imageURL: string | null
-    creationDate: Date 
+    creationDate: Date
+    version: string | null
     tasks: Task[]
 }
 
@@ -25,6 +24,7 @@ export type Task = {
     description: string | null
     creationDate: Date
     deadlineEnd: Date | null
+    version: string | null
     //TODO: make assigned users get passed by id (number[]) instead of string[]
     assignedUsers: string[] | string | null
 }
@@ -57,6 +57,7 @@ export type Comment = {
     text: string
     createdAt: Date
     createdBy: User
+    version: string | null
 }
 
 export type BoardOnUser = {
@@ -64,4 +65,5 @@ export type BoardOnUser = {
     userId: number
     addedAt: Date
     userRole: RoleString
+    version: string | null
 }

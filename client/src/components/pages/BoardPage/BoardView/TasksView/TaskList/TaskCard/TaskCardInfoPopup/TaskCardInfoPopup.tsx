@@ -22,16 +22,16 @@ export default function TaskCardInfoPopup({
     setOpen: (open: boolean) => void,
     task: Task
 }) {
-    const [comments, setComments] = React.useState<Comment[]>([]);
+    const [comments, setComments] = React.useState<Comment[]>([])
     const handleClose = () => setOpen(false);
 
     useEffect(() => {
             TaskApi.getCommentsByTask(1).then((comments) => {
-                setComments(comments);
+                setComments(comments)
             }).catch((error) => {
-                console.error("Failed to fetch comments:", error);
-            });
-        }, [open]);
+                console.error("Failed to fetch comments:", error)
+            })
+        }, [open])
     
     //TODO: move this to a separate file
     const modalContainer = {
@@ -79,7 +79,7 @@ export default function TaskCardInfoPopup({
                     <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 2}} >
                         <Grid size={8} sx={{height: '100%'}}>
                             <Stack spacing={2} sx={{height: '100%'}}>
-                                <DeadlineDescriptionView deadline={task.deadline} description={task.description}/>
+                                <DeadlineDescriptionView deadline={task.deadlineEnd} description={task.description}/>
                                 <CommentsView comments={comments} taskId={task.id}/>
                             </Stack>
                         </Grid>

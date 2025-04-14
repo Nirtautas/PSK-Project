@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using POS_System.Data.Database;
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 

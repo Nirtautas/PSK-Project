@@ -40,17 +40,19 @@ export default function TaskCardInfoPopup({
         setOpen(false)
         setEditMode(false)
 
-        const newTask: UpdateTaskDto = {
-            title: title ?? "",
-            description: description,
-            deadlineEnd: deadline,
-            taskStatus: task.taskStatus,
-            version: task.version
-        }
-        const updatedTask = await TaskApi.update(boardId, task.id, newTask)
+        if (editMode) {
+            const newTask: UpdateTaskDto = {
+                title: title ?? "",
+                description: description,
+                deadlineEnd: deadline,
+                taskStatus: task.taskStatus,
+                version: task.version
+            }
+            const updatedTask = await TaskApi.update(boardId, task.id, newTask)
 
-        if (updatedTask.result)
-            handleUpdate(updatedTask.result)
+            if (updatedTask.result)
+                handleUpdate(updatedTask.result)
+        }
     }
 
     const handleEdit = () => {

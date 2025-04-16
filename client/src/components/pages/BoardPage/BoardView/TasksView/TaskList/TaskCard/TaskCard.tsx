@@ -1,9 +1,10 @@
 import { Box, Card, CardActionArea, Modal, Typography } from '@mui/material'
-import { Task } from '@/types/types'
+import { Role, Task } from '@/types/types'
 
 import styles from './TaskCard.module.scss'
 import React from 'react'
 import TaskCardInfoPopup from './TaskCardInfoPopup'
+import { FetchResponse } from '@/types/fetch'
 
 type Props = {
     boardId: number,
@@ -11,9 +12,10 @@ type Props = {
     onClick: () => void
     onMouseDown: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
+    userRole: FetchResponse<Role | null>
 }
 
-const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate }: Props) => {
+const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole }: Props) => {
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -32,7 +34,7 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate }: Props) 
                     </span>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate}/>
+            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate} userRole={userRole}/>
         </>
     )
 }

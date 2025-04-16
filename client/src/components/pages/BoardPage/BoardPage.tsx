@@ -21,7 +21,7 @@ const BoardPage = ({ boardId }: Props) => {
         errorMsg,
         isLoading
     } = useFetch({
-        resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000
+        resolver: () => BoardApi.getBoardById(boardId)
     })
 
     const onUpdate = (updatedBoard: FetchResponse<Board>) => {

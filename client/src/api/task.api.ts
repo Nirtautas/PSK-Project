@@ -33,6 +33,14 @@ export default class TaskApi {
         })
     }
 
+    static async delete(boardId: number, taskId: number): Promise<FetchResponse<any>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}`,
+            method: HTTPMethod.DELETE,
+            headers: getAuthorizedHeaders()
+        })
+    }
+
     //TODO: probably needs to be paginated and taken out to a seperate API file
     public static async getCommentsByTask(taskId: Task['id']): Promise<Comment[]> {
         return [

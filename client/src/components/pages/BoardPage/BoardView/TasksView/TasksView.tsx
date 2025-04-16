@@ -151,6 +151,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
+                            userRole={userRole}
                             />
                     </div>
                 ))

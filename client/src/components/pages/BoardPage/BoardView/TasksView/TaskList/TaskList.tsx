@@ -1,9 +1,10 @@
 
 import styles from './TaskList.module.scss'
 import { Skeleton } from '@mui/material'
-import { Task } from '@/types/types'
+import { Role, Task } from '@/types/types'
 import TaskCard from '@/components/pages/BoardPage/BoardView/TasksView/TaskList/TaskCard'
 import ErrorDisplay from '@/components/shared/ErrorDisplay'
+import { FetchResponse } from '@/types/fetch'
 
 type Props = {
     boardId: number,
@@ -13,9 +14,10 @@ type Props = {
     tasks: Task[]
     onMouseDown: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
+    userRole: FetchResponse<Role | null>
 }
 
-const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate }: Props) => {
+const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole }: Props) => {
     if (isLoading) {
         return (
             <div className={styles.tasks_list}>
@@ -33,7 +35,13 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
         <div className={styles.tasks_list}>
                 {tasks.map((task, index) => (
                     <div key={index} className={styles.task_card_wrapper}>
-                        <TaskCard boardId={boardId} task={task} onClick={() => { console.log('clicked task: ', task)}} onMouseDown={onMouseDown} onTaskUpdate={onTaskUpdate}/>
+                        <TaskCard
+                            boardId={boardId}
+                            task={task}
+                            onClick={() => { console.log('clicked task: ', task)}}
+                            onMouseDown={onMouseDown}
+                            onTaskUpdate={onTaskUpdate}
+                            userRole={userRole}/>
                     </div>
                 ))}
         </div>

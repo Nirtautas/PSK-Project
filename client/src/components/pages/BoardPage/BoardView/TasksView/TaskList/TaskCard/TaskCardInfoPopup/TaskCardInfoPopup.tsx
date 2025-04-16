@@ -9,23 +9,26 @@ import Stack from '@mui/material/Stack';
 import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
-import { Task } from '@/types/types';
+import { Role, Task } from '@/types/types';
 import TaskApi, { UpdateTaskDto } from '@/api/task.api';
 import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
+import { FetchResponse } from '@/types/fetch';
 
 export default function TaskCardInfoPopup({
     boardId,
     open,
     setOpen,
     task,
-    handleUpdate
+    handleUpdate,
+    userRole
 }: {
     boardId: number,
     open: boolean, 
     setOpen: (open: boolean) => void,
     task: Task
     handleUpdate: (t: Task) => void
+    userRole: FetchResponse<Role | null>
 }) {
     const [comments, setComments] = useState<Comment[]>([])
     const [editMode, setEditMode] = useState<boolean>(false)
@@ -52,6 +55,10 @@ export default function TaskCardInfoPopup({
 
     const handleEdit = () => {
         setEditMode(editMode ? false : true)
+    }
+
+    const handleDelete = async () => {
+        await TaskApi.delete(boardId, task.id)
     }
     
 
@@ -100,12 +107,16 @@ export default function TaskCardInfoPopup({
                             onChange={(e) => setTitle(e.target.value)}
                         />
                     }
-                    <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
-                        Edit
-                    </Button>
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
-                        Delete
-                    </Button>
+                    {userRole && userRole.result !== Role.VIEWER && (
+                        <>
+                            <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                Edit
+                            </Button>
+                            <Button variant="outlined" onClick={handleDelete} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                Delete
+                            </Button>
+                        </>
+                    )}
                     <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Close
                     </Button>

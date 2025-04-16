@@ -24,8 +24,7 @@ const BoardPage = ({ boardId }: Props) => {
         resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000
     })
 
-    const onUpdate = (updatedBoard: FetchResponse<Board>) =>
-    {
+    const onUpdate = (updatedBoard: FetchResponse<Board>) => {
         setData(updatedBoard)
     }
 
@@ -41,6 +40,18 @@ const BoardPage = ({ boardId }: Props) => {
         })
     }
 
+    const handleTaskUpdate = (updatedTask: Task) => {
+        if (!data?.result) return
+
+        setData({
+            ...data,
+            result: {
+                ...data.result,
+                tasks: data.result.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+            }
+        })
+    }
+
     return (
         <div className={styles.content}>
             <Box className={styles.toolbar}>
@@ -50,7 +61,14 @@ const BoardPage = ({ boardId }: Props) => {
                 </Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={data?.result?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={handleTaskCreate} onUpdate={onUpdate} />
+                <BoardView
+                    boardId={boardId}
+                    tasks={data?.result?.tasks || []}
+                    errorMsg={errorMsg}
+                    isLoading={isLoading}
+                    onCreate={handleTaskCreate}
+                    onUpdate={onUpdate}
+                    onTaskUpdate={handleTaskUpdate} />
             </div>
         </div>
     )

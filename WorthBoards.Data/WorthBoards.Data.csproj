@@ -22,8 +22,4 @@
     <ProjectReference Include="..\WorthBoards.Domain\WorthBoards.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

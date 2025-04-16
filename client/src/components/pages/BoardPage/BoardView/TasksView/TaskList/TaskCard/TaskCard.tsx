@@ -6,12 +6,14 @@ import React from 'react'
 import TaskCardInfoPopup from './TaskCardInfoPopup'
 
 type Props = {
+    boardId: number,
     task: Task
     onClick: () => void
     onMouseDown: (e: MouseEvent, task: Task) => void
+    onTaskUpdate: (t: Task) => void
 }
 
-const TaskCard = ({ onClick, task, onMouseDown }: Props) => {
+const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate }: Props) => {
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -30,7 +32,7 @@ const TaskCard = ({ onClick, task, onMouseDown }: Props) => {
                     </span>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup open={open} setOpen={setOpen} task={task}/>
+            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate}/>
         </>
     )
 }

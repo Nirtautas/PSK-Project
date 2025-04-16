@@ -16,13 +16,14 @@ type Props = {
     tasks: Task[] | undefined
     onUpdate: (updatedBoard: FetchResponse<Board>) => void
     onCreate: (t: Task) => void
+    onTaskUpdate: (t: Task) => void
 }
 
-const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate }: Props) => {
+const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate, onTaskUpdate }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} />
+        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} />
         if (tab === 'Collaborators') return <div>Collaborators</div>
         if (tab === 'Archives') return <div>Archives</div>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />

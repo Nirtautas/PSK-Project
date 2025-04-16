@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
@@ -10,20 +10,50 @@ import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
 import { Task } from '@/types/types';
-import TaskApi from '@/api/task.api';
+import TaskApi, { UpdateTaskDto } from '@/api/task.api';
 import { Comment } from '@/types/types';
+import { TextField } from '@mui/material';
 
 export default function TaskCardInfoPopup({
+    boardId,
     open,
     setOpen,
-    task
+    task,
+    handleUpdate
 }: {
+    boardId: number,
     open: boolean, 
     setOpen: (open: boolean) => void,
     task: Task
+    handleUpdate: (t: Task) => void
 }) {
-    const [comments, setComments] = React.useState<Comment[]>([])
-    const handleClose = () => setOpen(false);
+    const [comments, setComments] = useState<Comment[]>([])
+    const [editMode, setEditMode] = useState<boolean>(false)
+    const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
+    const [description, setDescription] = useState<string | null>(task.description)
+    const [title, setTitle] = useState<string | null>(task.title)
+    
+    const handleClose = async () => {
+        setOpen(false)
+        setEditMode(false)
+
+        const newTask: UpdateTaskDto = {
+            title: title ?? "",
+            description: description,
+            deadlineEnd: deadline,
+            taskStatus: task.taskStatus,
+            version: task.version
+        }
+        const updatedTask = await TaskApi.update(boardId, task.id, newTask)
+
+        if (updatedTask.result)
+            handleUpdate(updatedTask.result)
+    }
+
+    const handleEdit = () => {
+        setEditMode(editMode ? false : true)
+    }
+    
 
     useEffect(() => {
             TaskApi.getCommentsByTask(1).then((comments) => {
@@ -61,10 +91,16 @@ export default function TaskCardInfoPopup({
         <Modal open={open} onClose={handleClose}>
             <Box sx={modalContainer}>
                 <Box sx={topRow}>
-                    <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ flexGrow: 1 }}>
-                        {task.title}
-                    </Typography>
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
+                    {!editMode && <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ flexGrow: 1 }}>{title}</Typography>}
+                    {editMode && 
+                        <TextField
+                            sx={{ flexGrow: 1 }}
+                            variant="outlined" 
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    }
+                    <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Edit
                     </Button>
                     <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
@@ -79,7 +115,13 @@ export default function TaskCardInfoPopup({
                     <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 2}} >
                         <Grid size={8} sx={{height: '100%'}}>
                             <Stack spacing={2} sx={{height: '100%'}}>
-                                <DeadlineDescriptionView deadline={task.deadlineEnd} description={task.description}/>
+                                <DeadlineDescriptionView
+                                    editMode={editMode}
+                                    deadline={deadline}
+                                    setDeadline={setDeadline}
+                                    description={description}
+                                    setDescription={setDescription}
+                                />
                                 <CommentsView comments={comments} taskId={task.id}/>
                             </Stack>
                         </Grid>

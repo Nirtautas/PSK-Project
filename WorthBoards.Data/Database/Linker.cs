@@ -2,7 +2,7 @@
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 
-namespace POS_System.Data.Database
+namespace WorthBoards.Data.Database
 {
     public static class Linker
     {

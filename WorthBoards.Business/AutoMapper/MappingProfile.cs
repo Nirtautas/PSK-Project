@@ -38,6 +38,26 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Comment, CommentUpdateRequest>();
             CreateMap<CommentUpdateRequest, Comment>();
 
+            CreateMap<Tuple<Comment, ApplicationUser>, CommentWithUserDataResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item1.Id))
+                .ForMember(dest => dest.TaskId, opt => opt.MapFrom(src => src.Item1.BoardTaskId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Item1.UserId))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Item1.Content))
+                .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(src => src.Item1.CreationDate))
+                .ForMember(dest => dest.Edited, opt => opt.MapFrom(src => src.Item1.Edited))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL));
+
+            //Notification
+            CreateMap<Notification, NotificationResponse>();
+            // CreateMap<(Notification, string), NotificationResponse>()
+            //     .ConvertUsing(tuple => new NotificationResponse() {
+            //         Id = tuple.Item1.Id,
+            //         SendDate = tuple.Item1.SendDate,
+            //         NotificationType = tuple.Item1.NotificationType,
+            //         SenderUsername = tuple.Item2
+            //     });
+
             CreateMap<LinkUserToBoardResponse, BoardOnUser>();
             CreateMap<BoardOnUser, LinkUserToBoardRequest>();
 

@@ -3,23 +3,25 @@
 import { Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
 import styles from './BoardManagemenModal.module.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { placeholderImageUrl } from '@/constants/placeholders'
-import { CreateBoardDto } from '../../../../api/board.api'
 
 type Props = {
     open: boolean
     onClose: () => void
-    onSubmit: (args: CreateBoardDto) => void
-    initialData?: CreateBoardDto
-    mode: 'create' | 'edit'
+    onSubmit: (args: CreateBoardArgs) => void
 }
 
-const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Props) => {
-    const [title, setTitle] = useState(initialData?.title || '')
-    const [description, setDescription] = useState(initialData?.description || '')
-    const [imageURL, setImageURL] = useState<string | null>(initialData?.imageURL ?? '')
+export type CreateBoardArgs = {
+    title: string,
+    description: string,
+    imageURL: string | null
+}
 
+const BoardManagementModal = ({ open, onClose, onSubmit }: Props) => {
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [imageURL, setImageURL] = useState<string | null>('')
     //const [image, setImage] = useState<File | null>(null)
     //const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
 
@@ -29,14 +31,6 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     //    }
     //}
 
-    useEffect(() => {
-        if (initialData) {
-            setTitle(initialData.title)
-            setDescription(initialData.description)
-            setImageURL(initialData.imageURL)
-        }
-    }, [initialData, open])
-
     const handleSubmit = () => {
         onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
     }
@@ -45,7 +39,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         <Modal open={open} onClose={onClose}>
             <div className={styles.wrapper}>
                 <Paper className={styles.container}>
-                    <Typography variant="h3" className={styles.title_text}>{mode === 'edit' ? 'Edit Board' : 'Create New Board'}</Typography>
+                    <Typography variant="h3" className={styles.title_text}>Create New Board</Typography>
 
                     <Stack spacing={2} sx={{ maxWidth: 400 }} className={styles.form}>
                         <TextField
@@ -78,7 +72,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             Cancel
                         </Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit} className={styles.buttons_button_right} sx={{ marginLeft: '1rem' }}>
-                            {mode === 'edit' ? 'Edit' : 'Create'}
+                            Create
                         </Button>
                     </div>
                 </Paper>

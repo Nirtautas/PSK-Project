@@ -20,6 +20,10 @@ public interface INotificationService {
 
     Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
-    // Call this before removing the user so that the user gets the notification that they have been removed
-    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken);
+    /// <summary>
+    /// Does not save changes. You must do that manually within caller methods.
+    /// Call this before removing the user so that they receive the removal notification.
+    /// </summary>
+    /// <param name="_unitOfWork"></param>
+    Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 }

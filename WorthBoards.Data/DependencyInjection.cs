@@ -47,12 +47,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IBoardRepository, BoardRepository>()
                 .AddScoped<IBoardTaskRepository, BoardTaskRepository>()
                 .AddScoped<ICommentRepository, CommentRepository>()
+                .AddScoped<IInvitationDataRepository, InvitationDataRepository>()
                 .AddScoped<INotificationRepository, NotificationRepository>()
                 .AddScoped<ITasksOnUserRepository, TasksOnUserRepository>()
                 .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IBoardOnUserRepository, BoardOnUserRepository>()
-                .AddScoped<INotificationOnUserRepository, NotificationOnUserRepository>()
-                .AddScoped<IUserRepository, UserRepository>();
+                .AddScoped<INotificationOnUserRepository, NotificationOnUserRepository>();
 
             return services;
         }

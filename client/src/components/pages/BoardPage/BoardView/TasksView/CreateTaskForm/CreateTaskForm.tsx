@@ -21,7 +21,7 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
     const [selectedUsers, setSelectedUsers] = useState<BoardUser[]>([]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+        event.preventDefault();
         
         try {
             const newTask = {
@@ -29,9 +29,9 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
                 description: description || null,
                 taskStatus: TaskStatus.PENDING,
                 deadlineEnd: deadline ? deadline.toDate() : null
-            }
+            };
             
-            const response = await TaskApi.create(newTask as CreateTaskDto, boardId)
+            const response = await TaskApi.create(newTask as CreateTaskDto, boardId);
             if (response.result) {
                 const userIds = selectedUsers.map(user => user.id)
                 await TaskOnUserApi.linkTaskUser(boardId, response.result.id, userIds)
@@ -39,9 +39,9 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
             }
             handleClose()
         } catch (error) {
-            console.error('Task creation failed:', error)
+            console.error('Task creation failed:', error);
         }
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit}>

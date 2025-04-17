@@ -6,9 +6,11 @@ import BoardApi, { CreateBoardDto } from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
 
 import styles from './BoardsPage.module.scss'
+import { useCallback } from 'react'
+import { useBoards } from '../../../hooks/boards.hook'
 import usePagedFetch from '../../../hooks/usePagedFetch'
 import { Board } from '../../../types/types'
-import { useRouter } from 'next/navigation'
+import router, { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
 import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
@@ -30,9 +32,17 @@ const BoardsPage = ({ pageNum }: Props) => {
         pageNum: pageNum,
         resultKey: 'boards'
     })
-    console.log(data)
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+    const handleBoardCreate = ({ title, description, imageURL}: CreateBoardArgs)=> {
+        BoardApi.createBoard({
+            title: title,
+            description: description,
+            imageURL: imageURL
+        })
+        setIsModalOpen(false)
+    }
 
     const totalPages = data ? Math.ceil(data.totalCount / data.pageSize) : 0
     const isLastPage = data ? pageNum >= totalPages - 1 : false
@@ -67,7 +77,6 @@ const BoardsPage = ({ pageNum }: Props) => {
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleBoardCreate}
-                mode="create"
             />
             <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
             <PageChanger

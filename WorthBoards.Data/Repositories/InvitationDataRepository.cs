@@ -5,7 +5,7 @@ using WorthBoards.Data.Database;
 
 namespace WorthBoards.Data.Repositories
 {
-    public class NotificationOnUserRepository(ApplicationDbContext dbContext) : Repository<NotificationOnUser>(dbContext), INotificationOnUserRepository
+    public class InvitationDataRepository(ApplicationDbContext dbContext) : Repository<InvitationData>(dbContext), IInvitationDataRepository
     {
-    }   
+    }
 }

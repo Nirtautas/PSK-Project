@@ -4,12 +4,13 @@ import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
-import { Role, Task, TaskStatus } from '@/types/types'
+import { Role, RoleString, StatusString, Task, TaskStatus } from '@/types/types'
 import { useEffect, useState } from 'react'
-import TaskApi, { UpdateTaskDto } from '@/api/task.api'
+import TaskApi, { CreateTaskDto } from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
+import { Padding } from '@mui/icons-material'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import useFetch from '@/hooks/useFetch'
@@ -80,12 +81,11 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
         if (!targetColumn || !targetTask) {
             return
         }
-        const newTask: UpdateTaskDto = {
+        const newTask: CreateTaskDto = {
             title: targetTask.title,
             description: targetTask.description,
             deadlineEnd: targetTask.deadlineEnd,
-            taskStatus: targetColumn.enumId,
-            version: targetTask.version
+            taskStatus: targetColumn.enumId
         }
         await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
         const newColumns: TaskColumn[] = [

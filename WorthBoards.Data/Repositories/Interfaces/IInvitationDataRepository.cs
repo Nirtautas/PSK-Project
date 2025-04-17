@@ -3,7 +3,7 @@ using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Data.Repositories.Interfaces
 {
-    public interface INotificationOnUserRepository : IRepository<NotificationOnUser>
+    public interface IInvitationDataRepository : IRepository<InvitationData>
     {
     }
 }

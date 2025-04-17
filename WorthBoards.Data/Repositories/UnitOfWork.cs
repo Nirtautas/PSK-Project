@@ -7,21 +7,21 @@ public class UnitOfWork(ApplicationDbContext dbContext,
                         IBoardRepository boardRepository,
                         IBoardTaskRepository boardTaskRepository,
                         ICommentRepository commentRepository,
-                        INotificationRepository notificationRepository,
+                        IInvitationDataRepository invitationDataRepository, 
+                        INotificationRepository notificationRepository, 
                         ITasksOnUserRepository tasksOnUserRepository,
                         IBoardOnUserRepository boardOnUserRepository,
-                        INotificationOnUserRepository notificationOnUserRepository,
-                        IUserRepository userRepository) : IUnitOfWork
+                        INotificationOnUserRepository notificationOnUserRepository) : IUnitOfWork
 {
     public IBoardRepository BoardRepository { get; } = boardRepository;
     public IBoardTaskRepository BoardTaskRepository { get; } = boardTaskRepository;
     public ICommentRepository CommentRepository { get; } = commentRepository;
+    public IInvitationDataRepository InvitationDataRepository { get; } = invitationDataRepository;
     public INotificationRepository NotificationRepository { get; } = notificationRepository;
     public ITasksOnUserRepository TasksOnUserRepository { get; } = tasksOnUserRepository;
     public IBoardOnUserRepository BoardOnUserRepository { get; } = boardOnUserRepository;
     public INotificationOnUserRepository NotificationOnUserRepository { get; } = notificationOnUserRepository;
-    public IUserRepository UserRepository { get; } = userRepository;
-
+  
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await dbContext.SaveChangesAsync(cancellationToken);

@@ -1,8 +1,8 @@
 import {Board} from '@/types/types'
+import TaskApi from '@/api/task.api'
 import { FetchResponse, HTTPMethod, PagedResponse } from '../types/fetch'
 import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
-import TaskApi from './task.api'
 
 export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'| 'collaborators'>
 export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'| 'collaborators'>
@@ -16,29 +16,6 @@ export default class BoardApi {
         })
     }
 
-    static async getBoardById(id: number): Promise<FetchResponse<Board>> {
-        const boardResponse = await fetch({
-            url: `${apiBaseUrl}/boards/${id}`,
-            method: HTTPMethod.GET,
-            headers: getAuthorizedHeaders()
-        })
-
-        const boardData = boardResponse.result
-
-        const taskResponse = await TaskApi.getTasks(id)
-        const tasks = taskResponse.result ?? []
-
-        boardResponse.result.tasks = tasks
-
-        return {
-            ...boardResponse,
-            result: {
-                ...boardData,
-                tasks
-            }
-        }
-    }
-
     static async createBoard(board: CreateBoardDto): Promise<FetchResponse<Board>> {
         return await fetch({
             url: `${apiBaseUrl}/boards`,
@@ -48,20 +25,14 @@ export default class BoardApi {
         })
     }
 
-    static async updateBoard(id: number, board: UpdateBoardDto): Promise<FetchResponse<Board>> {
-        return await fetch({
-            url: `${apiBaseUrl}/boards/${id}`,
-            method: HTTPMethod.PUT,
-            headers: getAuthorizedHeaders(),
-            body: JSON.stringify(board)
-        })
-    }
-
-    static async deleteBoard(id: number): Promise<FetchResponse<any>> {
-        return await fetch({
-            url: `${apiBaseUrl}/boards/${id}`,
-            method: HTTPMethod.DELETE,
-            headers: getAuthorizedHeaders()
-        })
+    static async getBoardById(id: number): Promise<Board> {
+        return {
+            title: 'test',
+            id,
+            description: 'test description',
+            imageURL: 'https://preview.colorkit.co/color/ff0000.png?static=true',
+            creationDate: new Date(Date.now()),
+            tasks: (await TaskApi.getTasks(id)).result ?? []
+        }
     }
 }

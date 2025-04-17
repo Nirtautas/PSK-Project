@@ -1,11 +1,10 @@
 import { Board, Task, Comment } from '@/types/types'
-import { FetchResponse, HTTPMethod } from '@/types/fetch'
-import { apiBaseUrl } from '@/constants/api'
+import { FetchResponse, HTTPMethod } from '@/types/fetch';
+import { apiBaseUrl } from '@/constants/api';
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 import TaskOnUserApi from './taskOnUser.api'
 
-export type CreateTaskDto = Omit<Task, 'id' | 'creationDate' | 'boardId' | 'assignedUsers' | 'version'>
-export type UpdateTaskDto = Omit<Task, 'id' | 'creationDate' | 'boardId' | 'assignedUsers'>
+export type CreateTaskDto = Omit<Task, 'id' | 'creationDate' | 'boardId' | 'assignedUsers'>
 
 export default class TaskApi {
     static async getTasks(boardId: number): Promise<FetchResponse<Task[]>> {
@@ -14,50 +13,9 @@ export default class TaskApi {
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
         })
-    
-        const tasks = tasksResponse.result ?? []
-    
-        const tasksWithUsers = await Promise.all(
-            tasks.map(async (task: Task) => {
-                const usersResponse = await TaskOnUserApi.getTaskUsers(boardId, task.id)
-                const users = usersResponse.result ?? []
-                return {
-                    ...task,
-                    assignedUsers: users
-                }
-            })
-        )
-    
-        return {
-            ...tasksResponse,
-            result: tasksWithUsers
-        }
     }
 
-    static async getTaskById(boardId: number, taskId: number): Promise<FetchResponse<Task>> {
-        const taskResponse = await fetch({
-            url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}`,
-            method: HTTPMethod.GET,
-            headers: getAuthorizedHeaders()
-        })
-
-        const taskData = taskResponse.result
-
-        const usersResponse = await TaskOnUserApi.getTaskUsers(boardId, taskId)
-        const users = usersResponse.result ?? []
-
-        taskResponse.result.assignedUsers = users
-
-        return {
-            ...taskResponse,
-            result: {
-                ...taskData,
-                users
-            }
-        }
-    }
-
-    public static async update(boardId: number, boardTaskId: number, task: UpdateTaskDto): Promise<FetchResponse<Task>> {
+    public static async update(boardId: number, boardTaskId: number, task: CreateTaskDto): Promise<FetchResponse<Task>> {
         return await fetch({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${boardTaskId}`,
             method: HTTPMethod.PUT,

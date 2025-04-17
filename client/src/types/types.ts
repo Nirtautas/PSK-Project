@@ -1,10 +1,11 @@
+
+
 export type Board = {
     id: number
     title: string
     description: string
     imageURL: string | null
-    creationDate: Date
-    version: number
+    creationDate: Date 
     tasks: Task[]
 }
 
@@ -96,5 +97,4 @@ export type BoardOnUser = {
     userId: number
     addedAt: Date
     userRole: RoleString
-    version: number
 }

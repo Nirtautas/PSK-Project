@@ -4,6 +4,5 @@ export const publicRoutes = [
 
 export const GetPageUrl = {
     login: '/login',
-    boards: (pageNum: number) => `/boards?pageNum=${pageNum}`,
-    board: (pageNum: number) => `/boards/${pageNum}`
+    boards: (pageNum: number) => `/boards?pageNum=${pageNum}`
 } as const

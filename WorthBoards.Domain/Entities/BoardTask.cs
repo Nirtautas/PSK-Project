@@ -14,7 +14,7 @@ namespace WorthBoards.Domain.Entities
         public required string Title { get; set; }
         public required string Description { get; set; }
         public required DateTime DeadlineEnd { get; set; }
-        public DateTime CreationDate { get; set; }
+        public required DateTime CreationDate { get; set; }
         public required TaskStatusEnum TaskStatus { get; set; }
 
         //Navigation properties
@@ -23,7 +23,6 @@ namespace WorthBoards.Domain.Entities
         public virtual ICollection<TaskOnUser> TasksOnUsers { get; set; }
 
         // Concurrency token
-        [Timestamp]
-        public uint Version { get; set; }
+        public required byte[] Version { get; set; }
     }
 }

@@ -28,7 +28,7 @@ const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate, on
         if (tab === 'Collaborators') return <div>Collaborators</div>
 
         if (tab === 'Archives') return <div>Archives</div>
-        return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />
+        return <div>Settings</div>
     }
     return (
         <div className={styles.wrapper}>

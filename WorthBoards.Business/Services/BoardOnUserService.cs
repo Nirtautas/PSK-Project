@@ -13,7 +13,7 @@ using WorthBoards.Domain.Entities;
 
 namespace WorthBoards.Business.Services
 {
-    public class BoardOnUserService(IUnitOfWork _unitOfWork, IMapper _mapper) : IBoardOnUserService
+    public class BoardOnUserService(IUnitOfWork _unitOfWork, IMapper _mapper, INotificationService _notificationService) : IBoardOnUserService
     {
         public async Task<IEnumerable<LinkUserToBoardResponse>> GetAllBoardToUserLinks(int boardId, CancellationToken cancellationToken)
         {
@@ -44,15 +44,21 @@ namespace WorthBoards.Business.Services
             return _mapper.Map<LinkUserToBoardResponse>(boardOnUser); 
         }
 
-        public async Task UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
+        public async Task UnlinkUserFromBoard(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
         {
+            var responsibleUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId && bou.BoardId == boardId);
+            if (responsibleUser == null) throw new NotFoundException(ExceptionFormatter.NotFound(nameof(responsibleUser), [responsibleUserId]));
+            if (!responsibleUser.UserRole.CanRemoveUsers() && userId != responsibleUserId) throw new BadRequestException(ExceptionFormatter.BadRequestRemoveUser);
+
             var boardOnUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             if (boardOnUser.UserRole == UserRoleEnum.OWNER)
                 throw new BadRequestException(ExceptionFormatter.BadRequestUnlinkOwner());
 
+            await _notificationService.NotifyUserRemoved(boardId, userId, responsibleUserId, cancellationToken);
             _unitOfWork.BoardOnUserRepository.Delete(boardOnUser);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

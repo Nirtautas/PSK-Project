@@ -20,7 +20,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         var notifications = await _unitOfWork.NotificationRepository.GetNotificationsWithSenderAndSubjectUsernamesByUserIdAsync(userId, cancellationToken);
 
         var notificationsMapped = notifications.Select(notification => NotificationFormatter.FormatNotification(
-            notification.Item1, notification.Item2, notification.Item3, userId
+            notification.Item1, notification.Item2, notification.Item3, notification.Item1.SubjectUserId == userId
         )).ToList();
 
         if (notificationsMapped is null)
@@ -98,8 +98,8 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         {
             throw new BadHttpRequestException($"Cannot invite user as {role}.");
         }
-        var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
-        var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
+        var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId && bou.BoardId == boardId, cancellationToken);
+        var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId && bou.BoardId == boardId, cancellationToken);
         if (boardOnSender is not null && !boardOnSender.UserRole.CanSendInvitations())
         {
             throw new UnauthorizedAccessException("You are unauthorized to send invitations to this board.");
@@ -146,7 +146,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             {
                 AddedAt = DateTime.UtcNow,
                 UserRole = UserRoleEnum.VIEWER,
-                BoardId = (int) invitationNotification.BoardId,
+                BoardId = (int)invitationNotification.BoardId,
                 UserId = userId,
             },
             cancellationToken
@@ -156,35 +156,22 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
+    public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
     {
-        // TODO: fix this method later
-        if (role != UserRoleEnum.OWNER)
-        {
-            throw new BadHttpRequestException($"Cannot remove user as {role}.");
-        }
-        var boardOnUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId, cancellationToken);
-        if (boardOnUser is null) throw new NotFoundException($"User with id: '{userId}' is not part of board: '{boardId}.");
-        if (!boardOnUser.UserRole.CanRemoveUsers()
-            && userId != responsibleUserId)
-        {
-            throw new UnauthorizedAccessException("You are unauthorized to remove users from this board.");
-        }
+        var boardUsers = await _unitOfWork.BoardOnUserRepository.GetAllByExpressionAsync(bou => bou.BoardId == boardId);
         var notification = new Notification()
         {
-            NotificationType = NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
+            NotificationType = responsibleUserId == userId
+                ? NotificationEventTypeEnum.USER_LEFT_BOARD
+                : NotificationEventTypeEnum.USER_REMOVED_FROM_BOARD,
             SenderId = responsibleUserId,
+            SubjectUserId = userId,
             BoardId = boardId,
-            InvitationRole = role,
-            NotificationsOnUsers = new List<NotificationOnUser>()
-            {
-                new NotificationOnUser()
-                {
-                    UserId = userId
-                }
-            }
+            NotificationsOnUsers = boardUsers
+                .Where(bou => bou.UserId != userId && bou.UserId != responsibleUserId)
+                .Select(bou => new NotificationOnUser(){ UserId = bou.UserId })
+                .ToList()
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

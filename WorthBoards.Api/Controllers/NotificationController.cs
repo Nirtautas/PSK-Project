@@ -10,6 +10,14 @@ namespace WorthBoards.Api.Controllers;
 [ApiController]
 public class NotificationController(INotificationService _notificationService) : ControllerBase
 {
+    [HttpPost("{notificationId}/accept")]
+    public async Task<IActionResult> AcceptInvitation(int notificationId, CancellationToken cancellationToken)
+    {
+        var userId = UserHelper.GetUserId(User).Value;
+        await _notificationService.AcceptInvitation(notificationId, userId, cancellationToken);
+        return NoContent();
+    }
+
     [AllowAnonymous]
     [HttpGet]
     public async Task<List<NotificationResponse>> GetNotificationsByUserId(CancellationToken cancellationToken = default)

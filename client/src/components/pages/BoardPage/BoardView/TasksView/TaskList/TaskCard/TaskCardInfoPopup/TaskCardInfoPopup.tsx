@@ -32,6 +32,7 @@ export default function TaskCardInfoPopup({
 }) {
     const [comments, setComments] = useState<Comment[]>([])
     const [editMode, setEditMode] = useState<boolean>(false)
+    const [wasEdited, setWasEdited] = useState<boolean>(false)
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
@@ -40,7 +41,7 @@ export default function TaskCardInfoPopup({
         setOpen(false)
         setEditMode(false)
 
-        if (editMode) {
+        if (wasEdited) {
             const newTask: UpdateTaskDto = {
                 title: title ?? "",
                 description: description,
@@ -53,10 +54,12 @@ export default function TaskCardInfoPopup({
             if (updatedTask.result)
                 handleUpdate(updatedTask.result)
         }
+        setWasEdited(false)
     }
 
     const handleEdit = () => {
         setEditMode(editMode ? false : true)
+        setWasEdited(true)
     }
 
     const handleDelete = async () => {

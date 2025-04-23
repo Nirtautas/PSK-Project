@@ -21,7 +21,8 @@ export default function TaskCardInfoPopup({
     setOpen,
     task,
     handleUpdate,
-    userRole
+    userRole,
+    onDelete
 }: {
     boardId: number,
     open: boolean, 
@@ -29,6 +30,7 @@ export default function TaskCardInfoPopup({
     task: Task
     handleUpdate: (t: Task) => void
     userRole: FetchResponse<Role | null>
+    onDelete: (t: Task) => void
 }) {
     const [comments, setComments] = useState<Comment[]>([])
     const [editMode, setEditMode] = useState<boolean>(false)
@@ -63,7 +65,13 @@ export default function TaskCardInfoPopup({
     }
 
     const handleDelete = async () => {
-        await TaskApi.delete(boardId, task.id)
+        try {
+            await TaskApi.delete(boardId, task.id)
+            onDelete(task)
+            handleClose()
+        } catch (error) {
+            console.log(error)
+        }
     }
     
 

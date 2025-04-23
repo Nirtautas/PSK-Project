@@ -80,6 +80,12 @@ namespace WorthBoards.Data.Database
                 .HasMany(b => b.Comments)
                 .WithOne(c => c.BoardTask) 
                 .IsRequired();
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Task)
+                .WithMany()
+                .HasForeignKey(n => n.TaskId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

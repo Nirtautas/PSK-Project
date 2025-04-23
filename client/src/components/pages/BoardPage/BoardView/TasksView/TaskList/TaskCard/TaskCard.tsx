@@ -13,9 +13,10 @@ type Props = {
     onMouseDown: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
     userRole: FetchResponse<Role | null>
+    onDelete: (t: Task) => void
 }
 
-const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole }: Props) => {
+const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -34,7 +35,7 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole 
                     </span>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate} userRole={userRole}/>
+            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate} userRole={userRole} onDelete={onDelete}/>
         </>
     )
 }

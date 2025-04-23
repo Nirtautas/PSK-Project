@@ -52,6 +52,18 @@ const BoardPage = ({ boardId }: Props) => {
         })
     }
 
+    const handleTaskDelete = (deletedTask: Task) => {
+        if (!data?.result) return
+
+        setData({
+            ...data,
+            result: {
+                ...data.result,
+                tasks: data.result.tasks.filter(task => task.id !== deletedTask.id)
+            }
+        })
+    }
+
     return (
         <div className={styles.content}>
             <Box className={styles.toolbar}>
@@ -68,7 +80,8 @@ const BoardPage = ({ boardId }: Props) => {
                     isLoading={isLoading}
                     onCreate={handleTaskCreate}
                     onUpdate={onUpdate}
-                    onTaskUpdate={handleTaskUpdate} />
+                    onTaskUpdate={handleTaskUpdate}
+                    onTaskDelete={handleTaskDelete}/>
             </div>
         </div>
     )

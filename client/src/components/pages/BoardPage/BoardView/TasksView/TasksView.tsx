@@ -21,6 +21,7 @@ type Props = {
     errorMsg: string
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
+    onTaskDelete: (t: Task) => void
 }
 
 type TaskColumn = {
@@ -32,7 +33,7 @@ type TaskColumn = {
 
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate }: Props) => {
+const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
@@ -152,6 +153,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
                             onMouseDown={handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}
+                            onDelete={onTaskDelete}
                             />
                     </div>
                 ))

@@ -15,9 +15,10 @@ type Props = {
     onMouseDown: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
     userRole: FetchResponse<Role | null>
+    onDelete: (t: Task) => void
 }
 
-const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole }: Props) => {
+const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
     if (isLoading) {
         return (
             <div className={styles.tasks_list}>
@@ -41,7 +42,8 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
                             onClick={() => { console.log('clicked task: ', task)}}
                             onMouseDown={onMouseDown}
                             onTaskUpdate={onTaskUpdate}
-                            userRole={userRole}/>
+                            userRole={userRole}
+                            onDelete={onDelete}/>
                     </div>
                 ))}
         </div>

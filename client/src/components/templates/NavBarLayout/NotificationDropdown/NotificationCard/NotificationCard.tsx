@@ -3,7 +3,8 @@ import React from 'react'
 import styles from './NotificationCard.module.scss'
 import { Notification, NotificationType } from '@/types/types'
 import { Button, Card, MenuItem } from '@mui/material'
-import NotificationApi from '@/api/notification.api'
+import { useRouter } from 'next/navigation'
+import { getPageUrl } from '@/constants/urls'
 
 type Props = {
     notification: Notification
@@ -11,8 +12,12 @@ type Props = {
 }
 
 const NotificationCard = ({ notification, onInvitationAccept }: Props) => {
+    const router = useRouter()
     const handleClick = () => {
-        // if ()
+        if (notification.type === NotificationType.INVITATION) return
+        if (notification.boardId) {
+            router.push(getPageUrl.board(notification.boardId))
+        }
     }
 
     return (

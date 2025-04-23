@@ -20,19 +20,48 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
+
+    const deadlineDisplay = () => {
+        if (!task.deadlineEnd) return ""
+        console.log(task.deadlineEnd)
+        const deadline = new Date(task.deadlineEnd)
+        const now = new Date()
+        const dateStr = deadline.toLocaleDateString()
+        const diffTime = deadline.getTime() - now.getTime()
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+        if (diffDays >= 0) {
+            return `Deadline by - ${dateStr} (${diffDays} days left)`
+        } else {
+            return (
+                <>
+                    <Box sx={{ color: 'red' }}>
+                        Deadline {dateStr} passed ({Math.abs(diffDays)} days late)
+                    </Box>
+                </>
+            )
+        }
+    }
+
     return (
         <>
             <Card elevation={2} className={styles.task_card} onMouseDown={(e) => onMouseDown(e as unknown as MouseEvent, task)} onClick={handleOpen}>
-                <CardActionArea
-                    onClick={onClick}
-                    sx={{
-                        display: 'flex',
-                        height: '100%'
-                    }}
-                >
-                    <span>
-                        {task.title}
-                    </span>
+                <CardActionArea onClick={onClick} className={styles.task_card_clickable}>
+                    <div className={styles.task_card_content}>
+                        <div className={styles.top_row}>
+                            <div className={styles.title_box}>
+                                {task.title}:
+                            </div>
+                            <div className={styles.image_box}>
+                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
+                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
+                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
+                            </div>
+                        </div>
+                        <div className={styles.bottom_row}>
+                            {deadlineDisplay()}
+                        </div>
+                    </div>
                 </CardActionArea>
             </Card>
             <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate} userRole={userRole} onDelete={onDelete}/>

@@ -18,7 +18,9 @@ const eslintConfig = [
             '@typescript-eslint/ban-ts-comment': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
-            'prefer-const': 'error'
+            '@typescript-eslint/no-unused-vars': ['warning', 'always'],
+            'prefer-const': 'error',
+            'eol-last': ['error', 'always']
         }
     }
 ]

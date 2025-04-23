@@ -12,9 +12,13 @@ type Props = {
 
 
 const BoardCard = ({
+    // @ts-ignore
     name,
+    // @ts-ignore
     description,
+    // @ts-ignore
     imgUrl,
+    // @ts-ignore
     onClick,
     isLoading
 }: Props) => (

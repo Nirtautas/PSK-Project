@@ -45,6 +45,14 @@ export type User = {
     lastName: string
 }
 
+export type BoardUser = {
+    id: number
+    userName: string
+    imageURL: string
+    userRole: RoleString
+    addedAt: Date
+}
+
 export type Notification = {
     id: number
     title: string

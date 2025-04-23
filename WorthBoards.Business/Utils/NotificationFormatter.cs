@@ -16,7 +16,7 @@ public class NotificationFormatter
         Notification notification,
         string senderUsername,
         string? subjectUsername,
-        int? receiverUserId)
+        bool isMe = false)
     {
         return new NotificationResponse()
         {
@@ -24,18 +24,18 @@ public class NotificationFormatter
             BoardId = notification.BoardId,
             SendDate = notification.SendDate,
             TaskId = notification.TaskId,
-            Title = GetNotificationResponseText(notification, senderUsername, subjectUsername, receiverUserId is not null),
+            Title = GetNotificationResponseText(notification, senderUsername, subjectUsername, isMe),
         };
     }
 
     private static string GetNotificationResponseText(Notification notification,
         string senderUsername,
         string? subjectUsername,
-        bool isSubjectReceiving = false)
+        bool isSubjectReceiving)
     {
-        if (notification.NotificationType == NotificationEventTypeEnum.TASK_ASSIGNED
+        if (subjectUsername is null && (notification.NotificationType == NotificationEventTypeEnum.TASK_ASSIGNED
             || notification.NotificationType == NotificationEventTypeEnum.USER_ADDED_TO_BOARD
-            || notification.NotificationType == NotificationEventTypeEnum.USER_LEFT_BOARD
+            || notification.NotificationType == NotificationEventTypeEnum.USER_LEFT_BOARD)
         ) {
             throw new ArgumentNullException(nameof(subjectUsername));
         }

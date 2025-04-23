@@ -14,8 +14,23 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class BoardOnUserController(IBoardOnUserService _boardOnUserService) : ControllerBase
+    public class BoardOnUserController(IBoardOnUserService _boardOnUserService, INotificationService _notificationService) : ControllerBase
     {
+        [HttpPost("{boardId}/invite")]
+        public async Task<IActionResult> InviteUser(int boardId, [FromBody] InvitationRequest invitationRequest, CancellationToken cancellationToken)
+        {
+            var responsibleUserId = UserHelper.GetUserId(User).Value;
+            await _notificationService.NotifyBoardInvitation(boardId, invitationRequest.UserId, responsibleUserId, invitationRequest.Role, cancellationToken);
+            return NoContent();
+        }
+
+        [HttpPost("{boardId}/remove/{userId}")]
+        public async Task<IActionResult> RemoveUser(int boardId, int userId, CancellationToken cancellationToken)
+        {
+            var responsibleUserId = UserHelper.GetUserId(User).Value;
+            await _boardOnUserService.UnlinkUserFromBoard(boardId, userId, responsibleUserId, cancellationToken);
+            return NoContent();
+        }
 
         [HttpGet("{boardId}/links")]
         [AuthorizeRole(UserRoleEnum.VIEWER)]
@@ -41,13 +56,13 @@ namespace WorthBoards.Api.Controllers
             return CreatedAtAction(nameof(LinkUserToBoard), new { boardId = linkResponse.BoardId, userId = linkResponse.UserId }, linkResponse);
         }
 
-        [HttpDelete("{boardId}/link/{userId}")]
-        [AuthorizeRole(UserRoleEnum.EDITOR)]
-        public async Task<IActionResult> UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
-        {
-            await _boardOnUserService.UnlinkUserFromBoard(boardId, userId, cancellationToken);
-            return NoContent();
-        }
+        // [HttpDelete("{boardId}/link/{userId}")]
+        // [AuthorizeRole(UserRoleEnum.EDITOR)]
+        // public async Task<IActionResult> UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
+        // {
+        //     await _boardOnUserService.UnlinkUserFromBoard(boardId, userId, cancellationToken);
+        //     return NoContent();
+        // }
 
         [HttpPut("{boardId}/link/{userId}")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]

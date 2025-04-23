@@ -74,14 +74,13 @@ export default function TaskCardInfoPopup({
         }
     }
     
-
     useEffect(() => {
-            TaskApi.getCommentsByTask(1).then((comments) => {
-                setComments(comments)
-            }).catch((error) => {
-                console.error("Failed to fetch comments:", error)
-            })
-        }, [open])
+        TaskApi.getCommentsByTask(1).then((comments) => {
+            setComments(comments)
+        }).catch((error) => {
+            console.error("Failed to fetch comments:", error)
+        })
+    }, [open])
     
     //TODO: move this to a separate file
     const modalContainer = {

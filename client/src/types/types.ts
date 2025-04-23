@@ -25,8 +25,7 @@ export type Task = {
     creationDate: Date
     deadlineEnd: Date | null
     version: number
-    //TODO: make assigned users get passed by id (number[]) instead of string[]
-    assignedUsers: string[] | string | null
+    assignedUsers: TaskUser[]
 }
 export const sortTasksByTitle = (a: Task, b: Task) => b.title.localeCompare(a.title)
 
@@ -51,6 +50,13 @@ export type BoardUser = {
     imageURL: string
     userRole: RoleString
     addedAt: Date
+}
+
+export type TaskUser = {
+    id: number
+    userName: string
+    imageURL: string
+    assignedAt: Date
 }
 
 export type Notification = {

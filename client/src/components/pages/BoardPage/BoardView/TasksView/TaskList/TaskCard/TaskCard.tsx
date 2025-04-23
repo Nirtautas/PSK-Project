@@ -53,9 +53,9 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
                                 {task.title}:
                             </div>
                             <div className={styles.image_box}>
-                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
-                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
-                                <img width={25} height={25} src='https://preview.colorkit.co/color/ff0000.png?static=true' alt="image" />
+                                {task.assignedUsers.slice(0, 3).map(user => (
+                                    <img key={user.id} width={25} height={25} src={user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true'} alt="image" />
+                                ))}
                             </div>
                         </div>
                         <div className={styles.bottom_row}>

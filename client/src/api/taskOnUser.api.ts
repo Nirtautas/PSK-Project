@@ -1,10 +1,10 @@
 import { FetchResponse, HTTPMethod } from "@/types/fetch"
-import { BoardUser } from "@/types/types"
+import { TaskUser } from "@/types/types"
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 import { apiBaseUrl } from "@/constants/api"
 
 export default class TaskOnUserApi {
-    static async getTaskUsers(boardId: number, taskId: number): Promise<FetchResponse<BoardUser[]>> {
+    static async getTaskUsers(boardId: number, taskId: number): Promise<FetchResponse<TaskUser[]>> {
         return fetch ({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/users`,
             method: HTTPMethod.GET,

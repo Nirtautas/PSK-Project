@@ -63,7 +63,7 @@ const BoardPage = ({ boardId }: Props) => {
             }
         })
     }
-
+    
     return (
         <div className={styles.content}>
             <Box className={styles.toolbar}>

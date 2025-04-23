@@ -121,7 +121,6 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
         p: 4,
     };
 
-
     return (
         <Paper className={styles.container}>
             { userRole && userRole.result !== Role.VIEWER && (

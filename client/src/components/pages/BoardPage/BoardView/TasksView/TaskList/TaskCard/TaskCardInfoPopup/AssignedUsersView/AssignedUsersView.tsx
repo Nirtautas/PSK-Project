@@ -13,12 +13,15 @@ type Props = {
 }
   
 export default function AssignedUsersView({ users, boardId, onUserChange, editMode }: Props) {
-    
+    const [currentUsers, setCurrentUsers] = useState<TaskUser[]>(users)
+
+
     const handleSelectedUsersChange = (changedUsers: BoardUser[]) => {
         const selectedFiltered = users.filter(u =>
             changedUsers.some(cu => cu.id === u.id)
         )
         onUserChange(selectedFiltered)
+        setCurrentUsers(selectedFiltered)
     }
 
     return (
@@ -30,7 +33,7 @@ export default function AssignedUsersView({ users, boardId, onUserChange, editMo
                     selectedUsers={users}
                     boardId={boardId}
                 />}
-                {!editMode && (users && users.length ? users.map((user) => (
+                {!editMode && (users && currentUsers.length ? currentUsers.map((user) => (
                     <Box key={user.id} className={styles.user_box}>
                         <img key={user.id} width={25} height={25} src={user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true'} alt="image" />
                         <Typography>{user.userName}</Typography>

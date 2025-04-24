@@ -1,0 +1,21 @@
+.users_container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+
+.user_box {
+    display: flex;
+    padding: 0.8rem;
+    margin: 0.3rem 0 0.3rem 0;
+    background-color: #1F1F1F;
+    border-radius: 1rem;
+}
+
+.user_box > * {
+    margin-right: 0.5rem;
+}
+
+.user_box > img {
+    border-radius: 50%;
+}

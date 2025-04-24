@@ -2,6 +2,7 @@ import { Box, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import DeadlineDisplay from "../../DeadlineDisplay";
 
 export default function DeadlineDescriptionView
 ({
@@ -21,7 +22,7 @@ export default function DeadlineDescriptionView
         <Box sx={{height: '50%'}}>
             <Box>
                 <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Deadline</Typography>
-                {!editMode && <Typography variant="body1">{deadline ? new Date(deadline).toLocaleDateString() : "No deadline"}</Typography>}
+                {!editMode && <DeadlineDisplay deadline={deadline}/>}
                 {editMode && 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker

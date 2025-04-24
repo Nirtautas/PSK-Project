@@ -9,11 +9,12 @@ import Stack from '@mui/material/Stack';
 import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
-import { Role, Task } from '@/types/types';
+import { Role, Task, TaskUser } from '@/types/types';
 import TaskApi, { UpdateTaskDto } from '@/api/task.api';
 import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
+import TaskOnUserApi from '@/api/taskOnUser.api';
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -38,6 +39,7 @@ export default function TaskCardInfoPopup({
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
+    const [assignedUsers, setAssignedUsers] = useState<TaskUser[]>(task.assignedUsers || [])
     
     const handleClose = async () => {
         setOpen(false)
@@ -52,9 +54,15 @@ export default function TaskCardInfoPopup({
                 version: task.version
             }
             const updatedTask = await TaskApi.update(boardId, task.id, newTask)
-
+            
             if (updatedTask.result)
                 handleUpdate(updatedTask.result)
+            
+            const assignedUserIds = (task.assignedUsers).map(user => user.id)
+            await TaskOnUserApi.unlinkTaskUser(boardId, task.id, assignedUserIds)
+
+            const newAssignedUserIds = assignedUsers.map(user => user.id)
+            const linkResult = await TaskOnUserApi.linkTaskUser(boardId, task.id, newAssignedUserIds)
         }
         setWasEdited(false)
     }
@@ -152,7 +160,7 @@ export default function TaskCardInfoPopup({
                             <Divider orientation="vertical" />
                         </Grid>
                         <Grid size={3}>
-                            <AssignedUsersView users={task.assignedUsers}/>
+                            <AssignedUsersView users={task.assignedUsers || []} boardId={boardId} onUserChange={setAssignedUsers} editMode={editMode}/>
                         </Grid>
                     </Grid>
                 </Box>

@@ -67,7 +67,7 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <SelectUsersField 
-                    setSelectedUsers={setSelectedUsers}
+                    onUsersChange={setSelectedUsers}
                     boardId={boardId}
                 />
                 <Button type="submit" variant="contained">

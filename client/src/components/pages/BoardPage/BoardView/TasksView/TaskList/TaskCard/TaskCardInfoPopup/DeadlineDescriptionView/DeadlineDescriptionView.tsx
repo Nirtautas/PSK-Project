@@ -19,8 +19,8 @@ export default function DeadlineDescriptionView
 }) {
     return(
         <Box sx={{height: '50%'}}>
-            <Box sx={{ padding: 0.5}}>
-                <Typography variant="h4" sx={{padding: 1}}>Deadline</Typography>
+            <Box>
+                <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Deadline</Typography>
                 {!editMode && <Typography variant="body1">{deadline ? new Date(deadline).toLocaleDateString() : "No deadline"}</Typography>}
                 {editMode && 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -32,8 +32,8 @@ export default function DeadlineDescriptionView
                 }
                 
             </Box>
-            <Box sx={{ padding: 0.5, overflowY: 'auto'}}>
-                <Typography variant="h4" sx={{padding: 1}}>Description</Typography>
+            <Box sx={{ overflowY: 'auto'}}>
+                <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Description</Typography>
                 {!editMode && <Typography variant="body1">{description ? description : "No description provided"}</Typography>}
                 {editMode &&
                     <TextareaAutosize

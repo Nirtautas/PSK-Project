@@ -135,7 +135,7 @@ export default function TaskCardInfoPopup({
                 </Box>
                 <Divider />
                 <Box sx={{ width: '100%', height: '100%', padding: 1}}>
-                    <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 2}} >
+                    <Grid container spacing={2} sx={{width: '100%', height: '100%', padding: 1}} >
                         <Grid size={8} sx={{height: '100%'}}>
                             <Stack spacing={2} sx={{height: '100%'}}>
                                 <DeadlineDescriptionView

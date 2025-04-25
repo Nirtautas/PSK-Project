@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Extensions.DependencyModel;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
@@ -100,7 +101,16 @@ namespace WorthBoards.Business.Services
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
             
             var users = await _unitOfWork.BoardOnUserRepository.GetUsersByUserNameAsync(userName, cancellationToken);
-            return _mapper.Map<List<UserResponse>>(users);
+            var usersNotInBoard = new List<ApplicationUser>();
+
+            foreach (var user in users)
+            {
+                if (await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == user.Id, cancellationToken) == null)
+                {
+                    usersNotInBoard.Add(user);
+                }
+            }
+            return _mapper.Map<List<UserResponse>>(usersNotInBoard);
         }
     }
 }

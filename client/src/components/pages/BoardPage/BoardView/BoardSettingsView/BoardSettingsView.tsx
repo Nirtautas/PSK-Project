@@ -35,8 +35,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                 title: result.title,
                 description: result.description,
                 imageURL: result.imageURL || null,
-                version: result.version,
-                collaborators: []
+                version: result.version
             }
             setEditData(boardData)
             setIsEditOpen(true)

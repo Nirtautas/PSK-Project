@@ -28,4 +28,20 @@ export default class CollaboratorApi {
             body: JSON.stringify({ userRole: role }),
         });
     }
+
+    static async updateUserRole(boardId: number, userId: number, newRole: string): Promise<FetchResponse<User>> {
+        const patchData = [
+            {
+                op: 'replace', 
+                path: '/userRole', 
+                value: newRole 
+            }
+        ];
+
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/link/${userId}`,
+            method: HTTPMethod.PATCH,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(patchData), 
+    }
 }

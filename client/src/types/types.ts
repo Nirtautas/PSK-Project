@@ -43,6 +43,7 @@ export type User = {
     userRole: RoleString
     firstName: string
     lastName: string
+    userName: string
 }
 
 export type Notification = {

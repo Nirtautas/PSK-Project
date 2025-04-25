@@ -9,6 +9,7 @@ import BoardApi from '@/api/board.api'
 import { Board } from '../../../types/types'
 import { FetchResponse } from '../../../types/fetch'
 import { Task } from '@/types/types'
+import CollaboratorApi from '@/api/collaborator.api'
 
 type Props = {
     boardId: number
@@ -40,7 +41,7 @@ const BoardPage = ({ boardId }: Props) => {
             }
         })
     }
-
+    
     return (
         <div className={styles.content}>
             <Box className={styles.toolbar}>

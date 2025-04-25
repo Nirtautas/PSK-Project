@@ -89,6 +89,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpGet("{boardId}/collaborators")]
+        [AuthorizeRole(UserRoleEnum.OWNER)]
         public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsersByUserName([FromRoute] int boardId, [FromQuery] string userName, CancellationToken cancellationToken)
         {
             var userResponse = await _boardOnUserService.GetUsersByUserNameAsync(boardId, userName, cancellationToken);

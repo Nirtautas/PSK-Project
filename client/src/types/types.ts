@@ -43,7 +43,7 @@ export type User = {
     lastName: string
     userName: string
     creationDate: Date
-    imageURL: string | undefined
+    imageURL: string
 }
 
 export type BoardUser = {

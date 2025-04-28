@@ -7,6 +7,6 @@
         string LastName,
         string Email,
         DateTime CreationDate,
-        int? ImageURL
+        string? ImageURL
     );
 }

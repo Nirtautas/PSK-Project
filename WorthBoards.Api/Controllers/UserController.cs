@@ -10,7 +10,7 @@ namespace WorthBoards.Api.Controllers
     [ApiController]
     public class UserController(IUserService _userService) : ControllerBase
     {
-        [HttpGet]
+        [HttpGet("{userId}")]
         [Authorize]
         public async Task<IActionResult> GetUserById(int? userId, CancellationToken cancellationToken)
         {

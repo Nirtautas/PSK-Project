@@ -9,9 +9,10 @@ import { getPageUrl } from '@/constants/urls'
 type Props = {
     notification: Notification
     onInvitationAccept: () => void
+    onInvitationDecline: () => void
 }
 
-const NotificationCard = ({ notification, onInvitationAccept }: Props) => {
+const NotificationCard = ({ notification, onInvitationAccept, onInvitationDecline }: Props) => {
     const router = useRouter()
     const handleClick = () => {
         if (notification.type === NotificationType.INVITATION) return
@@ -32,13 +33,23 @@ const NotificationCard = ({ notification, onInvitationAccept }: Props) => {
                     <sub>{notification.description}</sub>
                     <div className={styles.button_wrapper}>
                         {notification.type === NotificationType.INVITATION && (
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={() => onInvitationAccept()}
-                            >
-                                Join
-                            </Button>
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={onInvitationAccept}
+                                >
+                                    Join
+                                </Button>
+                                <Button
+                                    sx={{ marginLeft: '1rem' }}
+                                    variant="contained"
+                                    color="error"
+                                    onClick={onInvitationDecline}
+                                >
+                                    Decline
+                                </Button>
+                            </>
                         )}
                     </div>
                 </div>

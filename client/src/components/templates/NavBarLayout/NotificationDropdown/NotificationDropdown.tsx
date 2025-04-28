@@ -12,9 +12,10 @@ type Props = {
     errorMsg: string
     notifications: Notification[]
     onInvitationAccept: (notification: Notification) => void
+    onInvitationDecline: (notification: Notification) => void
 }
 
-const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept }: Props) => {
+const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept, onInvitationDecline }: Props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const isOpen = Boolean(anchorEl)
 
@@ -51,7 +52,12 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
         )
         if (errorMsg) return null
         return (notifications.sort((n1, n2) => new Date(n2.sendDate).getTime() - new Date(n1.sendDate).getTime()).map((notification) => (
-            <NotificationCard key={`notification-${notification.id}`} notification={notification} onInvitationAccept={() => onInvitationAccept(notification)}/>
+            <NotificationCard
+                key={`notification-${notification.id}`}
+                notification={notification}
+                onInvitationAccept={() => onInvitationAccept(notification)}
+                onInvitationDecline={() => onInvitationDecline(notification)}
+            />
         )))
     }
 

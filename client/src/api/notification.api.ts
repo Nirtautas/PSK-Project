@@ -19,4 +19,12 @@ export default class NotificationApi {
             headers: getAuthorizedHeaders()
         })
     }
+
+    public static async declineInvitation(notificationId: Notification['id']) {
+        return fetch({
+            method: HTTPMethod.DELETE,
+            url: `${apiBaseUrl}/notifications/${notificationId}`,
+            headers: getAuthorizedHeaders()
+        })
+    }
 }

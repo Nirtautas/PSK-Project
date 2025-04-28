@@ -40,6 +40,14 @@ const NavBarLayout = ({ children }: Props) => {
             window.location.reload()
         }
     }
+    const handleInvitationDecline = async (subjectNotification: Notification) => {
+        const response = await NotificationApi.declineInvitation(subjectNotification.id)
+        if (response.error) {
+            console.error('An error occured when accepting board invitation.')
+            return
+        }
+        setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
+    }
 
     const handleLogOut = () => {
         deleteCookie('jwtToken', { secure: true, sameSite: 'strict' })
@@ -63,6 +71,7 @@ const NavBarLayout = ({ children }: Props) => {
                                 isLoading={isLoading}
                                 errorMsg={errorMsg}
                                 onInvitationAccept={handleInvitationAccept}
+                                onInvitationDecline={handleInvitationDecline}
                             />
                         </Box>
                         <Box className={styles.centered_wrapper}>

@@ -21,15 +21,20 @@ public class NotificationController(INotificationService _notificationService) :
         return NoContent();
     }
 
-    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetNotificationsByUserId(CancellationToken cancellationToken = default)
     {
         var userId = UserHelper.GetUserId(User);
-        if (userId.Result is UnauthorizedObjectResult unauthorizedResult)
-            return unauthorizedResult;
-
         var notifications = await _notificationService.GetNotificationsByUserId(userId.Value, cancellationToken);
         return Ok(notifications);
+    }
+
+    [HttpDelete("{notificationId}")]
+    public async Task<IActionResult> DeleteNotification(int notificationId, CancellationToken cancellationToken = default)
+    {
+        var userId = UserHelper.GetUserId(User);
+
+        await _notificationService.UnlinkNotification(userId.Value, notificationId, cancellationToken);
+        return Ok();
     }
 }

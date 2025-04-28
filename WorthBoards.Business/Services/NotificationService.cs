@@ -7,6 +7,7 @@ using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
+using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
@@ -180,5 +181,21 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 .ToList()
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+    }
+
+    public async Task UnlinkNotification(int userId, int notificationId, CancellationToken cancellationToken)
+    {
+        var notificationOnUser = await _unitOfWork.NotificationOnUserRepository.GetByExpressionAsync(nou => nou.UserId == userId && nou.NotificationId == notificationId, cancellationToken);
+        if (notificationOnUser is null)
+        {
+            throw new NotFoundException(ExceptionFormatter.NotFound(nameof (notificationOnUser), [notificationId]));
+        }
+        _unitOfWork.NotificationOnUserRepository.Delete(notificationOnUser);
+        var notification = await _unitOfWork.NotificationRepository.GetByExpressionWithIncludesAsync(n => n.Id == notificationId, cancellationToken, n => n.NotificationsOnUsers);
+        if (notification is not null && notification.NotificationsOnUsers.Count == 0)
+        {
+            _unitOfWork.NotificationRepository.Delete(notification);
+        }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

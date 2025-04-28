@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Typography, Button, Box, CircularProgress, TextField, MenuItem, Select, FormControl, InputLabel, IconButton, Card, CardContent, Avatar, Paper } from '@mui/material'
 import CollaboratorApi from '@/api/collaborator.api'
-import { Role, RoleString, User } from '@/types/types'
+import { Role, RoleString, BoardUser } from '@/types/types'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import styles from './CollaboratorsView.module.scss'
 
@@ -29,10 +29,10 @@ type Props = {
 
 const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const [userName, setUserName] = useState('') 
-  const [users, setUsers] = useState<User[]>([]) 
+  const [users, setUsers] = useState<BoardUser[]>([]) 
   const [roleMapping, setRoleMapping] = useState<{ [userId: number]: string }>({}) 
   const [linkErrorMsg, setLinkErrorMsg] = useState<string>('')
-  const [collaborators, setCollaborators] = useState<User[]>([]);
+  const [collaborators, setCollaborators] = useState<BoardUser[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]) 
   const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({});
   const debouncedUserName = useDebounce(userName, 500) 
@@ -160,7 +160,7 @@ return (
           <CircularProgress />
         ) : (
           <Box className={styles.card_container}>
-              {Array.isArray(collaborators) && collaborators.map((user: User, index: number) => (
+              {Array.isArray(collaborators) && collaborators.map((user: BoardUser, index: number) => (
                 <Card key={user.id} className={styles.user_card}>
                   <CardContent className={styles.card_Content}>
                   <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center' }}>
@@ -170,7 +170,7 @@ return (
                     </Paper>
                     <div className={styles.date_container}>
                       <Typography variant="body2" color="text.secondary">
-                        Joined since - {new Date(user.date).toLocaleDateString("en-GB")}
+                        Joined since - {new Date(user.addedAt).toLocaleDateString()}
                       </Typography>   
                     </div>
                   </CardContent>

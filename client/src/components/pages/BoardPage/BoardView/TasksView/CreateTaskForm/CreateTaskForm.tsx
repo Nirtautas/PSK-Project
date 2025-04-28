@@ -5,7 +5,8 @@ import TaskApi, { CreateTaskDto } from "@/api/task.api";
 import SelectUsersField from "./SelectUsersField";
 import dayjs from "dayjs";
 import { useState, FormEvent } from "react";
-import { Task, TaskStatus } from "@/types/types";
+import { BoardUser, Task, TaskStatus } from "@/types/types";
+import TaskOnUserApi from "@/api/taskOnUser.api";
 
 type Props = {
     handleClose: () => void
@@ -17,7 +18,7 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState<dayjs.Dayjs | null>(null);
-    const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<BoardUser[]>([]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -32,6 +33,8 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
             
             const response = await TaskApi.create(newTask as CreateTaskDto, boardId)
             if (response.result) {
+                const userIds = selectedUsers.map(user => user.id)
+                await TaskOnUserApi.linkTaskUser(boardId, response.result.id, userIds)
                 onCreate(response.result)
             }
             handleClose()
@@ -64,7 +67,8 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <SelectUsersField 
-                    setSelectedUsers={setSelectedUsers}
+                    onUsersChange={setSelectedUsers}
+                    boardId={boardId}
                 />
                 <Button type="submit" variant="contained">
                     Create Task

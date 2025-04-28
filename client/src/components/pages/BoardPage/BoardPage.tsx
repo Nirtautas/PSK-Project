@@ -22,11 +22,10 @@ const BoardPage = ({ boardId }: Props) => {
         errorMsg,
         isLoading
     } = useFetch({
-        resolver: () => BoardApi.getBoardById(boardId), delayMs: 1000
+        resolver: () => BoardApi.getBoardById(boardId)
     })
 
-    const onUpdate = (updatedBoard: FetchResponse<Board>) =>
-    {
+    const onUpdate = (updatedBoard: FetchResponse<Board>) => {
         setData(updatedBoard)
     }
 
@@ -41,6 +40,30 @@ const BoardPage = ({ boardId }: Props) => {
             }
         })
     }
+
+    const handleTaskUpdate = (updatedTask: Task) => {
+        if (!data?.result) return
+
+        setData({
+            ...data,
+            result: {
+                ...data.result,
+                tasks: data.result.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+            }
+        })
+    }
+
+    const handleTaskDelete = (deletedTask: Task) => {
+        if (!data?.result) return
+
+        setData({
+            ...data,
+            result: {
+                ...data.result,
+                tasks: data.result.tasks.filter(task => task.id !== deletedTask.id)
+            }
+        })
+    }
     
     return (
         <div className={styles.content}>
@@ -51,7 +74,15 @@ const BoardPage = ({ boardId }: Props) => {
                 </Typography>
             </Box>
             <div className={styles.board_view_container}>
-                <BoardView boardId={boardId} tasks={data?.result?.tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={handleTaskCreate} onUpdate={onUpdate} />
+                <BoardView
+                    boardId={boardId}
+                    tasks={data?.result?.tasks || []}
+                    errorMsg={errorMsg}
+                    isLoading={isLoading}
+                    onCreate={handleTaskCreate}
+                    onUpdate={onUpdate}
+                    onTaskUpdate={handleTaskUpdate}
+                    onTaskDelete={handleTaskDelete}/>
             </div>
         </div>
     )

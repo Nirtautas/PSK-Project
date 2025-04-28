@@ -4,8 +4,8 @@ import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 import TaskApi from './task.api'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'>
-export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'>
+export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'| 'collaborators'>
+export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'| 'collaborators'>
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<PagedResponse<Board>>> {

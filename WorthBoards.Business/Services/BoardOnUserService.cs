@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Extensions.DependencyModel;
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
@@ -33,6 +34,8 @@ namespace WorthBoards.Business.Services
         public async Task<LinkUserToBoardResponse> LinkUserToBoard(int boardId, int userId, LinkUserToBoardRequest linkUserToBoardRequest, CancellationToken cancellationToken)
         {
             //In the future check if user has invitation before allowing to link
+            var responsibleUser = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId && bou.BoardId == boardId && bou.UserRole == UserRoleEnum.OWNER, cancellationToken);
+            if (responsibleUser != null) throw new BadRequestException(ExceptionFormatter.NotFound(nameof(responsibleUser), [userId]));
 
             var boardOnUser = _mapper.Map<BoardOnUser>(linkUserToBoardRequest);
             boardOnUser.BoardId = boardId;
@@ -74,8 +77,8 @@ namespace WorthBoards.Business.Services
 
         public async Task<LinkUserToBoardResponse> PatchUserOnBoard(int boardId, int userId, JsonPatchDocument<LinkUserToBoardRequest> linkUserToBoardPatchDoc, CancellationToken cancellationToken)
         {
-            var boardTaskToPatch = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId, cancellationToken)
-                ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
+            var boardTaskToPatch = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == userId && b.UserRole != UserRoleEnum.OWNER, cancellationToken)
+                ?? throw new BadRequestException(ExceptionFormatter.NotFound(nameof(BoardOnUser), [boardId, userId]));
 
             var boardTaskToPatchDto = _mapper.Map<LinkUserToBoardRequest>(boardTaskToPatch);
             linkUserToBoardPatchDoc.ApplyTo(boardTaskToPatchDto);
@@ -100,7 +103,16 @@ namespace WorthBoards.Business.Services
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
             
             var users = await _unitOfWork.BoardOnUserRepository.GetUsersByUserNameAsync(userName, cancellationToken);
-            return _mapper.Map<List<UserResponse>>(users);
+            var usersNotInBoard = new List<ApplicationUser>();
+
+            foreach (var user in users)
+            {
+                if (await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(b => b.BoardId == boardId && b.UserId == user.Id, cancellationToken) == null)
+                {
+                    usersNotInBoard.Add(user);
+                }
+            }
+            return _mapper.Map<List<UserResponse>>(usersNotInBoard);
         }
     }
 }

@@ -5,6 +5,8 @@
         string UserName,
         string FirstName,
         string LastName,
-        string Email
+        string Email,
+        DateTime CreationDate,
+        int? ImageURL
     );
 }

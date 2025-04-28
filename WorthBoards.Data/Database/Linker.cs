@@ -18,9 +18,9 @@ namespace WorthBoards.Data.Database
                 .Property(b => b.CreationDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            modelBuilder.Entity<BoardOnUser>()
-                .Property(b => b.AddedAt)
-                .HasDefaultValueSql("TO_TIMESTAMP(CURRENT_TIMESTAMP, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS')");
+            //modelBuilder.Entity<BoardOnUser>()
+            //    .Property(b => b.AddedAt)
+            //    .HasDefaultValueSql("TO_TIMESTAMP(CURRENT_TIMESTAMP, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS')");
 
             modelBuilder.Entity<BoardTask>()
                 .Property(b => b.CreationDate)

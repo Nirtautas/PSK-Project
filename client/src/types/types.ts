@@ -45,6 +45,7 @@ export type User = {
     lastName: string
     userName: string
     date: Date
+    imageURL: string | undefined
 }
 
 export type Notification = {

@@ -43,5 +43,6 @@ export default class CollaboratorApi {
             method: HTTPMethod.PATCH,
             headers: getAuthorizedHeaders(),
             body: JSON.stringify(patchData), 
+        });
     }
 }

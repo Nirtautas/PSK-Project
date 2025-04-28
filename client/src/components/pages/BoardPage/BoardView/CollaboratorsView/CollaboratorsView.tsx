@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Typography, Button, Box, CircularProgress, TextField, MenuItem, Select, FormControl, InputLabel, IconButton, Card, CardContent, Avatar, Paper } from '@mui/material'
 import CollaboratorApi from '@/api/collaborator.api'
-import { RoleString, User } from '@/types/types'
+import { Role, RoleString, User } from '@/types/types'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import styles from './CollaboratorsView.module.scss'
 
 const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value)
+  const [debouncedValue, setDebouncedValue] = useState(value) 
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -28,14 +28,14 @@ type Props = {
 }
 
 const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
-  const [userName, setUserName] = useState('') // Search term for filtering users
-  const [users, setUsers] = useState<User[]>([]) // List of users that match the search term
-  const [roleMapping, setRoleMapping] = useState<{ [userId: number]: string }>({}) // Mapping of userId to selected role
+  const [userName, setUserName] = useState('') 
+  const [users, setUsers] = useState<User[]>([]) 
+  const [roleMapping, setRoleMapping] = useState<{ [userId: number]: string }>({}) 
   const [linkErrorMsg, setLinkErrorMsg] = useState<string>('')
-  const [collaborators, setCollaborators] = useState<any>([]) // Collaborators state
-  const [selectedUsers, setSelectedUsers] = useState<number[]>([]) // Track selected users to add to board
-
-  const debouncedUserName = useDebounce(userName, 500) // 500ms debounce delay
+  const [collaborators, setCollaborators] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([]) 
+  const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({});
+  const debouncedUserName = useDebounce(userName, 500) 
   
   useEffect(() => {
     const fetchCollaborators = async () => {
@@ -48,9 +48,8 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
     };
   
     fetchCollaborators();
-  }, [boardId]); // Only re-fetch when boardId changes
-  
-  // Fetch users based on search
+  }, [boardId]); // re-fetch when boardId changes
+
   useEffect(() => {
     const fetchUsers = async () => {
       if (debouncedUserName.length > 0) {
@@ -63,7 +62,7 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
       }
     }
 
-    fetchUsers()
+  fetchUsers()
   }, [debouncedUserName, boardId])
 
   const handleRoleSelection = (userId: number, newRole: string) => {
@@ -78,17 +77,16 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
       const response = await CollaboratorApi.updateUserRole(boardId, userId, newRole);
       if (response.result) {
         setRoleMapping((prev) => ({ ...prev, [userId]: newRole }));
+        setRoleErrors((prev) => ({ ...prev, [userId]: '' })); 
         const { result } = await CollaboratorApi.getCollaborators(boardId);
-        setCollaborators(result || []); 
+        setCollaborators(result || []);
       } else {
-        console.error('Failed to update role');
+        setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
       }
     } catch (error) {
-      console.error('Error updating role:', error);
+      setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
     }
   };
-
-  
 
   const handleUserSelection = (userId: number) => {
     setSelectedUsers(prev => {
@@ -101,25 +99,29 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   }
 
   const handleLinkUsers = async () => {
-    setLinkErrorMsg('')
-    
-    // Link selected users to board
+    setLinkErrorMsg('');
+  
     for (const userId of selectedUsers) {
-      const selectedRole = roleMapping[userId] || 'VIEWER'
+      const selectedRole = roleMapping[userId] || 'VIEWER';
+  
       try {
-        const { result: updatedCollaborators } = await CollaboratorApi.linkUserToBoard(boardId, userId, selectedRole)
-        if (updatedCollaborators) {
-          setCollaborators(updatedCollaborators)
+        await CollaboratorApi.linkUserToBoard(boardId, userId, selectedRole);
+
+        const response = await CollaboratorApi.getCollaborators(boardId);
+        if (response && response.result) {
+          setCollaborators(response.result); 
         } else {
-          setLinkErrorMsg('Failed to add collaborators')
+          setLinkErrorMsg('Failed to fetch updated collaborators');
         }
       } catch (error) {
-        setLinkErrorMsg('Failed to add collaborators')
+        setLinkErrorMsg('Failed to add collaborators');
       }
     }
-    
-    setSelectedUsers([]) 
-  }
+  
+    setSelectedUsers([]);
+    setUsers([]);
+    setUserName('');
+  };
   
 const mapUserRoleEnumToString = (role: string | null): RoleString => {
   if (role === null) return null; 
@@ -139,9 +141,13 @@ const mapUserRoleEnumToString = (role: string | null): RoleString => {
 };
 
 const handleRemoveCollaborator = (userId: number) => {
-console.log("Remove collaborator with id:", userId);
+console.log("Remove collaborator");
+// to do
 };
 
+console.log('Collaborators:', collaborators);
+console.log('Is array:', Array.isArray(collaborators));
+console.log('Length:', Array.isArray(collaborators) ? collaborators.length : 'Not an array');
 return (
     <Box className={styles.main_panel}>
       <Box className={styles.panel}>
@@ -154,47 +160,45 @@ return (
           <CircularProgress />
         ) : (
           <Box className={styles.card_container}>
-            {collaborators.length === 0 ? (
-              <Typography>No collaborators found.</Typography>
-            ) : (
-              collaborators.map((user: User, index: number) => (
+              {Array.isArray(collaborators) && collaborators.map((user: User, index: number) => (
                 <Card key={user.id} className={styles.user_card}>
                   <CardContent className={styles.card_Content}>
                   <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center' }}>
-                    {index + 1}.    <Avatar className={styles.img_container} alt={user.userName} src="https://images.contentstack.io/v3/assets/bltcedd8dbd5891265b/blt5f18c2119ce26485/6668df65db90945e0caf9be6/beautiful-flowers-lotus.jpg?q=70&width=3840&auto=webp" />
-                     {user.userName} Role: {mapUserRoleEnumToString(user.userRole)}
-                    
+                    {index + 1}.    
+                    <Avatar className={styles.img_container} alt={user.userName} src={user.imageURL}  />
+                    {user.userName} Role: {mapUserRoleEnumToString(user.userRole)}
                     </Paper>
                     <div className={styles.date_container}>
                       <Typography variant="body2" color="text.secondary">
-  Joined since - {new Date(user.date).toLocaleDateString("en-GB")}
-</Typography>
-
+                        Joined since - {new Date(user.date).toLocaleDateString("en-GB")}
+                      </Typography>   
                     </div>
                   </CardContent>
-                  <FormControl className={styles.roleSelect}>
+                  <FormControl className={styles.roleSelect} >
                       <InputLabel>Role</InputLabel>
-                      <Select
-                        value={roleMapping[user.id] || 'VIEWER'}
+                      <Select 
+                        value={roleMapping[user.id] || 'OWNER'}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         label="Role"
                         size="small"
+                        disabled={user.userRole === 0}
                       >
+                        <MenuItem value="OWNER">Owner</MenuItem>
                         <MenuItem value="EDITOR">Editor</MenuItem>
                         <MenuItem value="VIEWER">Viewer</MenuItem>
                       </Select>
                     </FormControl>
+                    
                     <IconButton onClick={() => handleRemoveCollaborator(user.id)}>
                       <RemoveCircleOutlineIcon />
                     </IconButton>
                 </Card>
-              ))
-            )}
+              ))}
           </Box>
         )}
       </Box>
 
-      <Box className={styles.panel}>
+      <Box className={styles.panel} >
           <div className="BoardPage-module-scss-module___CFF7a__toolbar MuiBox-root css-0">
           <Typography variant="h5">Add Collaborator</Typography>
           </div>
@@ -202,52 +206,63 @@ return (
           {linkErrorMsg && <Typography color="error">{linkErrorMsg}</Typography>}
 
           <TextField
-            label="Search by username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            fullWidth
-            variant="outlined"
-            size="small"
-            sx={{ marginBottom: 2 }}
+          label="Search by username"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          variant="outlined"
+          size="small"
+          sx={{ marginBottom: 2, width: '50%' }}
           />
 
-          {isLoading ? (
-            <CircularProgress />
+        {isLoading ? (
+          <CircularProgress />
           ) : (
-            <Box>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <Box key={user.id} sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                    <Typography>{user.userName}</Typography>
+          <Box>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <Paper 
+                  key={user.id}
+                  elevation={3}
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    padding: 2,
+                    marginBottom: 2,
+                    backgroundColor: '#1e1e1e', 
+                    borderRadius: 2,
+                    width: '50%',
+                  }}
+                >
+                  <Typography>{user.userName}</Typography>
 
-                    <FormControl className={styles.roleSelect}>
-                      <InputLabel>Role</InputLabel>
-                      <Select
-                        value={roleMapping[user.id] || 'VIEWER'}
-                        onChange={(e) => handleRoleSelection(user.id, e.target.value)}
-                        label="Role"
-                        size="small"
-                      >
-                        <MenuItem value="EDITOR">Editor</MenuItem>
-                        <MenuItem value="VIEWER">Viewer</MenuItem>
-                      </Select>
-                    </FormControl>
+        <FormControl className={styles.roleSelect} sx={{ minWidth: 120 }}>
+          <InputLabel>Role</InputLabel>
+          <Select
+            value={roleMapping[user.id] || 'VIEWER'}
+            onChange={(e) => handleRoleSelection(user.id, e.target.value)}
+            label="Role"
+            size="small"
+          >
+            <MenuItem value="EDITOR">Editor</MenuItem>
+            <MenuItem value="VIEWER">Viewer</MenuItem>
+          </Select>
+        </FormControl>
 
-                    <Button
-                      variant="contained"
-                      sx={{ marginLeft: 2 }}
-                      onClick={() => handleUserSelection(user.id)}
-                    >
-                      {selectedUsers.includes(user.id) ? 'Remove' : 'Select'}
-                    </Button>
-                  </Box>
-                ))
-              ) : (
-                <Typography>No users found</Typography>
-              )}
-            </Box>
-          )}
-
+        <Button
+          variant="contained"
+          sx={{ marginLeft: 2 }}
+          onClick={() => handleUserSelection(user.id)}
+        >
+          {selectedUsers.includes(user.id) ? 'Remove' : 'Select'}
+        </Button>
+        </Paper>
+          ))
+            ) : (
+            <Typography>No users found</Typography>
+            )}
+          </Box>
+        )}
           <Button
             variant="contained"
             color="primary"

@@ -7,6 +7,7 @@ using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
+using WorthBoards.Common.Exceptions;
 using WorthBoards.Common.Exceptions.Custom;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Domain.Entities;
@@ -100,6 +101,8 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         }
         var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId && bou.BoardId == boardId, cancellationToken);
         var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId && bou.BoardId == boardId, cancellationToken);
+        var existingInvitation = await _unitOfWork.NotificationRepository.GetByExpressionAsync(notif => notif.NotificationType == NotificationEventTypeEnum.INVITATION && notif.SubjectUserId == userId);
+
         if (boardOnSender is not null && !boardOnSender.UserRole.CanSendInvitations())
         {
             throw new UnauthorizedAccessException("You are unauthorized to send invitations to this board.");
@@ -108,9 +111,14 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         {
             throw new BadHttpRequestException("Cannot invite a user that has already joined this board.");
         }
+        if (existingInvitation is not null)
+        {
+            throw new BadHttpRequestException("This user has already received an invitation to the board.");
+        }
         var notification = new Notification()
         {
             NotificationType = NotificationEventTypeEnum.INVITATION,
+            SubjectUserId = userId,
             SenderId = responsibleUserId,
             BoardId = boardId,
             InvitationRole = role,
@@ -173,5 +181,21 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 .ToList()
         };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
+    }
+
+    public async Task UnlinkNotification(int userId, int notificationId, CancellationToken cancellationToken)
+    {
+        var notificationOnUser = await _unitOfWork.NotificationOnUserRepository.GetByExpressionAsync(nou => nou.UserId == userId && nou.NotificationId == notificationId, cancellationToken);
+        if (notificationOnUser is null)
+        {
+            throw new NotFoundException(ExceptionFormatter.NotFound(nameof (notificationOnUser), [notificationId]));
+        }
+        _unitOfWork.NotificationOnUserRepository.Delete(notificationOnUser);
+        var notification = await _unitOfWork.NotificationRepository.GetByExpressionWithIncludesAsync(n => n.Id == notificationId, cancellationToken, n => n.NotificationsOnUsers);
+        if (notification is not null && notification.NotificationsOnUsers.Count == 0)
+        {
+            _unitOfWork.NotificationRepository.Delete(notification);
+        }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

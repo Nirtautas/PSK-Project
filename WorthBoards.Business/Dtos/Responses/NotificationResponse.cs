@@ -10,9 +10,12 @@ namespace WorthBoards.Business.Dtos.Responses
         public DateTime SendDate { get; set; }
 
         public string Title { get; set; }
+        public string Description { get; set; }
 
         public int? TaskId { get; set; }
 
         public int? BoardId { get; set; }
+
+        public NotificationEventTypeEnum Type { get; set; }
     }
 }

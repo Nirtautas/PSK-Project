@@ -100,6 +100,8 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         }
         var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId && bou.BoardId == boardId, cancellationToken);
         var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId && bou.BoardId == boardId, cancellationToken);
+        var existingInvitation = await _unitOfWork.NotificationRepository.GetByExpressionAsync(notif => notif.NotificationType == NotificationEventTypeEnum.INVITATION && notif.SubjectUserId == userId);
+
         if (boardOnSender is not null && !boardOnSender.UserRole.CanSendInvitations())
         {
             throw new UnauthorizedAccessException("You are unauthorized to send invitations to this board.");
@@ -108,9 +110,14 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         {
             throw new BadHttpRequestException("Cannot invite a user that has already joined this board.");
         }
+        if (existingInvitation is not null)
+        {
+            throw new BadHttpRequestException("This user has already received an invitation to the board.");
+        }
         var notification = new Notification()
         {
             NotificationType = NotificationEventTypeEnum.INVITATION,
+            SubjectUserId = userId,
             SenderId = responsibleUserId,
             BoardId = boardId,
             InvitationRole = role,

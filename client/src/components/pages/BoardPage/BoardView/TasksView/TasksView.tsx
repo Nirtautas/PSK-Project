@@ -20,6 +20,8 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     onCreate: (t: Task) => void
+    onTaskUpdate: (t: Task) => void
+    onTaskDelete: (t: Task) => void
 }
 
 type TaskColumn = {
@@ -31,7 +33,7 @@ type TaskColumn = {
 
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => {
+const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
@@ -119,7 +121,6 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
         p: 4,
     };
 
-
     return (
         <Paper className={styles.container}>
             { userRole && userRole.result !== Role.VIEWER && (
@@ -143,11 +144,15 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
                             <Typography variant="h6" className={styles.label}>{column.label}</Typography>
                         </div>
                         <TaskList
+                            boardId={boardId}
                             id={column.id}
                             isLoading={isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
+                            onTaskUpdate={onTaskUpdate}
+                            userRole={userRole}
+                            onDelete={onTaskDelete}
                             />
                     </div>
                 ))

@@ -1,4 +1,4 @@
-import { Board, BoardOnUser, Role, RoleString } from "@/types/types"
+import { Board, BoardOnUser, Role, RoleString, BoardUser } from "@/types/types"
 import { FetchResponse, HTTPMethod } from '@/types/fetch';
 import { apiBaseUrl } from '@/constants/api';
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
@@ -20,5 +20,13 @@ export default class BoardOnUserApi {
         }
         
         return { result: userData.result.userRole }
+    }
+
+    static async getBoardUsers(boardId: number): Promise<FetchResponse<BoardUser[]>> {
+        return fetch ({
+            url: `${apiBaseUrl}/boards/${boardId}/users`,
+            method: HTTPMethod.GET,
+            headers: getAuthorizedHeaders()
+        })
     }
 }

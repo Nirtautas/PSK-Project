@@ -1,14 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
 import { Typography, Button, Box, CircularProgress } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
 import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
-import { Board, BoardUser } from '../../../../../types/types'
+import { Board, BoardUser, Role } from '../../../../../types/types'
 import { FetchResponse } from '../../../../../types/fetch'
 import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
+import useFetch from '@/hooks/useFetch'
+import BoardOnUserApi from '@/api/boardOnUser.api'
+import { getUserId, setUserId } from '@/utils/userId'
 
 type Props = {
     boardId: number
@@ -21,12 +24,24 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [editData, setEditData] = useState<UpdateBoardDto | null>(null)
     const [editError, setEditError] = useState<string>('')
-
+    
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string>('')
 
     const router = useRouter()
-
+    const [userId, setUserId] = useState<number | null>(null)
+    
+    useEffect(() => {
+        const userId = getUserId();
+        setUserId(userId);
+    }, []);
+    
+    const { data: userRole } = useFetch({
+        resolver: () => userId ? BoardOnUserApi.getUserRole(boardId, userId) : Promise.resolve(null),
+        deps: [userId]
+    });
+    
+    
     const handleOpenEdit = async () => {
         try {
             const { result } = await BoardApi.getBoardById(boardId)
@@ -113,12 +128,19 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                 </Button>
             </Box>
 
-            <Box className={styles.warning_box}>
-            <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
-                Select a user to transfer ownership:
-            </Typography>
-                <TransferOwnershipView boardId={boardId}/>
-            </Box>
+            {userRole === null || userRole === undefined ? (
+                <Typography>Loading user role...</Typography>
+            ) : userRole.result === Role.OWNER ? (
+                <Box className={styles.warning_box}>
+                    <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
+                        Select a user to transfer ownership:
+                    </Typography>
+                    <TransferOwnershipView boardId={boardId} />
+                </Box>
+            ) : (
+                <Typography></Typography>
+            )}
+
 
             <BoardManagementModal
                 open={isEditOpen}

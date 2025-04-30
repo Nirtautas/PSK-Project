@@ -38,6 +38,16 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Comment, CommentUpdateRequest>();
             CreateMap<CommentUpdateRequest, Comment>();
 
+            //Notification
+            CreateMap<Notification, NotificationResponse>();
+            // CreateMap<(Notification, string), NotificationResponse>()
+            //     .ConvertUsing(tuple => new NotificationResponse() {
+            //         Id = tuple.Item1.Id,
+            //         SendDate = tuple.Item1.SendDate,
+            //         NotificationType = tuple.Item1.NotificationType,
+            //         SenderUsername = tuple.Item2
+            //     });
+
             CreateMap<LinkUserToBoardResponse, BoardOnUser>();
             CreateMap<BoardOnUser, LinkUserToBoardRequest>();
 

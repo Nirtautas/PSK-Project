@@ -20,10 +20,6 @@ namespace WorthBoards.Business.Validators.BoardTask
                 .MaximumLength(ValidationConstants.DescriptionMaxLength)
                 .WithMessage(ValidationMessages.DescriptionTooLong);
 
-            RuleFor(x => x.DeadlineEnd)
-                .GreaterThan(DateTime.UtcNow)
-                .WithMessage(ValidationMessages.DeadlineInvalid);
-
             RuleFor(x => x.TaskStatus)
                 .Must(status => Enum.IsDefined(typeof(TaskStatusEnum), status))
                 .WithMessage(ValidationMessages.TaskStatusInvalid);

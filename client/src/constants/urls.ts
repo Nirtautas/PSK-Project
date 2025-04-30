@@ -8,3 +8,7 @@ export const getPageUrl = {
     register: () => '/register',
     logout: () => '/logout'
 }
+
+export const pathnames = {
+    boards: '/boards'
+}

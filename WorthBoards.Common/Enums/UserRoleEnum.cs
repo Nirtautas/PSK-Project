@@ -6,4 +6,10 @@
         EDITOR,
         VIEWER
     }
+
+    public static class UserRoleExtensions
+    {
+        public static bool CanSendInvitations(this UserRoleEnum role) => role == UserRoleEnum.OWNER;
+        public static bool CanRemoveUsers(this UserRoleEnum role) => role == UserRoleEnum.OWNER; 
+    }
 }

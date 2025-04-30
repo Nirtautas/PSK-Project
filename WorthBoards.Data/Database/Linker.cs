@@ -2,7 +2,7 @@
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 
-namespace POS_System.Data.Database
+namespace WorthBoards.Data.Database
 {
     public static class Linker
     {
@@ -20,7 +20,7 @@ namespace POS_System.Data.Database
 
             modelBuilder.Entity<BoardOnUser>()
                 .Property(b => b.AddedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .HasDefaultValueSql("TO_TIMESTAMP(CURRENT_TIMESTAMP, 'YYYY-MM-DD\"T\"HH24:MI:SS.MS')");
 
             modelBuilder.Entity<BoardTask>()
                 .Property(b => b.CreationDate)
@@ -80,6 +80,12 @@ namespace POS_System.Data.Database
                 .HasMany(b => b.Comments)
                 .WithOne(c => c.BoardTask) 
                 .IsRequired();
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Task)
+                .WithMany()
+                .HasForeignKey(n => n.TaskId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

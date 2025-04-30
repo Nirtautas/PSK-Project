@@ -11,5 +11,6 @@ namespace WorthBoards.Business.Dtos.Responses
         public DateTime DeadlineEnd { get; set; }
         public DateTime CreationDate { get; set; }
         public TaskStatusEnum TaskStatus { get; set; }
+        public uint Version { get; set; }
     }
 }

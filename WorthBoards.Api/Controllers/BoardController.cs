@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
 

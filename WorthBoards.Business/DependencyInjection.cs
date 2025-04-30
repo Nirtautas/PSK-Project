@@ -25,7 +25,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IBoardService, BoardService>()
                 .AddScoped<ICommentService, CommentService>()
                 .AddScoped<IBoardOnUserService, BoardOnUserService>()
-                .AddScoped<ITaskOnUserService, TaskOnUserService>();
+                .AddScoped<ITaskOnUserService, TaskOnUserService>()
+                .AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

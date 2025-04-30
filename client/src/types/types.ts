@@ -1,11 +1,10 @@
-
-
 export type Board = {
     id: number
     title: string
     description: string
     imageURL: string | null
-    creationDate: Date 
+    creationDate: Date
+    version: number
     tasks: Task[]
 }
 
@@ -25,8 +24,8 @@ export type Task = {
     description: string | null
     creationDate: Date
     deadlineEnd: Date | null
-    //TODO: make assigned users get passed by id (number[]) instead of string[]
-    assignedUsers: string[] | string | null
+    version: number
+    assignedUsers: TaskUser[]
 }
 export const sortTasksByTitle = (a: Task, b: Task) => b.title.localeCompare(a.title)
 
@@ -43,13 +42,44 @@ export type User = {
     userRole: RoleString
     firstName: string
     lastName: string
+    userName: string
+    date: Date
+    imageURL: string | undefined
+}
+
+export type BoardUser = {
+    id: number
+    userName: string
+    imageURL: string
+    userRole: RoleString
+    addedAt: Date
+}
+
+export type TaskUser = {
+    id: number
+    userName: string
+    imageURL: string
+    assignedAt: Date
 }
 
 export type Notification = {
     id: number
+    boardId: number
+    taskId: number
     title: string
     description: string
-    date: Date
+    sendDate: Date
+    type: NotificationType
+}
+
+export enum NotificationType {
+    INVITATION = 0,
+    TASK_CREATED,
+    TASK_STATUS_CHANGE,
+    TASK_ASSIGNED,
+    USER_ADDED_TO_BOARD,
+    USER_REMOVED_FROM_BOARD,
+    USER_LEFT_BOARD,
 }
 
 export type Comment = {
@@ -58,6 +88,7 @@ export type Comment = {
     userId: number
     content: string
     creationDate: Date
+    version: number
 }
 
 export type BoardOnUser = {
@@ -65,4 +96,5 @@ export type BoardOnUser = {
     userId: number
     addedAt: Date
     userRole: RoleString
+    version: number
 }

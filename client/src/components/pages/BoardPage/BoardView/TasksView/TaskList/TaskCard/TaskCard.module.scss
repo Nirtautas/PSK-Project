@@ -1,3 +1,49 @@
 .task_card {
   height: 8rem;
 }
+
+.task_card_clickable {
+  height: 100%;
+}
+
+.task_card_content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.title_box {
+  font-size: 0.9rem;
+}
+
+.top_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom_row {
+  align-self: flex-start;
+}
+
+.image_box {
+  display: flex;
+}
+
+.image_box img {
+  border-radius: 50%;
+  margin-left: -0.7rem;
+  border: 1px solid black;
+  z-index: 2;
+}
+
+.image_box img:first-child {
+  margin-left: 0;
+  z-index: 3;
+}
+
+.image_box img:last-child {
+  z-index: 1;
+}

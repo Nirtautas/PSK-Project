@@ -4,13 +4,12 @@ import { Box, Button, Modal, Paper, Typography } from '@mui/material'
 
 import styles from './TasksView.module.scss'
 import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
-import { Role, RoleString, StatusString, Task, TaskStatus } from '@/types/types'
+import { Role, Task, TaskStatus } from '@/types/types'
 import { useEffect, useState } from 'react'
-import TaskApi, { CreateTaskDto } from '@/api/task.api'
+import TaskApi, { UpdateTaskDto } from '@/api/task.api'
 import useDragAndDrop from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
-import { Padding } from '@mui/icons-material'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import useFetch from '@/hooks/useFetch'
@@ -21,6 +20,8 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     onCreate: (t: Task) => void
+    onTaskUpdate: (t: Task) => void
+    onTaskDelete: (t: Task) => void
 }
 
 type TaskColumn = {
@@ -32,7 +33,7 @@ type TaskColumn = {
 
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => {
+const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
@@ -79,11 +80,12 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
         if (!targetColumn || !targetTask) {
             return
         }
-        const newTask: CreateTaskDto = {
+        const newTask: UpdateTaskDto = {
             title: targetTask.title,
             description: targetTask.description,
             deadlineEnd: targetTask.deadlineEnd,
-            taskStatus: targetColumn.enumId
+            taskStatus: targetColumn.enumId,
+            version: targetTask.version
         }
         await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
         const newColumns: TaskColumn[] = [
@@ -119,7 +121,6 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
         p: 4,
     };
 
-
     return (
         <Paper className={styles.container}>
             { userRole && userRole.result !== Role.VIEWER && (
@@ -143,11 +144,15 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate }: Props) => 
                             <Typography variant="h6" className={styles.label}>{column.label}</Typography>
                         </div>
                         <TaskList
+                            boardId={boardId}
                             id={column.id}
                             isLoading={isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
+                            onTaskUpdate={onTaskUpdate}
+                            userRole={userRole}
+                            onDelete={onTaskDelete}
                             />
                     </div>
                 ))

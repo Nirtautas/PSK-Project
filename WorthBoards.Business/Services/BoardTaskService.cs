@@ -47,7 +47,7 @@ namespace WorthBoards.Business.Services
             var boardTaskToDelete = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskId]));
 
-            _unitOfWork.BoardTaskRepository.Delete(boardTaskToDelete); ;
+            _unitOfWork.BoardTaskRepository.Delete(boardTaskToDelete);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

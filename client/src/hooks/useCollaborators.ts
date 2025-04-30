@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import CollaboratorApi from '@/api/collaborator.api'
-import { BoardUser } from '@/types/types'
+import { BoardUser, Role } from '@/types/types'
 
 export const useCollaborators = (boardId: number, userName?: string | null) => {
   const [collaborators, setCollaborators] = useState<BoardUser[]>([])
@@ -13,16 +13,39 @@ export const useCollaborators = (boardId: number, userName?: string | null) => {
         const { result } = await CollaboratorApi.getCollaborators(boardId)
 
         if (result) {
-          const filteredCollaborators = userName
-            ? result.filter((collaborator: BoardUser) =>
-                collaborator.userName.toLowerCase().includes(userName.toLowerCase())
+          let filteredCollaborators = result
+
+          if (userName) {
+            filteredCollaborators = filteredCollaborators.filter(
+              (collaborator) => collaborator.userRole !== Role.OWNER
+            )
+          }
+
+          filteredCollaborators = filteredCollaborators.filter(
+            (collaborator) =>
+              userName
+                ? collaborator.userName.toLowerCase().includes(userName.toLowerCase())
+                : true
+          )
+
+          if (!userName) {
+            const owner = filteredCollaborators.find(
+              (collaborator) => collaborator.userRole === Role.OWNER
+            )
+
+            if (owner) {
+              filteredCollaborators = filteredCollaborators.filter(
+                (collaborator) => collaborator.userRole !== Role.OWNER
               )
-            : result
-            
-          setCollaborators(filteredCollaborators || [])
+              filteredCollaborators.unshift(owner)
+            }
+          }
+
+          setCollaborators(filteredCollaborators)
         } else {
           setCollaborators([])
         }
+
         setError(null)
       } catch {
         setError('Failed to fetch collaborators')

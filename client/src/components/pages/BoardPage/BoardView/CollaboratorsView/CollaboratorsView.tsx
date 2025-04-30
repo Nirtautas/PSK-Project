@@ -4,6 +4,7 @@ import CollaboratorApi from '@/api/collaborator.api'
 import { Role, RoleString, BoardUser } from '@/types/types'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import styles from './CollaboratorsView.module.scss'
+import { useCollaborators } from '@/hooks/useCollaborators'
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value) 
@@ -31,25 +32,12 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const [userName, setUserName] = useState('') 
   const [users, setUsers] = useState<BoardUser[]>([]) 
   const [roleMapping, setRoleMapping] = useState<{ [userId: number]: string }>({}) 
+  const { collaborators, error: collaboratorError, loading, setCollaborators } = useCollaborators(boardId)
   const [linkErrorMsg, setLinkErrorMsg] = useState<string>('')
-  const [collaborators, setCollaborators] = useState<BoardUser[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]) 
-  const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({});
+  const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({})
   const debouncedUserName = useDebounce(userName, 500) 
   
-  useEffect(() => {
-    const fetchCollaborators = async () => {
-      try {
-        const { result } = await CollaboratorApi.getCollaborators(boardId);
-        setCollaborators(result || []);
-      } catch (error) {
-        setLinkErrorMsg('Failed to fetch collaborators');
-      }
-    };
-  
-    fetchCollaborators();
-  }, [boardId]); // re-fetch when boardId changes
-
   useEffect(() => {
     const fetchUsers = async () => {
       if (debouncedUserName.length > 0) {
@@ -156,7 +144,7 @@ return (
             Your Collaborators:
           </Typography>
         </div>
-        {isLoading ? (
+        {loading ? (
           <CircularProgress />
         ) : (
           <Box className={styles.card_container}>
@@ -214,7 +202,7 @@ return (
           sx={{ marginBottom: 2, width: '50%' }}
           />
 
-        {isLoading ? (
+        {loading ? (
           <CircularProgress />
           ) : (
           <Box>

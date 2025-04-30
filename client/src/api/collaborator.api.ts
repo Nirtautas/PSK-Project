@@ -45,4 +45,12 @@ export default class CollaboratorApi {
             body: JSON.stringify(patchData), 
         });
     }
+
+    static async transferOwnership(boardId: number, newOwnerId: number): Promise<FetchResponse<any>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/collaborators/${newOwnerId}`,
+            method: HTTPMethod.POST,
+            headers: getAuthorizedHeaders(),
+        });
+    }
 }

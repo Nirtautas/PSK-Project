@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
-import { Typography, Button, Box } from '@mui/material'
+import { Typography, Button, Box, CircularProgress } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
 import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
-import { Board } from '../../../../../types/types'
+import { Board, BoardUser } from '../../../../../types/types'
 import { FetchResponse } from '../../../../../types/fetch'
+import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
 
 type Props = {
     boardId: number
@@ -111,6 +112,14 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     {isDeleting ? 'Deleting...' : 'Delete Board'}
                 </Button>
             </Box>
+
+            <Box className={styles.warning_box}>
+            <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
+                Select a user to transfer ownership:
+            </Typography>
+                <TransferOwnershipView boardId={boardId}/>
+            </Box>
+
             <BoardManagementModal
                 open={isEditOpen}
                 onClose={() => setIsEditOpen(false)}

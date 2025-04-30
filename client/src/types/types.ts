@@ -1,10 +1,13 @@
 
 
+
+
 export type Board = {
     id: number
     title: string
     description: string
     imageURL: string | null
+    creationDate: Date 
     creationDate: Date 
     tasks: Task[]
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import BoardApi from '@/api/board.api'
+import BoardApi, { CreateBoardDto } from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
 
 import styles from './BoardsPage.module.scss'
@@ -13,8 +13,7 @@ import { Board } from '../../../types/types'
 import router, { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
-import image from 'next/image'
-import BoardManagementModal, { CreateBoardArgs } from './BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
 
 type Props = {
     pageNum: number
@@ -47,6 +46,26 @@ const BoardsPage = ({ pageNum }: Props) => {
 
     const totalPages = data ? Math.ceil(data.totalCount / data.pageSize) : 0
     const isLastPage = data ? pageNum >= totalPages - 1 : false
+
+    const handleBoardCreate = async ({ title, description, imageURL }: CreateBoardDto) => {
+        const res = await BoardApi.createBoard({
+            title,
+            description,
+            imageURL
+        })
+
+        setIsModalOpen(false)
+
+        if (res?.result && data) {
+            if (data.results.length != data.pageSize) {
+                setData({
+                    ...data,
+                    totalCount: data.totalCount + 1,
+                    results: [res.result, ...data.results]
+                })
+            }
+        }
+    }
 
     return (
         <div className={styles.content}>

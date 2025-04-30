@@ -19,5 +19,7 @@ namespace WorthBoards.Domain.Entities
         //Navigation properties
         public virtual InvitationData? InvitationData { get; set; }
         public virtual ICollection<NotificationOnUser> NotificationsOnUsers { get; set; }
+        public virtual Board Board { get; set;}
+        public virtual BoardTask Task { get; set; }
     }
 }

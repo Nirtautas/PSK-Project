@@ -4,9 +4,8 @@ import { FetchResponse, HTTPMethod, PagedResponse } from '../types/fetch'
 import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'creationDate'> & {
-    imageFile?: File
-}
+export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'| 'collaborators'>
+export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'| 'collaborators'>
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<PagedResponse<Board>>> {

@@ -10,10 +10,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 30vh;
+  max-width: 45ch;
 }
 
 .content_wrapper {
-  width: 30ch;
   margin: 1rem;
   min-height: 3ch;
 
@@ -29,4 +29,8 @@
   &_active {
     color: red;
   }
+}
+
+.notifications_container {
+    margin: 0 1rem;
 }

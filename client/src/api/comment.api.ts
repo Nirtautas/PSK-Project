@@ -1,11 +1,12 @@
 import { apiBaseUrl, defaultHeaders } from "@/constants/api";
+import { PagedResponse } from "@/hooks/usePagedFetch";
 import { FetchResponse, HTTPMethod } from "@/types/fetch";
 import { Board, Task, Comment } from "@/types/types";
 import { getAuthorizedHeaders, fetch } from "@/utils/fetch";
 
 export default class CommentApi {
 
-    public static async getAll(boardId: Board['id'], taskId: Task['id']): Promise<FetchResponse<{item1: Comment[], item2: number}>> {
+    public static async getAll(boardId: Board['id'], taskId: Task['id']): Promise<FetchResponse<PagedResponse<{item1: Comment[], item2: number}>>> {
         const commentsAndCount = await fetch({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/comments`,
             method: HTTPMethod.GET,

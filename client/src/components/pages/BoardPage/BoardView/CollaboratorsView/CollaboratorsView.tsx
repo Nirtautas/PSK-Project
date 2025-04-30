@@ -189,6 +189,15 @@ return (
       <Box className={styles.panel} >
           <div className="BoardPage-module-scss-module___CFF7a__toolbar MuiBox-root css-0">
           <Typography variant="h5">Add Collaborator</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLinkUsers}
+            sx={{ marginTop: 2 }}
+            disabled={selectedUsers.length === 0}
+          >
+            Add Selected Users to Board
+          </Button>
           </div>
           {errorMsg && <Typography color="error">{errorMsg}</Typography>}
           {linkErrorMsg && <Typography color="error">{linkErrorMsg}</Typography>}
@@ -251,15 +260,6 @@ return (
             )}
           </Box>
         )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleLinkUsers}
-            sx={{ marginTop: 2 }}
-            disabled={selectedUsers.length === 0}
-          >
-            Add Selected Users to Board
-          </Button>
       </Box>
     </Box>
 )}

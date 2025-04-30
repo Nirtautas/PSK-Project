@@ -43,24 +43,22 @@ const TransferOwnershipView = ({ boardId }: { boardId: number }) => {
     try {
       setIsTransferring(true);
       const response = await CollaboratorApi.transferOwnership(boardId, selectedUserId);
-  
-      // Check if response contains an error
+
       if (response.error) {
-        setTransferError(response.error); // Display error message from response
+        setTransferError(response.error); 
         setTransferSuccess(null);
       } else if (response.result) {
-        // If response contains a result, show success
         setTransferSuccess('Ownership successfully transferred!');
         setTransferError(null);
+        setSelectedUserId(null);
+        setUserName('');
       } else {
-        // If no result is returned, handle as a generic error
         setTransferError('An unexpected error occurred.');
         setTransferSuccess(null);
       }
     } catch (error: any) {
       console.error('Ownership transfer failed:', error);
   
-      // Catch and handle errors related to empty or non-JSON responses
       if (error instanceof SyntaxError) {
         setTransferError('Failed to parse response. The server may not have returned valid JSON.');
       } else if (error?.message) {

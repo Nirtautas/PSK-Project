@@ -95,5 +95,14 @@ namespace WorthBoards.Api.Controllers
             var userResponse = await _boardOnUserService.GetUsersByUserNameAsync(boardId, userName, cancellationToken);
             return Ok(userResponse);
         }
+
+        [HttpPost("{boardId}/collaborators/{newOwnerId}")]
+        [AuthorizeRole(UserRoleEnum.OWNER)]
+        public async Task<IActionResult> TransferOwnership(int boardId, int newOwnerId, CancellationToken cancellationToken)
+        {
+            var currentOwnerId = UserHelper.GetUserId(User).Value;
+            await _boardOnUserService.TransferOwnershipAsync(boardId, currentOwnerId, newOwnerId, cancellationToken);
+            return NoContent();
+        }
     }
 }

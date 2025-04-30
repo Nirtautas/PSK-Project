@@ -205,7 +205,7 @@ return (
         {loading ? (
           <CircularProgress />
           ) : (
-          <Box>
+          <Box className={styles.add_user_container}>
             {users.length > 0 ? (
               users.map((user) => (
                 <Paper 

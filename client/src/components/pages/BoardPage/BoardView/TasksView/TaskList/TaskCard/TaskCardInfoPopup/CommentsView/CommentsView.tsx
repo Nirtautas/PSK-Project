@@ -58,10 +58,8 @@ export default function CommentsView
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-
-        const commentText = (event.currentTarget[0] as HTMLInputElement).value
         //TODO: the comments taskId returns as 0 all the time
-        const createdComment = await CommentApi.create(boardId, commentText, taskId)
+        const createdComment = await CommentApi.create(boardId, commentInputText, taskId)
 
         if (createdComment.error) {
             console.error("Error creating comment:", createdComment.error)
@@ -71,8 +69,6 @@ export default function CommentsView
             console.log("Created comment:", createdComment.result)
             setCashedComments((prevComments) => [...prevComments, createdComment.result as Comment])
         }
-        //Reset
-        // (event.currentTarget[0] as HTMLInputElement).value = ''
         setCommentInputText('')
     }
 

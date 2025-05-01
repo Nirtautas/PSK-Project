@@ -1,19 +1,31 @@
-import { apiBaseUrl, defaultHeaders } from "@/constants/api";
-import { PagedResponse } from "@/hooks/usePagedFetch";
+import { apiBaseUrl } from "@/constants/api";
+import { Paginated } from '@/types/api'
 import { FetchResponse, HTTPMethod } from "@/types/fetch";
 import { Board, Task, Comment } from "@/types/types";
 import { getAuthorizedHeaders, fetch } from "@/utils/fetch";
 
 export default class CommentApi {
 
-    public static async getAll(boardId: Board['id'], taskId: Task['id'], pageNum: Number, pageSize: Number): Promise<FetchResponse<PagedResponse<Comment[]>>> {
-        const commentsAndCount = await fetch({
+    public static async getAll(boardId: Board['id'], taskId: Task['id'], pageNum: Number, pageSize: Number): Promise<FetchResponse<Paginated<Comment>>> {
+        // FIXME: fix when actual backend pagination is implemented
+        const response = await fetch({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/comments?pageNum=${pageNum}&pageSize=${pageSize}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders() as HeadersInit,
         });
-        
-        return commentsAndCount;
+            
+        if (!response.result) {
+            return response
+        }
+        const comments = response.result.comments
+        return {
+            result: {
+                pageNumber: 0,
+                pageSize: 5,
+                pageCount: 999,
+                items: comments as Comment[]
+            }
+        }
     }
 
     public static async create(boardId: Board['id'], commentText: String, taskId: Task['id']): Promise<FetchResponse<Comment>> {

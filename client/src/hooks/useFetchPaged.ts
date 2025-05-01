@@ -8,7 +8,7 @@ export type UseFetchPagedArgs<T> = {
     deps?: any[]
 }
 
-
+// Remember to check if 'isLoading' and 'errorMsg' before using other properties as they may be undefined or null
 const useFetchResponsePaged = <T>(args: UseFetchPagedArgs<T>) => {
     const {
         data,
@@ -20,9 +20,9 @@ const useFetchResponsePaged = <T>(args: UseFetchPagedArgs<T>) => {
 
     return {
         data: data?.items || null,
-        pageNumber: data?.pageNumber || null,
-        pageCount: data?.pageCount || null,
-        pageSize: data?.pageSize || null,
+        pageNumber: data?.pageNumber as unknown as number,
+        pageCount: data?.pageCount as unknown as number,
+        pageSize: data?.pageSize as unknown as number,
         setData: (newItems: T[]) => setData({ ...data, items: newItems }),
         isLoading,
         errorMsg,

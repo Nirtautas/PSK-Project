@@ -18,7 +18,6 @@ export default function CommentsView
     taskId: number,
     boardId: number
 }) {
-    const userId = getUserId();
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
     const [pageNum, setPageNum] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
@@ -89,14 +88,16 @@ export default function CommentsView
         });
     }
 
-    const link = !loadingUsers ? users.result?.find((user: BoardUser) => user.id === userId)?.imageURL || '' : '';
+    const getUserImageLink = (userId: number) => {
+        return !loadingUsers ? users.result?.find((user: BoardUser) => user.id === userId)?.imageURL || '' : '';
+    };
     
     return (
         <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {cashedComments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={link}/>
+                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)}/>
                 ))}
             </Box>
             <form onSubmit={handleSubmit}>

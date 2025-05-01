@@ -35,13 +35,14 @@ export default class CommentApi {
         });
     }
     
-    public static async update(boardId: Board['id'], taskId: Task['id'], commentId: Comment['id'], commentText: String): Promise<FetchResponse<Comment>> {
+    public static async update(boardId: Board['id'], taskId: Task['id'], commentId: Comment['id'], commentText: String, version: number): Promise<FetchResponse<Comment>> {
         return fetch({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/comments/${commentId}`,
             method: HTTPMethod.PUT,
             headers: getAuthorizedHeaders() as HeadersInit,
             body: JSON.stringify({
                 Content: commentText,
+                Version: version
             })
         });
     }

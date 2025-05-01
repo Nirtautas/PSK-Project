@@ -8,5 +8,6 @@
         public string Content { get; set; }
         public DateTime CreationDate { get; set; }
         public bool Edited { get; set; }
+        public uint Version { get; set; }
     }
 }

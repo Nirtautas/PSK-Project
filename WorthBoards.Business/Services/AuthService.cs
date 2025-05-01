@@ -20,7 +20,7 @@ namespace WorthBoards.Business.Services
         ApplicationDbContext context
     ) : IAuthService
     {
-        public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest credentials)
+        public async Task<UserLoginResponse> LoginUserAsync(UserLoginRequest credentials, CancellationToken cancellationToken)
         {
             var user = await userManager.FindByNameAsync(credentials.UserName);
 
@@ -44,7 +44,7 @@ namespace WorthBoards.Business.Services
             return new UserLoginResponse(user.Id, credentials.UserName, jwtToken);
         }
 
-        public async Task<UserResponse> RegisterUserAsync(UserRegisterRequest registerUser)
+        public async Task<UserResponse> RegisterUserAsync(UserRegisterRequest registerUser, CancellationToken cancellationToken)
         {
             int maxNumOfCharsInName = 30;
             if (registerUser.FirstName.Length > maxNumOfCharsInName || registerUser.LastName.Length > maxNumOfCharsInName)

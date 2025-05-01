@@ -7,6 +7,7 @@ import { Board, Task, User } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
 import { FetchResponse } from '../../../../types/fetch'
 import CollaboratorsView from './CollaboratorsView' 
+import CollaboratorView from './CollaboratorsView'
 
 type Props = {
     boardId: number
@@ -25,7 +26,7 @@ const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate, on
 
     const getView = () => {
         if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
-        if (tab === 'Collaborators') return <div>Collaborators</div>
+        if (tab === 'Collaborators') return <CollaboratorView boardId={boardId} isLoading={isLoading} errorMsg={errorMsg}/>
 
         if (tab === 'Archives') return <div>Archives</div>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />

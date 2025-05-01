@@ -18,6 +18,9 @@
   flex: 1;
   border-right: 1px solid #ccc;
   margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .user_card {
@@ -29,7 +32,17 @@
 }
 
 .card_container {
-  word-spacing: 10px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px; 
+  max-height: calc(100vh - 120px); 
+}
+
+.add_user_container {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  max-height: calc(100vh - 200px); 
 }
 
 .img_container{

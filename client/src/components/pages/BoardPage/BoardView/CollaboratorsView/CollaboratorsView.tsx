@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Typography, Button, Box, CircularProgress, TextField, MenuItem, Select, FormControl, InputLabel, IconButton, Card, CardContent, Avatar, Paper } from '@mui/material'
 import CollaboratorApi from '@/api/collaborator.api'
-import { Role, RoleString, User } from '@/types/types'
+import { Role, RoleString, BoardUser } from '@/types/types'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import styles from './CollaboratorsView.module.scss'
+import { useCollaborators } from '@/hooks/useCollaborators'
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value) 
@@ -29,27 +30,14 @@ type Props = {
 
 const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const [userName, setUserName] = useState('') 
-  const [users, setUsers] = useState<User[]>([]) 
+  const [users, setUsers] = useState<BoardUser[]>([]) 
   const [roleMapping, setRoleMapping] = useState<{ [userId: number]: string }>({}) 
+  const { collaborators, error: collaboratorError, loading, setCollaborators } = useCollaborators(boardId)
   const [linkErrorMsg, setLinkErrorMsg] = useState<string>('')
-  const [collaborators, setCollaborators] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]) 
-  const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({});
+  const [roleErrors, setRoleErrors] = useState<{ [userId: number]: string }>({})
   const debouncedUserName = useDebounce(userName, 500) 
   
-  useEffect(() => {
-    const fetchCollaborators = async () => {
-      try {
-        const { result } = await CollaboratorApi.getCollaborators(boardId);
-        setCollaborators(result || []);
-      } catch (error) {
-        setLinkErrorMsg('Failed to fetch collaborators');
-      }
-    };
-  
-    fetchCollaborators();
-  }, [boardId]); // re-fetch when boardId changes
-
   useEffect(() => {
     const fetchUsers = async () => {
       if (debouncedUserName.length > 0) {
@@ -156,11 +144,11 @@ return (
             Your Collaborators:
           </Typography>
         </div>
-        {isLoading ? (
+        {loading ? (
           <CircularProgress />
         ) : (
           <Box className={styles.card_container}>
-              {Array.isArray(collaborators) && collaborators.map((user: User, index: number) => (
+              {Array.isArray(collaborators) && collaborators.map((user: BoardUser, index: number) => (
                 <Card key={user.id} className={styles.user_card}>
                   <CardContent className={styles.card_Content}>
                   <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center' }}>
@@ -170,7 +158,7 @@ return (
                     </Paper>
                     <div className={styles.date_container}>
                       <Typography variant="body2" color="text.secondary">
-                        Joined since - {new Date(user.date).toLocaleDateString("en-GB")}
+                        Joined since - {new Date(user.addedAt).toLocaleDateString()}
                       </Typography>   
                     </div>
                   </CardContent>
@@ -201,6 +189,15 @@ return (
       <Box className={styles.panel} >
           <div className="BoardPage-module-scss-module___CFF7a__toolbar MuiBox-root css-0">
           <Typography variant="h5">Add Collaborator</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLinkUsers}
+            sx={{ marginTop: 2 }}
+            disabled={selectedUsers.length === 0}
+          >
+            Add Selected Users to Board
+          </Button>
           </div>
           {errorMsg && <Typography color="error">{errorMsg}</Typography>}
           {linkErrorMsg && <Typography color="error">{linkErrorMsg}</Typography>}
@@ -214,10 +211,10 @@ return (
           sx={{ marginBottom: 2, width: '50%' }}
           />
 
-        {isLoading ? (
+        {loading ? (
           <CircularProgress />
           ) : (
-          <Box>
+          <Box className={styles.add_user_container}>
             {users.length > 0 ? (
               users.map((user) => (
                 <Paper 
@@ -263,15 +260,6 @@ return (
             )}
           </Box>
         )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleLinkUsers}
-            sx={{ marginTop: 2 }}
-            disabled={selectedUsers.length === 0}
-          >
-            Add Selected Users to Board
-          </Button>
       </Box>
     </Box>
 )}

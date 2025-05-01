@@ -7,12 +7,14 @@ import TaskList from '@/components/pages/BoardPage/BoardView/TasksView/TaskList'
 import { Role, Task, TaskStatus } from '@/types/types'
 import { useEffect, useState } from 'react'
 import TaskApi, { UpdateTaskDto } from '@/api/task.api'
-import useDragAndDrop from '@/hooks/useDragAndDrop'
+import useDragAndDrop, { DragAndDropReleaseArgs } from '@/hooks/useDragAndDrop'
 import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import useFetch from '@/hooks/useFetch'
+import { log } from 'console'
+import { useRouter } from 'next/navigation'
 
 type Props = {
     boardId: number
@@ -70,15 +72,13 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
         ])
     }, [tasks])
 
-
-    const handleDrop = async (event: MouseEvent, droppedOn: Element | null, targetTask: Task) => {
+    const handleDrop = async (event: MouseEvent, droppedOn: Element | null, targetTask: Task, targetElement: HTMLElement): Promise<DragAndDropReleaseArgs> => {
         if (!droppedOn) {
-            console.log('null dropped on')
-            return
+            return {}
         }
         const targetColumn = columns.find(column => column.id === droppedOn.id)
         if (!targetColumn || !targetTask) {
-            return
+            return {}
         }
         const newTask: UpdateTaskDto = {
             title: targetTask.title,
@@ -87,7 +87,14 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
             taskStatus: targetColumn.enumId,
             version: targetTask.version
         }
-        await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
+        const response = await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
+        if (!response.result) {
+            console.log('error while updating task')
+            return {
+                shouldReset: true
+            }
+        }
+        targetTask.version = response.result.version
         const newColumns: TaskColumn[] = [
             ...columns.filter((column) => column.id !== targetColumn.id)
                 .map((column) => ({
@@ -97,6 +104,7 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
             { ...targetColumn, items: [...targetColumn.items, targetTask] }
         ].sort(compareTaskColumnsByLabel)
         setColumns(newColumns)
+        return {}
     }
 
     const {

@@ -97,7 +97,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
     {
         if (role == UserRoleEnum.OWNER)
         {
-            throw new BadHttpRequestException($"Cannot invite user as {role}.");
+            throw new BadRequestException($"Cannot invite user as {role}.");
         }
         var boardOnSender = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == responsibleUserId && bou.BoardId == boardId, cancellationToken);
         var boardOnInvitee = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(bou => bou.UserId == userId && bou.BoardId == boardId, cancellationToken);
@@ -105,11 +105,11 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
 
         if (boardOnSender is not null && !boardOnSender.UserRole.CanSendInvitations())
         {
-            throw new UnauthorizedAccessException("You are unauthorized to send invitations to this board.");
+            throw new UnauthorizedException("You are unauthorized to send invitations to this board.");
         }
         if (boardOnInvitee is not null)
         {
-            throw new BadHttpRequestException("Cannot invite a user that has already joined this board.");
+            throw new BadRequestException("Cannot invite a user that has already joined this board.");
         }
         if (existingInvitation is not null)
         {
@@ -146,7 +146,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             cancellationToken
         )) is null)
         {
-            throw new UnauthorizedAccessException("You cannot accept an invitation that wasn't for you.");
+            throw new UnauthorizedException("You cannot accept an invitation that wasn't for you.");
         }
 
         await _unitOfWork.BoardOnUserRepository.CreateAsync(

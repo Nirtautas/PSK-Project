@@ -51,28 +51,30 @@ namespace WorthBoards.Business.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskRequest boardTaskDto, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskUpdateRequest boardTaskDto, CancellationToken cancellationToken)
         {
             var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
+
+            _unitOfWork.EnsureConcurrencyTokenMatch(boardTaskToUpdate.Version, boardTaskDto.Version, "Task");
 
             _mapper.Map(boardTaskDto, boardTaskToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return _mapper.Map<BoardTaskResponse>(boardTaskToUpdate);
         }
 
-        public async Task<BoardTaskResponse> PatchBoardTask(int boardId, int boardTaskToUpdateId, JsonPatchDocument<BoardTaskRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
+        public async Task<BoardTaskResponse> PatchBoardTask(int boardId, int boardTaskToUpdateId, JsonPatchDocument<BoardTaskUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
             var boardTaskToPatch = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [boardTaskToUpdateId]));
 
-            var boardTaskToUpdateDto = _mapper.Map<BoardTaskRequest>(boardTaskToPatch);
-
+            var boardTaskToUpdateDto = _mapper.Map<BoardTaskUpdateRequest>(boardTaskToPatch);
             taskBoardPatchDoc.ApplyTo(boardTaskToUpdateDto);
+
+            _unitOfWork.EnsureConcurrencyTokenMatch(boardTaskToPatch.Version, boardTaskToUpdateDto.Version, "Task");
+
             _mapper.Map(boardTaskToUpdateDto, boardTaskToPatch);
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
             return _mapper.Map<BoardTaskResponse>(boardTaskToPatch);
         }
     }

@@ -6,25 +6,36 @@ import styles from './BoardView.module.scss'
 import { Board, Task, User } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
 import { FetchResponse } from '../../../../types/fetch'
-import CollaboratorsView from './CollaboratorsView' 
+import CollaboratorsView from './CollaboratorsView'
 
 type Props = {
     boardId: number
     isLoading: boolean
     errorMsg: string
     tasks: Task[] | undefined
-    onUpdate: (updatedBoard: FetchResponse<Board>) => void
+    onUpdate: (updatedBoard: Board) => void
 
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
+    onTaskVersionMismatch: () => void
 }
 
-const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
+const BoardView = ({
+    boardId,
+    tasks,
+    isLoading,
+    errorMsg,
+    onUpdate,
+    onCreate,
+    onTaskUpdate,
+    onTaskDelete,
+    onTaskVersionMismatch
+}: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} onTaskVersionMismatch={onTaskVersionMismatch}/>
         if (tab === 'Collaborators') return <div>Collaborators</div>
 
         if (tab === 'Archives') return <div>Archives</div>

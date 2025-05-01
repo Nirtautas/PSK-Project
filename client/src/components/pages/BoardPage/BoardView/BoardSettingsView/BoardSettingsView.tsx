@@ -13,7 +13,7 @@ type Props = {
     boardId: number
     isLoading: boolean
     errorMsg: string
-    onUpdate: (updatedBoard: FetchResponse<Board>) => void
+    onUpdate: (updatedBoard: Board) => void
 }
 
 const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) => {
@@ -45,18 +45,19 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     }
 
     const handleUpdateBoard = async (updatedData: CreateBoardDto) => {
-        try {
-            const updatedDataWithVersion: UpdateBoardDto = {
-                ...updatedData,
-                version: editData?.version ?? 0
-            }
-
-            const result = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
-            setIsEditOpen(false)
-            onUpdate(result)
-        } catch (err: any) {
-            setEditError(err?.message || 'Failed to update board')
+        const updatedDataWithVersion: UpdateBoardDto = {
+            ...updatedData,
+            version: editData?.version ?? 0
         }
+
+        const response = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
+        if (!response.result) {
+            setIsEditOpen(false)
+            setEditError('Failed to update board.')
+            return
+        }
+        setIsEditOpen(false)
+        onUpdate(response.result)
     }
 
     const handleDelete = async () => {

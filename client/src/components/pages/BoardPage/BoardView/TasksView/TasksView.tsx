@@ -24,6 +24,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
+    onTaskVersionMismatch?: () => void
 }
 
 type TaskColumn = {
@@ -35,20 +36,29 @@ type TaskColumn = {
 
 const compareTaskColumnsByLabel = (column1: TaskColumn, column2: TaskColumn) => column2.label.localeCompare(column1.label)
 
-const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
+const TasksView = ({
+    boardId,
+    tasks,
+    isLoading,
+    errorMsg,
+    onCreate,
+    onTaskUpdate,
+    onTaskDelete,
+    onTaskVersionMismatch
+}: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    
+
     useEffect(() => {
         const userId = getUserId()
         setUserId(userId)
     }, []);
 
     const { data: userRole } = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
-    
+
     useEffect(() => {
         setColumns([
             {
@@ -80,16 +90,17 @@ const TasksView = ({ boardId, tasks, isLoading, errorMsg, onCreate, onTaskUpdate
         if (!targetColumn || !targetTask) {
             return {}
         }
-        const newTask: UpdateTaskDto = {
+        const updateDto: UpdateTaskDto = {
             title: targetTask.title,
             description: targetTask.description,
             deadlineEnd: targetTask.deadlineEnd,
             taskStatus: targetColumn.enumId,
             version: targetTask.version
         }
-        const response = await TaskApi.update(targetTask.boardId, targetTask.id, newTask)
+        const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
-            console.log('error while updating task')
+            console.log('Error while updating task')
+            onTaskVersionMismatch?.()
             return {
                 shouldReset: true
             }

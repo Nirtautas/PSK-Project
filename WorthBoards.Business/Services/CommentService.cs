@@ -68,8 +68,9 @@ namespace WorthBoards.Business.Services
             
             commentToUpdate.Edited = true;
 
-            _mapper.Map(commentDto, commentToUpdate);
+            _unitOfWork.EnsureConcurrencyTokenMatch(commentToUpdate.Version, commentDto.Version, nameof(Comment));
 
+            _mapper.Map(commentDto, commentToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return _mapper.Map<CommentResponse>(commentToUpdate);
         }
@@ -81,10 +82,11 @@ namespace WorthBoards.Business.Services
 
             var commentToUpdateDto = _mapper.Map<CommentUpdateRequest>(commentToPatch);
             commentToPatch.Edited = true;
-
             commentPatchDoc.ApplyTo(commentToUpdateDto);
-            _mapper.Map(commentToUpdateDto, commentToPatch);
 
+            _unitOfWork.EnsureConcurrencyTokenMatch(commentToPatch.Version, commentToUpdateDto.Version, nameof(Comment));
+
+            _mapper.Map(commentToUpdateDto, commentToPatch);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return _mapper.Map<CommentResponse>(commentToPatch);

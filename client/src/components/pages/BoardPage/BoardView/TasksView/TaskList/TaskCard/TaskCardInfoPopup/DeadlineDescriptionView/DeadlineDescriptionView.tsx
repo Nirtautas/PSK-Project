@@ -19,7 +19,7 @@ export default function DeadlineDescriptionView
     setDescription: (d: string | null) => void
 }) {
     return(
-        <Box sx={{height: '50%'}}>
+        <Box sx={{height: '40%'}}>
             <Box>
                 <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Deadline</Typography>
                 {!editMode && <DeadlineDisplay deadline={deadline}/>}
@@ -33,7 +33,7 @@ export default function DeadlineDescriptionView
                 }
                 
             </Box>
-            <Box sx={{ overflowY: 'auto'}}>
+            <Box sx={{ overflowY: 'auto' }}>
                 <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Description</Typography>
                 {!editMode && <Typography variant="body1">{description ? description : "No description provided"}</Typography>}
                 {editMode &&

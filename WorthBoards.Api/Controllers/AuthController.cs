@@ -12,11 +12,11 @@ namespace WorthBoards.Api.Controllers
     {
         [AllowAnonymous]
         [HttpPost("/register")]
-        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request)
+        public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var response = await authService.RegisterUserAsync(request);
+                var response = await authService.RegisterUserAsync(request, cancellationToken);
                 return Ok(response);
             }
             catch (BadRequestException ex)
@@ -31,11 +31,11 @@ namespace WorthBoards.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("/login")]
-        public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest credentials)
+        public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginRequest credentials, CancellationToken cancellationToken)
         {
             try
             {
-                var response = await authService.LoginUserAsync(credentials);
+                var response = await authService.LoginUserAsync(credentials, cancellationToken);
                 return Ok(response);
             }
             catch (UnauthorizedException)

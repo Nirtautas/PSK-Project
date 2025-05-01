@@ -3,10 +3,8 @@ import BoardViewButtons, { BoardViewTab } from '@/components/pages/BoardPage/Boa
 import TasksView from '@/components/pages/BoardPage/BoardView/TasksView'
 
 import styles from './BoardView.module.scss'
-import { Board, Task, User } from '@/types/types'
+import { Board, Task } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
-import { FetchResponse } from '../../../../types/fetch'
-import CollaboratorsView from './CollaboratorsView'
 
 type Props = {
     boardId: number

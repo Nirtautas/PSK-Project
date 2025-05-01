@@ -33,7 +33,6 @@ export default function TaskCardInfoPopup({
     userRole: Role
     onDelete: (t: Task) => void
 }) {
-    const [comments, setComments] = useState<Comment[]>([])
     const [editMode, setEditMode] = useState<boolean>(false)
     const [wasEdited, setWasEdited] = useState<boolean>(false)
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
@@ -82,14 +81,6 @@ export default function TaskCardInfoPopup({
         }
     }
     
-    useEffect(() => {
-        TaskApi.getCommentsByTask(1).then((comments) => {
-            setComments(comments)
-        }).catch((error) => {
-            console.error("Failed to fetch comments:", error)
-        })
-    }, [open])
-    
     //TODO: move this to a separate file
     const modalContainer = {
         position: 'absolute',
@@ -100,7 +91,7 @@ export default function TaskCardInfoPopup({
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
-        overflowY: 'auto',
+        overflowY: 'hidden',
         display: 'flex',
         flexDirection: 'column',
     };
@@ -113,7 +104,6 @@ export default function TaskCardInfoPopup({
         alignItems: 'center'
     };
 
-    //TODO: handle edit and delete buttons
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={modalContainer}>
@@ -153,7 +143,7 @@ export default function TaskCardInfoPopup({
                                     description={description}
                                     setDescription={setDescription}
                                 />
-                                <CommentsView comments={comments} taskId={task.id}/>
+                                <CommentsView taskId={task.id} boardId={boardId}/>
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>

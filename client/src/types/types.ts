@@ -39,19 +39,20 @@ export enum Role {
 
 export type User = {
     id: number
-    userRole: RoleString
     firstName: string
     lastName: string
     userName: string
-    date: Date
-    imageURL: string | undefined
+    creationDate: Date
+    imageURL: string
 }
 
 export type BoardUser = {
     id: number
     userName: string
-    imageURL: string
+    imageURL: string | undefined
     userRole: RoleString
+    firstName: string
+    lastName: string
     addedAt: Date
 }
 
@@ -84,16 +85,9 @@ export enum NotificationType {
 
 export type Comment = {
     id: number
-    text: string
-    createdAt: Date
-    createdBy: User
-    version: number
-}
-
-export type BoardOnUser = {
-    boardId: number
+    taskId: number
     userId: number
-    addedAt: Date
-    userRole: RoleString
+    content: string
+    creationDate: Date
     version: number
 }

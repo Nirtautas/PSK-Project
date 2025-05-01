@@ -15,5 +15,6 @@ namespace WorthBoards.Business.Services.Interfaces
         Task<LinkUserToBoardResponse> PatchUserOnBoard(int boardId, int userId, JsonPatchDocument<LinkUserToBoardRequest> linkUserToBoardPatchDoc, CancellationToken cancellationToken);
         Task<IEnumerable<LinkedUserToBoardResponse>> GetUsersLinkedToBoardAsync(int boardId, CancellationToken cancellationToken);
         Task<List<UserResponse>> GetUsersByUserNameAsync(int boardId, string userName, CancellationToken cancellationToken);
+        Task TransferOwnershipAsync(int boardId, int currentOwnerId, int newOwnerId, CancellationToken cancellationToken);
     }
 }

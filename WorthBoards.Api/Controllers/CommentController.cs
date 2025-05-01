@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.Internal;
 using System.Security.Claims;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Dtos.Requests;
@@ -15,8 +16,8 @@ namespace WorthBoards.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllBoardTaskComments([FromRoute] int taskId, CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
         {
-            var commentResponse = await _commentService.GetAllBoardTaskCommentsAsync(taskId, cancellationToken, pageNum, pageSize);
-            return Ok(commentResponse);
+            var (commentResponse, totalCount) = await _commentService.GetAllBoardTaskCommentsAsync(taskId, cancellationToken, pageNum, pageSize);
+            return Ok(new {Comments = commentResponse, TotalCount = totalCount});
         }
 
         [HttpGet("{commentId}")]
@@ -29,10 +30,9 @@ namespace WorthBoards.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComment([FromRoute] int boardId, [FromRoute] int taskId, [FromBody] CommentRequest commentRequest, CancellationToken cancellationToken)
         {
-          
-                var userId = UserHelper.GetUserId(User);
-                if (userId.Result is UnauthorizedObjectResult unauthorizedResult)
-                    return unauthorizedResult;
+            var userId = UserHelper.GetUserId(User);
+            if (userId.Result is UnauthorizedObjectResult unauthorizedResult)
+                return unauthorizedResult;
 
             var commentResponse = await _commentService.CreateCommentAsync(userId.Value, taskId, commentRequest, cancellationToken);
             return CreatedAtAction(nameof(GetCommentById), new { boardId = boardId, taskId = taskId, commentId = commentResponse.Id }, commentResponse);

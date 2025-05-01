@@ -1,4 +1,4 @@
-import { Board, BoardOnUser, Role, RoleString, BoardUser } from "@/types/types"
+import { Board, Role, RoleString, BoardUser } from "@/types/types"
 import { FetchResponse, HTTPMethod } from '@/types/fetch';
 import { apiBaseUrl } from '@/constants/api';
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'

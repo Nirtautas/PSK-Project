@@ -114,5 +114,28 @@ namespace WorthBoards.Business.Services
             }
             return _mapper.Map<List<UserResponse>>(usersNotInBoard);
         }
+
+        public async Task TransferOwnershipAsync(int boardId, int currentOwnerId, int newOwnerId, CancellationToken cancellationToken)
+        {
+            if (currentOwnerId == newOwnerId)
+                throw new BadRequestException("You cannot transfer ownership to yourself.");
+
+            var currentOwner = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(
+                b => b.BoardId == boardId && b.UserId == currentOwnerId, cancellationToken
+            ) ?? throw new NotFoundException("Current owner not found.");
+
+            if (currentOwner.UserRole != UserRoleEnum.OWNER)
+                throw new BadRequestException("Only the owner can transfer ownership.");
+
+            var newOwner = await _unitOfWork.BoardOnUserRepository.GetByExpressionAsync(
+                b => b.BoardId == boardId && b.UserId == newOwnerId, cancellationToken
+            ) ?? throw new NotFoundException("Target user is not linked to the board.");
+
+            currentOwner.UserRole = UserRoleEnum.VIEWER;
+            newOwner.UserRole = UserRoleEnum.OWNER;
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
     }
 }

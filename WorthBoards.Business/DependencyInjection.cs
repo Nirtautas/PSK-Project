@@ -4,6 +4,8 @@ using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
 using WorthBoards.Business.Utils;
+using WorthBoards.Business.Utils.EmailService.Interfaces;
+using WorthBoards.Business.Utils.EmailService;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -16,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IBoardService, BoardService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IEmailService, GmailService>();
 
             // TODO: Add global user roles
             //services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
@@ -26,7 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<ICommentService, CommentService>()
                 .AddScoped<IBoardOnUserService, BoardOnUserService>()
                 .AddScoped<ITaskOnUserService, TaskOnUserService>()
-                .AddScoped<INotificationService, NotificationService>();
+                .AddScoped<INotificationService, NotificationService>()
+                .AddScoped<IUserService, UserService>();
 
             return services;
         }

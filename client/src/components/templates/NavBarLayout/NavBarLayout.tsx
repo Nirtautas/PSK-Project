@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, MenuItem, Paper, Skeleton, Typography } from '@mui/material'
+import { Box, Button, MenuItem, Paper, Skeleton, Typography } from '@mui/material'
 
 import styles from './NavBarLayout.module.scss'
 import UserProfile from '@/components/templates/NavBarLayout/UserProfile'
@@ -9,11 +9,13 @@ import { usePathname, useRouter } from 'next/navigation'
 import { getPageUrl, pathnames } from '@/constants/urls'
 import NotificationApi from '@/api/notification.api'
 import { Notification } from '@/types/types'
-import { removeUserId } from '@/utils/userId'
+import { getUserId, removeUserId } from '@/utils/userId'
 import { deleteCookie } from 'cookies-next'
 import { GetPageUrl } from '@/constants/route'
 import useFetchResponse from '@/hooks/useFetchResponse'
 import NotificationDropdown from '@/components/templates/NavBarLayout/NotificationDropdown'
+import UserApi from '@/api/user.api'
+import { useEffect } from 'react'
 
 type Props = {
     children: React.ReactNode
@@ -22,12 +24,18 @@ type Props = {
 const NavBarLayout = ({ children }: Props) => {
     const router = useRouter()
     const pathname = usePathname()
+    
+    const {
+        data: user
+    } = useFetchResponse({ resolver: () => UserApi.getById(getUserId())})
+
     const {
         isLoading,
         errorMsg,
         data: notifications,
         setData: setNotifications
     } = useFetchResponse({ resolver: () => NotificationApi.getAll() })
+
     const handleInvitationAccept = async (subjectNotification: Notification) => {
         const response = await NotificationApi.acceptInvitation(subjectNotification.id)
         if (response.error) {
@@ -53,7 +61,7 @@ const NavBarLayout = ({ children }: Props) => {
         removeUserId()
         router.push(GetPageUrl.login)
     }
-
+    
     return (
         <div className={styles.layout}>
             <header>
@@ -74,9 +82,9 @@ const NavBarLayout = ({ children }: Props) => {
                             />
                         </Box>
                         <Box className={styles.centered_wrapper}>
-                            <UserProfile
-                                name="placeholder"
-                                imageUrl="https://preview.colorkit.co/color/ff0000.png?static=true"
+                            {user && <UserProfile
+                                name={user.userName ?? "placeholder"}
+                                imageUrl={user.imageURL ?? "https://preview.colorkit.co/color/ff0000.png?static=true"}
                                 buttons={[
                                     {
                                         label: 'My Boards',
@@ -95,7 +103,7 @@ const NavBarLayout = ({ children }: Props) => {
                                         onClick: handleLogOut
                                     },
                                 ]}
-                            />
+                            />}
                         </Box>
                     </div>
                 </Paper>

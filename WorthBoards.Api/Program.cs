@@ -8,7 +8,8 @@ builder
     .ConfigureSwagger()
     .ConfigureAuthentication()
     .ConfigureAuthorization()
-    .ConfigureValidators();
+    .ConfigureValidators()
+    .ConfigureGmail();
 
 // Add services to the container.
 builder.Services.AddApiServices(builder.Configuration);

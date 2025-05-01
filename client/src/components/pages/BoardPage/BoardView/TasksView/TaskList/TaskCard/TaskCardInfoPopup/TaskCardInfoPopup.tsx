@@ -153,7 +153,7 @@ export default function TaskCardInfoPopup({
                                     description={description}
                                     setDescription={setDescription}
                                 />
-                                <CommentsView comments={comments} taskId={task.id}/>
+                                <CommentsView taskId={task.id} boardId={boardId}/>
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>

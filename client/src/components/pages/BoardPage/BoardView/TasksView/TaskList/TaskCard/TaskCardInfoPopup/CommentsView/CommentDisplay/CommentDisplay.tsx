@@ -8,24 +8,21 @@ import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CommentApi from "@/api/comment.api";
+import Avatar from "@mui/material/Avatar";
 
 export default function CommentDisplay({
     commentData,
     boardId,
-    handleDelete
+    handleDelete,
+    pfpLink
 }: {
     commentData: Comment,
     boardId: number,
-    handleDelete: ({commentData}: {commentData: Comment}) => void
+    handleDelete: ({commentData}: {commentData: Comment}) => void,
+    pfpLink: string
 }) {
     const userId = getUserId();
-    const [userName, setUserName] = useState<string>("");
     const [editing, setEditing] = useState(false);
-
-    useEffect(() => {
-        //TODO: fetch user data from commentData.userId and save the name for display
-        setUserName(commentData.userId.toString());
-    }, [commentData]);
     
     const handleEdit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -61,9 +58,18 @@ export default function CommentDisplay({
                 </form>
             ) : (
                 <>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                        <Typography variant="body1">{userName}: {commentData.content}</Typography>
-                        <Typography variant="body2" sx={{ marginLeft: 2, color: 'gray' }}>{commentData.creationDate.toLocaleString()}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                        <Avatar alt="userName" src={pfpLink} />
+                        <Box sx={{ flex: 1 }}>
+                            <Typography variant="body1" 
+                              sx={{
+                                wordBreak: 'break-word', // allows long words to wrap
+                                whiteSpace: 'pre-wrap',  // respects line breaks and wraps text
+                              }}>{commentData.content}</Typography>
+                            <Typography variant="body2" sx={{ color: 'gray' }}>
+                                {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
+                            </Typography>
+                        </Box>
                     </Box>
                     {commentData.userId === userId && (
                     <Box sx={{ display: 'flex', gap: 1, marginTop: 1 }}>

@@ -1,6 +1,6 @@
 import { BoardUser, Comment, User } from "@/types/types";
 import { getUserId } from "@/utils/userId";
-import { Button, TextField } from "@mui/material";
+import { Button, TablePagination, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import CommentDisplay from "./CommentDisplay";
 import CommentApi from "@/api/comment.api";
 import useFetch from "@/hooks/useFetch";
 import BoardOnUserApi from "@/api/boardOnUser.api";
+import usePagedFetch from "@/hooks/usePagedFetch";
 
 export default function CommentsView
 ({
@@ -19,28 +20,52 @@ export default function CommentsView
 }) {
     const userId = getUserId();
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
-    const { data: comments, isLoading: loadingComments } = useFetch({ resolver: () => CommentApi.getAll(boardId, taskId), deps: [taskId] });
+    const [pageNum, setPageNum] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [cashedComments, setCashedComments] = useState<Comment[]>([]);
     
+    const { 
+        data: comments,
+        isLoading: loadingComments
+    } = usePagedFetch({
+        resolver: () => CommentApi.getAll(boardId, taskId, pageNum, rowsPerPage), 
+        deps: [taskId, pageNum, rowsPerPage], 
+        pageNum: pageNum, 
+        resultKey: 'comments' 
+    });
     
     //TODO: useFetch instead of get all
     useEffect((() => {
+        console.log(taskId);
         if (!loadingComments){
-            setCashedComments(comments.result?.item1 as Comment[]);
+            setCashedComments((comments?.results as Comment[]) || []);
+            setTotalCount(comments?.totalCount || 0);
         } else {
             console.log("Loading comments...");
         }
     }), [comments])
 
+
+    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setCashedComments([]);
+        setPageNum(newPage);
+    };
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setCashedComments([]);
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPageNum(0);
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const commentText = (event.currentTarget[0] as HTMLInputElement).value;
+        //TODO: the comments taskId returns as 0 all the time
         const createdComment = await CommentApi.create(boardId, commentText, taskId);
 
         if (createdComment.error) {
             console.error("Error creating comment:", createdComment.error);
-            setCashedComments((prevComments) => [...prevComments, {id: 0, taskId: 0, userId: 0, content: `internal error, read text ${commentText}`, creationDate: new Date()} as Comment]);
             return;
         }
         if (createdComment.result) {
@@ -61,16 +86,15 @@ export default function CommentsView
                 return;
             }
             setCashedComments((prevComments) => prevComments.filter((comment) => comment.id !== commentData.id));
-            console.log("Deleted comment successfully");
         });
     }
 
     const link = !loadingUsers ? users.result?.find((user: BoardUser) => user.id === userId)?.imageURL || '' : '';
     
     return (
-        <Box sx={{ height: '50%'}}>
+        <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
-            <Box sx={{ padding: 1, overflowY: 'auto', height: '60%' }}>
+            <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {cashedComments.map((comment: Comment, index: number) => (
                     <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={link}/>
                 ))}
@@ -81,6 +105,16 @@ export default function CommentsView
                     Post
                 </Button>
             </form>
+            <TablePagination
+                component="div"
+                count={totalCount}
+                page={pageNum}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                labelRowsPerPage="Comments per page"
+                rowsPerPageOptions={[5, 10, 25]}
+            />
         </Box>
     );
 }

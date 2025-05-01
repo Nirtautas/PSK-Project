@@ -74,8 +74,8 @@ const BoardPage = ({ boardId }: Props) => {
                     onUpdate={onUpdate}
                     onTaskUpdate={handleTaskUpdate}
                     onTaskDelete={handleTaskDelete}
-                    onTaskVersionMismatch={() => {
-                        setSnackbarMsg('Task version mismatch. Reloading the board.')
+                    onTaskVersionMismatch={(errorMsg: string) => {
+                        setSnackbarMsg(`${errorMsg} Reloading tasks...`)
                         refetchBoard()
                     }}
                 />

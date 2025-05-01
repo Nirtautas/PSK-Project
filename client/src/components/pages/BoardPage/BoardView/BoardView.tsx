@@ -12,11 +12,10 @@ type Props = {
     errorMsg: string
     tasks: Task[] | undefined
     onUpdate: (updatedBoard: Board) => void
-
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch: () => void
+    onTaskVersionMismatch: (errorMsg: string) => void
 }
 
 const BoardView = ({
@@ -33,7 +32,19 @@ const BoardView = ({
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} onTaskVersionMismatch={onTaskVersionMismatch}/>
+        if (tab === 'Tasks') return (
+            <TasksView
+                boardId={boardId}
+                tasks={tasks || []}
+                errorMsg={errorMsg}
+                isLoading={isLoading}
+                onCreate={onCreate}
+                onTaskUpdate={onTaskUpdate}
+                onTaskDelete={onTaskDelete}
+                onTaskVersionMismatch={onTaskVersionMismatch}
+            />
+        )
+        
         if (tab === 'Collaborators') return <div>Collaborators</div>
 
         if (tab === 'Archives') return <div>Archives</div>

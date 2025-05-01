@@ -22,7 +22,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch?: () => void
+    onTaskVersionMismatch?: (errMsg: string) => void
 }
 
 type TaskColumn = {
@@ -98,7 +98,7 @@ const TasksView = ({
         const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
             console.log('Error while updating task')
-            onTaskVersionMismatch?.()
+            onTaskVersionMismatch?.(response.error || 'Error while updating task')
             return {
                 shouldReset: true
             }

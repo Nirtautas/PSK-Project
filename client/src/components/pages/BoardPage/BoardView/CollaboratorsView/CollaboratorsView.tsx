@@ -165,13 +165,12 @@ return (
                   <FormControl className={styles.roleSelect} >
                       <InputLabel>Role</InputLabel>
                       <Select 
-                        value={roleMapping[user.id] || 'OWNER'}
+                        value={roleMapping[user.id] || 'VIEWER'}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         label="Role"
                         size="small"
                         disabled={user.userRole === 0}
                       >
-                        <MenuItem value="OWNER">Owner</MenuItem>
                         <MenuItem value="EDITOR">Editor</MenuItem>
                         <MenuItem value="VIEWER">Viewer</MenuItem>
                       </Select>

@@ -30,7 +30,7 @@ export default function TaskCardInfoPopup({
     setOpen: (open: boolean) => void,
     task: Task
     handleUpdate: (t: Task) => void
-    userRole: FetchResponse<Role | null>
+    userRole: Role
     onDelete: (t: Task) => void
 }) {
     const [comments, setComments] = useState<Comment[]>([])
@@ -127,7 +127,7 @@ export default function TaskCardInfoPopup({
                             onChange={(e) => setTitle(e.target.value)}
                         />
                     }
-                    {userRole && userRole.result !== Role.VIEWER && (
+                    {userRole !== Role.VIEWER && (
                         <>
                             <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 Edit

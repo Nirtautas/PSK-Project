@@ -12,9 +12,7 @@ import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
-import useFetch from '@/hooks/useFetch'
-import { log } from 'console'
-import { useRouter } from 'next/navigation'
+import useFetchResponse from '@/hooks/useFetchResponse'
 
 type Props = {
     boardId: number
@@ -57,7 +55,7 @@ const TasksView = ({
         setUserId(userId)
     }, []);
 
-    const { data: userRole } = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const userRole = useFetchResponse({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
 
     useEffect(() => {
         setColumns([
@@ -142,7 +140,7 @@ const TasksView = ({
 
     return (
         <Paper className={styles.container}>
-            { userRole && userRole.result !== Role.VIEWER && (
+            { userRole && userRole.data !== Role.VIEWER && (
                 <>
                     <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
                     <Modal open={open} onClose={handleClose}>
@@ -165,12 +163,12 @@ const TasksView = ({
                         <TaskList
                             boardId={boardId}
                             id={column.id}
-                            isLoading={isLoading}
+                            isLoading={isLoading || userRole.isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
-                            userRole={userRole}
+                            userRole={userRole.data}
                             onDelete={onTaskDelete}
                             />
                     </div>

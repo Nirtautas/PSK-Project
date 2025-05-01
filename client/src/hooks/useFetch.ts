@@ -12,11 +12,9 @@ type Args<T> = {
     resolver: () => Promise<T>
     delayMs?: number,
     deps?: any[]
-
 }
 
 const useFetch = <T>({ resolver, delayMs, deps = [] }: Args<T>) => {
-    // TODO: implement error handling
     const [data, setData] = useState<T>(null as T)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [errorMsg, setErrorMsg] = useState<string>('')

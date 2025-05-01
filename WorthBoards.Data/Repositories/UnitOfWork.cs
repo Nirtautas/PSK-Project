@@ -1,4 +1,5 @@
-﻿using WorthBoards.Data.Database;
+﻿using WorthBoards.Common.Exceptions.Custom;
+using WorthBoards.Data.Database;
 using WorthBoards.Data.Repositories.Interfaces;
 
 namespace WorthBoards.Data.Repositories;
@@ -25,5 +26,13 @@ public class UnitOfWork(ApplicationDbContext dbContext,
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public void EnsureConcurrencyTokenMatch(uint currentVersion, uint incomingVersion, string entityName)
+    {
+        if (currentVersion != incomingVersion)
+        {
+            throw new OptimisticLockException(entityName);
+        }
     }
 }

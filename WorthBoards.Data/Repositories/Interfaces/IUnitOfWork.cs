@@ -12,4 +12,6 @@ public interface IUnitOfWork
     IUserRepository UserRepository { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    void EnsureConcurrencyTokenMatch(uint currentVersion, uint incomingVersion, string entityName);
 }

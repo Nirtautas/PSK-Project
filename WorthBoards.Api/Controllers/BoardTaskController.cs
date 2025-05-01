@@ -60,7 +60,7 @@ namespace WorthBoards.Api.Controllers
 
         [HttpPut("{boardId}/tasks/{boardTaskId}")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]
-        public async Task<IActionResult> UpdateBoardTask(int boardId, int boardTaskId, [FromBody] BoardTaskRequest boardTaskRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBoardTask(int boardId, int boardTaskId, [FromBody] BoardTaskUpdateRequest boardTaskRequest, CancellationToken cancellationToken)
         {
             var oldTask = await _boardTaskService.GetBoardTaskById(boardId, boardTaskId, cancellationToken);
             var oldStatus = oldTask.TaskStatus;
@@ -80,7 +80,7 @@ namespace WorthBoards.Api.Controllers
 
         [HttpPatch("{boardId}/tasks/{boardTaskId}")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]
-        public async Task<IActionResult> PatchBoardTask(int boardId, int boardTaskId, [FromBody] JsonPatchDocument<BoardTaskRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
+        public async Task<IActionResult> PatchBoardTask(int boardId, int boardTaskId, [FromBody] JsonPatchDocument<BoardTaskUpdateRequest> taskBoardPatchDoc, CancellationToken cancellationToken)
         {
             var boardTaskResponse = await _boardTaskService.PatchBoardTask(boardId, boardTaskId, taskBoardPatchDoc, cancellationToken);
             return Ok(boardTaskResponse);

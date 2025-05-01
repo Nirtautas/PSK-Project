@@ -59,6 +59,8 @@ namespace WorthBoards.Business.Services
             var boardToUpdate = await _unitOfWork.BoardRepository.GetByIdAsync(boardToUpdateId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardToUpdateId]));
 
+            _unitOfWork.EnsureConcurrencyTokenMatch(boardToUpdate.Version, boardDto.Version, nameof(Board));
+
             _mapper.Map(boardDto, boardToUpdate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return _mapper.Map<BoardResponse>(boardToUpdate);
@@ -70,10 +72,11 @@ namespace WorthBoards.Business.Services
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardToUpdateId]));
 
             var boardToUpdateDto = _mapper.Map<BoardUpdateRequest>(boardToPatch);
-
             boardPatchDoc.ApplyTo(boardToUpdateDto);
-            _mapper.Map(boardToUpdateDto, boardToPatch);
 
+            _unitOfWork.EnsureConcurrencyTokenMatch(boardToPatch.Version, boardToUpdateDto.Version, nameof(Board));
+
+            _mapper.Map(boardToUpdateDto, boardToPatch);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return _mapper.Map<BoardResponse>(boardToPatch);

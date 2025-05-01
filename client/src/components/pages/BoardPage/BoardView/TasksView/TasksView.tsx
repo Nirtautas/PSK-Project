@@ -12,7 +12,7 @@ import React from 'react'
 import CreateTaskForm from './CreateTaskForm'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
-import useFetchResponse from '@/hooks/useFetchResponse'
+import useFetch from '@/hooks/useFetch'
 
 type Props = {
     boardId: number
@@ -55,7 +55,7 @@ const TasksView = ({
         setUserId(userId)
     }, []);
 
-    const userRole = useFetchResponse({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
 
     useEffect(() => {
         setColumns([

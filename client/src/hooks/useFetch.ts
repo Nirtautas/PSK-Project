@@ -9,12 +9,10 @@ type Args<T> = {
     fallbackValue?: T
 }
 
-const useFetchResponse = <T>({ resolver, delayMs, deps = [], fallbackValue }: Args<T>) => {
+const useFetch = <T>({ resolver, delayMs, deps = [], fallbackValue }: Args<T>) => {
     const [data, setData] = useState<T>(null as T)
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [errorMsg, setErrorMsg] = useState<string>('')
-
-
 
     const fetchData = async () => {
         const response = await resolver()
@@ -48,4 +46,4 @@ const useFetchResponse = <T>({ resolver, delayMs, deps = [], fallbackValue }: Ar
     }
 }
 
-export default useFetchResponse
+export default useFetch

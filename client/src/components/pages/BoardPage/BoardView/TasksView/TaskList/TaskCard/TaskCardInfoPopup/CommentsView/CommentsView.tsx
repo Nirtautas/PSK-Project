@@ -6,8 +6,8 @@ import { useState } from "react"
 import CommentDisplay from "./CommentDisplay"
 import CommentApi from "@/api/comment.api"
 import BoardOnUserApi from "@/api/boardOnUser.api"
-import useFetchResponse from '@/hooks/useFetchResponse'
-import useFetchResponsePaged from '@/hooks/useFetchPaged'
+import useFetch from '@/hooks/useFetch'
+import usePagedFetch from '@/hooks/usePagedFetch'
 import PageChanger from '@/components/shared/PageChanger'
 
 export default function CommentsView
@@ -19,7 +19,7 @@ export default function CommentsView
     boardId: number
 }) {
     const [commentInputText, setCommentInputText] = useState<string>('')
-    const { data: users, isLoading: loadingUsers } = useFetchResponse({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
+    const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
     const [pageNum, setPageNum] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const {
@@ -28,7 +28,7 @@ export default function CommentsView
         isLoading: loadingComments,
         errorMsg: errorMsgComments,
         pageCount,
-    } = useFetchResponsePaged({
+    } = usePagedFetch({
         resolver: () => CommentApi.getAll(boardId, taskId, pageNum, rowsPerPage),
         deps: [taskId, pageNum, rowsPerPage]
     })

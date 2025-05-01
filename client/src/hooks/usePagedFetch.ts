@@ -1,6 +1,6 @@
 import { Paginated } from '@/types/api'
 import { FetchResponse } from '@/types/fetch'
-import useFetchResponse from './useFetchResponse'
+import useFetch from './useFetch'
 
 export type UseFetchPagedArgs<T> = {
     resolver: () => Promise<FetchResponse<Paginated<T>>>
@@ -9,14 +9,14 @@ export type UseFetchPagedArgs<T> = {
 }
 
 // Remember to check if 'isLoading' and 'errorMsg' before using other properties as they may be undefined or null
-const useFetchResponsePaged = <T>(args: UseFetchPagedArgs<T>) => {
+const usePagedFetch = <T>(args: UseFetchPagedArgs<T>) => {
     const {
         data,
         setData,
         isLoading,
         errorMsg,
         refetch
-    } = useFetchResponse(args)
+    } = useFetch(args)
 
     return {
         data: data?.items || null,
@@ -30,4 +30,4 @@ const useFetchResponsePaged = <T>(args: UseFetchPagedArgs<T>) => {
     }
 }
 
-export default useFetchResponsePaged
+export default usePagedFetch

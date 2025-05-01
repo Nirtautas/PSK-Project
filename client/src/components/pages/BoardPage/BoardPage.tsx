@@ -7,7 +7,7 @@ import BoardView from '@/components/pages/BoardPage/BoardView'
 import BoardApi from '@/api/board.api'
 import { Board } from '../../../types/types'
 import { Task } from '@/types/types'
-import useFetchResponse from '@/hooks/useFetchResponse'
+import useFetch from '@/hooks/useFetch'
 import { useState } from 'react'
 
 type Props = {
@@ -22,7 +22,7 @@ const BoardPage = ({ boardId }: Props) => {
         errorMsg: boardErrorMsg,
         isLoading: isBoardLoading,
         refetch: refetchBoard
-    } = useFetchResponse({
+    } = useFetch({
         resolver: () => BoardApi.getBoardById(boardId)
     })
 

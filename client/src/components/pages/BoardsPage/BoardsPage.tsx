@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
 import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
-import useFetchResponsePaged from '@/hooks/useFetchPaged'
+import usePagedFetch from '@/hooks/usePagedFetch'
 
 type Props = {
     pageNum: number
@@ -26,7 +26,7 @@ const BoardsPage = ({ pageNum }: Props) => {
         errorMsg,
         pageCount,
         refetch
-    } = useFetchResponsePaged<Board>({
+    } = usePagedFetch<Board>({
         resolver: () => BoardApi.getBoards(pageNum)
     })
 

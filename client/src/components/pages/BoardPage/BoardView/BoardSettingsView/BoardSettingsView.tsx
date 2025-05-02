@@ -41,6 +41,8 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         deps: [userId]
       });
 
+      console.log('User role:', userRole);
+      
     const handleOpenEdit = async () => {
         try {
             const { result } = await BoardApi.getBoardById(boardId)
@@ -130,7 +132,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
 
             {userRole === null || userRole === undefined ? (
                 <Typography>Loading user role...</Typography>
-            ) : userRole === Role.OWNER ? (
+            ) : userRole.userRole === Role.OWNER ? (
                 <Box className={styles.warning_box}>
                     <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
                         Select a user to transfer ownership:

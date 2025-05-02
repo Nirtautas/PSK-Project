@@ -1,13 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
 import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
-import { Board } from '../../../../../types/types'
+import { Board, Role } from '../../../../../types/types'
 import { FetchResponse } from '../../../../../types/fetch'
+import useFetch from '@/hooks/useFetch'
+import BoardOnUserApi from '@/api/boardOnUser.api'
+import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
+import { getUserId } from '@/utils/userId'
 
 type Props = {
     boardId: number
@@ -25,6 +29,17 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     const [deleteError, setDeleteError] = useState<string>('')
 
     const router = useRouter()
+    const [userId, setUserId] = useState<number | null>(null)
+
+    useEffect(() => {
+        const userId = getUserId();
+        setUserId(userId);
+    }, []);
+
+    const { data: userRole } = useFetch({
+        resolver: () => BoardOnUserApi.getUserRole(boardId, userId),
+        deps: [userId]
+      });
 
     const handleOpenEdit = async () => {
         try {
@@ -112,6 +127,20 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     {isDeleting ? 'Deleting...' : 'Delete Board'}
                 </Button>
             </Box>
+
+            {userRole === null || userRole === undefined ? (
+                <Typography>Loading user role...</Typography>
+            ) : userRole === Role.OWNER ? (
+                <Box className={styles.warning_box}>
+                    <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
+                        Select a user to transfer ownership:
+                    </Typography>
+                    <TransferOwnershipView boardId={boardId} />
+                </Box>
+            ) : (
+                <Typography></Typography>
+            )}
+
             <BoardManagementModal
                 open={isEditOpen}
                 onClose={() => setIsEditOpen(false)}

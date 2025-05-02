@@ -7,7 +7,6 @@ import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
 import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
 import { Board, Role } from '../../../../../types/types'
-import { FetchResponse } from '../../../../../types/fetch'
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
@@ -41,8 +40,6 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         deps: [userId]
       });
 
-      console.log('User role:', userRole);
-      
     const handleOpenEdit = async () => {
         try {
             const { result } = await BoardApi.getBoardById(boardId)

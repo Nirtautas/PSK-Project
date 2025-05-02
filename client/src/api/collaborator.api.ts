@@ -20,12 +20,21 @@ export default class CollaboratorApi {
         });
     }
 
-    static async linkUserToBoard(boardId: number, userId: number, role: string): Promise<FetchResponse<BoardUser[]>> {
+    // static async linkUserToBoard(boardId: number, userId: number, role: string): Promise<FetchResponse<BoardUser[]>> {
+    //     return await fetch({
+    //         url: `${apiBaseUrl}/boards/${boardId}/link/${userId}`,
+    //         method: HTTPMethod.POST,
+    //         headers: getAuthorizedHeaders(),
+    //         body: JSON.stringify({ userRole: role }),
+    //     });
+    // }
+
+    static async inviteUserToBoard(boardId: number, userId: number, role: string): Promise<FetchResponse<any>> {
         return await fetch({
-            url: `${apiBaseUrl}/boards/${boardId}/link/${userId}`,
+            url: `${apiBaseUrl}/boards/${boardId}/invite`,
             method: HTTPMethod.POST,
             headers: getAuthorizedHeaders(),
-            body: JSON.stringify({ userRole: role }),
+            body: JSON.stringify({ userId, role }),
         });
     }
 

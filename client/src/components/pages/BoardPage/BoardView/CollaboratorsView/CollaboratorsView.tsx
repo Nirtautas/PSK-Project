@@ -91,19 +91,7 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   
     for (const userId of selectedUsers) {
       const selectedRole = roleMapping[userId] || 'VIEWER';
-  
-      try {
-        await CollaboratorApi.linkUserToBoard(boardId, userId, selectedRole);
-
-        const response = await CollaboratorApi.getCollaborators(boardId);
-        if (response && response.result) {
-          setCollaborators(response.result); 
-        } else {
-          setLinkErrorMsg('Failed to fetch updated collaborators');
-        }
-      } catch (error) {
-        setLinkErrorMsg('Failed to add collaborators');
-      }
+      await CollaboratorApi.inviteUserToBoard(boardId, userId, selectedRole);
     }
   
     setSelectedUsers([]);

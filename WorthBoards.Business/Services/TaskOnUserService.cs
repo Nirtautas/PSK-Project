@@ -42,16 +42,19 @@ namespace WorthBoards.Business.Services
             return addedLinksDto;
         }
 
-        public async Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int boardId, int taskId, IEnumerable<int> userIds, CancellationToken cancellationToken)
+        public async Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int boardId, int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
         {
             ICollection<LinkUserToTaskResponse> successUnlinks = [];
 
             var task = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.BoardId == boardId && t.Id == taskId, cancellationToken)
                 ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(BoardTask), [taskId]));
 
-            foreach (var userId in userIds)
+            foreach (var linkDto in linkList)
             {
-                var taskOnUser = await _unitOfWork.TasksOnUserRepository.GetByExpressionAsync(t => t.BoardTaskId == taskId && t.UserId == userId);
+                var link = _mapper.Map<TaskOnUser>(linkDto);
+                link.BoardTaskId = task.Id;
+
+                var taskOnUser = await _unitOfWork.TasksOnUserRepository.GetByExpressionAsync(t => t.BoardTaskId == taskId && t.UserId == link.UserId);
 
                 if (taskOnUser != null)
                 {

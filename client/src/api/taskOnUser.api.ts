@@ -28,7 +28,7 @@ export default class TaskOnUserApi {
 
         return fetch ({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/users/unlink`,
-            method: HTTPMethod.POST,
+            method: HTTPMethod.DELETE,
             headers: getAuthorizedHeaders(),
             body: JSON.stringify(body)
         })

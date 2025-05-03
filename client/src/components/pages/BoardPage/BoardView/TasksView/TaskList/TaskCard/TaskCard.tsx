@@ -1,8 +1,8 @@
 import { Box, Card, CardActionArea, Modal, Typography } from '@mui/material'
-import { Role, Task } from '@/types/types'
+import { Role, Task, TaskUser } from '@/types/types'
 
 import styles from './TaskCard.module.scss'
-import React from 'react'
+import React, { useState } from 'react'
 import TaskCardInfoPopup from './TaskCardInfoPopup'
 import { FetchResponse } from '@/types/fetch'
 import DeadlineDisplay from './DeadlineDisplay'
@@ -19,8 +19,14 @@ type Props = {
 
 const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false)
+    const [currentTask, setCurrentTask] = useState<Task>(task)
     const handleOpen = () => setOpen(true);
+
+    const handleUsersChange = (taskUsers: TaskUser[]) => {
+        currentTask.assignedUsers = taskUsers
+        setCurrentTask(currentTask)
+    }
 
     return (
         <>
@@ -32,18 +38,18 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
                                 {task.title}:
                             </div>
                             <div className={styles.image_box}>
-                                {task.assignedUsers?.slice(0, 3).map(user => (
+                                {currentTask.assignedUsers?.slice(0, 3).map(user => (
                                     <img key={user.id} width={25} height={25} src={user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true'} alt="image" />
                                 ))}
                             </div>
                         </div>
                         <div className={styles.bottom_row}>
-                            <DeadlineDisplay deadline={task.deadlineEnd}/>
+                            <DeadlineDisplay deadline={currentTask.deadlineEnd}/>
                         </div>
                     </div>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={task} handleUpdate={onTaskUpdate} userRole={userRole} onDelete={onDelete}/>
+            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={currentTask} handleUpdate={onTaskUpdate} userRole={userRole} onDelete={onDelete} onUserChange={handleUsersChange}/>
         </>
     )
 }

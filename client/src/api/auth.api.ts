@@ -1,5 +1,5 @@
 import { authApiBaseUrl, defaultHeaders } from '@/constants/api'
-import { LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth'
+import { ForgotPasswordRequest, ForgotPasswordResponse, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth'
 import { FetchResponse, HTTPMethod } from '@/types/fetch'
 import { fetch } from '@/utils/fetch'
 
@@ -19,6 +19,15 @@ export default class AuthApi {
     static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse, string[]>> {
         return fetch({
             url: `${authApiBaseUrl}/register`,
+            method: HTTPMethod.POST,
+            headers: defaultHeaders,
+            body: JSON.stringify(request)
+        })
+    }
+
+    static async forgotPassword(request: ForgotPasswordRequest): Promise<FetchResponse<ForgotPasswordResponse>> {
+        return fetch({
+            url: `${authApiBaseUrl}/forgot-password`,
             method: HTTPMethod.POST,
             headers: defaultHeaders,
             body: JSON.stringify(request)

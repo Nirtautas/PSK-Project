@@ -52,7 +52,7 @@ const LoginPage = () => {
                         name="password"
                         error={errorMsg === "Unauthorized"}
                         required />
-                    <Link href="#">forgot password</Link>
+                    <Link href="/forgot-password">Forgot password</Link>
                     <br />
                     <Button type="submit" variant="contained">Login</Button>
                     <div className={styles.horizontal}>

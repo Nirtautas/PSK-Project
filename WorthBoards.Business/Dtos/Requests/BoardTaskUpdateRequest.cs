@@ -6,7 +6,7 @@ namespace WorthBoards.Business.Dtos.Requests
     {
         public string Title { get; set; }
         public string? Description { get; set; }
-        public DateTime DeadlineEnd { get; set; }
+        public DateTime? DeadlineEnd { get; set; }
         public TaskStatusEnum TaskStatus { get; set; }
         public uint Version { get; set; }
     }

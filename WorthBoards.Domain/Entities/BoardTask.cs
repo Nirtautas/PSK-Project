@@ -13,7 +13,7 @@ namespace WorthBoards.Domain.Entities
         [MaxLength(30)]
         public required string Title { get; set; }
         public string? Description { get; set; }
-        public required DateTime DeadlineEnd { get; set; }
+        public DateTime? DeadlineEnd { get; set; }
         public DateTime CreationDate { get; set; }
         public required TaskStatusEnum TaskStatus { get; set; }
 

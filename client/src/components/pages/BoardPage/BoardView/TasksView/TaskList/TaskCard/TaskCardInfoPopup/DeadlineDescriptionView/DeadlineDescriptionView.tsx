@@ -22,7 +22,7 @@ export default function DeadlineDescriptionView
         <Box sx={{height: '40%'}}>
             <Box>
                 <Typography variant="h4" sx={{padding: '1rem 1rem 1rem 0'}}>Deadline</Typography>
-                {!editMode && <DeadlineDisplay deadline={deadline}/>}
+                {!editMode && deadline ? <DeadlineDisplay deadline={deadline}/> : "No deadline provided"}
                 {editMode && 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker

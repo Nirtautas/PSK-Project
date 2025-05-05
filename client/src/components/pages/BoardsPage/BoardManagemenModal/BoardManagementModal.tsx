@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Alert, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
 import styles from './BoardManagemenModal.module.scss'
 import { useEffect, useState } from 'react'
@@ -17,6 +17,7 @@ type Props = {
 
 const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Props) => {
     const [title, setTitle] = useState(initialData?.title || '')
+    const [titleError, setTitleError] = useState<string>('')
     const [description, setDescription] = useState(initialData?.description || '')
     const [imageURL, setImageURL] = useState<string | null>(initialData?.imageURL ?? '')
 
@@ -30,6 +31,8 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     //}
 
     useEffect(() => {
+        setTitleError('')
+
         if (initialData) {
             setTitle(initialData.title)
             setDescription(initialData.description)
@@ -38,6 +41,11 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     }, [initialData, open])
 
     const handleSubmit = () => {
+        if (!title.trim()) {
+            setTitleError('Board title is required.')
+            return
+        } 
+
         onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
     }
 
@@ -48,9 +56,11 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                     <Typography variant="h3" className={styles.title_text}>{mode === 'edit' ? 'Edit Board' : 'Create New Board'}</Typography>
 
                     <Stack spacing={2} sx={{ maxWidth: 400 }} className={styles.form}>
+                        {titleError && <Alert severity="error">{titleError}</Alert>}
                         <TextField
                             label="Board Title"
                             variant="outlined"
+                            required
                             fullWidth
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}

@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
-import { Comment } from "@/types/types";
+import { BoardUser, Comment } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -14,12 +14,12 @@ export default function CommentDisplay({
     commentData,
     boardId,
     handleDelete,
-    pfpLink
+    cashedUsers,
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
-    pfpLink: string
+    cashedUsers: BoardUser[] | null
 }) {
     const userId = getUserId();
     const [editing, setEditing] = useState(false);
@@ -59,7 +59,10 @@ export default function CommentDisplay({
             ) : (
                 <>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                        <Avatar alt="userName" src={pfpLink} />
+                        <Avatar alt="profile picture" src={cashedUsers?.find(user => user.id === commentData.userId)?.imageURL} />
+                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                            {commentData.userId === userId ? "You" : cashedUsers?.find(user => user.id === commentData.userId)?.userName}
+                        </Typography>
                         <Box sx={{ flex: 1 }}>
                             <Typography variant="body1" 
                               sx={{

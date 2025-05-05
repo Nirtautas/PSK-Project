@@ -1,4 +1,4 @@
-import { BoardUser, Comment, User } from "@/types/types";
+import { Board, BoardUser, Comment, User } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { Button, TablePagination, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -23,7 +23,8 @@ export default function CommentsView
     const [totalCount, setTotalCount] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [cashedComments, setCashedComments] = useState<Comment[]>([]);
-    
+    const [cashedUsers, setCashedUsers] = useState<BoardUser[] | null>(null);
+
     const { 
         data: comments,
         isLoading: loadingComments
@@ -45,6 +46,11 @@ export default function CommentsView
         }
     }), [comments])
 
+    useEffect(() => {
+        if (loadingUsers) return;
+        const currUsers = users.result ? users.result : null;
+        setCashedUsers(currUsers);
+    }, [users]);
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setCashedComments([]);
@@ -87,17 +93,13 @@ export default function CommentsView
             setCashedComments((prevComments) => prevComments.filter((comment) => comment.id !== commentData.id));
         });
     }
-
-    const getUserImageLink = (userId: number) => {
-        return !loadingUsers ? users.result?.find((user: BoardUser) => user.id === userId)?.imageURL || '' : '';
-    };
     
     return (
         <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {cashedComments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)}/>
+                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} cashedUsers={cashedUsers}/>
                 ))}
             </Box>
             <form onSubmit={handleSubmit}>

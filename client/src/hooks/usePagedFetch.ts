@@ -1,57 +1,32 @@
-import { useEffect, useState } from 'react'
+import { Paginated } from '@/types/api'
+import { FetchResponse } from '@/types/fetch'
+import useFetch from './useFetch'
 
-type Args<T> = {
-    resolver: () => Promise<any>
-    pageNum: number
-    pageSize?: number
-    delayMs?: number
+export type UseFetchPagedArgs<T> = {
+    resolver: () => Promise<FetchResponse<Paginated<T>>>
+    delayMs?: number,
     deps?: any[]
-    resultKey?: string
 }
 
-export type PagedResponse<T> = {
-    totalCount: number
-    pageSize: number
-    pageNum: number
-    results: T[]
-}
-
-const usePagedFetch = <T>({ resolver, pageNum, pageSize = 10, delayMs, deps = [], resultKey = 'boards' }: Args<T>) => {
-    const [data, setData] = useState<PagedResponse<T> | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true)
-    const [errorMsg, setErrorMsg] = useState<string>('')
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const raw = await resolver()
-                const result = raw.result
-                delayMs && await new Promise(resolve => setTimeout(resolve, delayMs))
-
-                const response: PagedResponse<T> = {
-                    totalCount: result.totalCount,
-                    pageNum,
-                    pageSize,
-                    results: result[resultKey] || []
-                }
-
-                setErrorMsg('')
-                setData(response)
-            } catch (e: any) {
-                setErrorMsg(e.message || 'Something went wrong')
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchData()
-    }, [pageNum, pageSize, delayMs, resultKey, ...deps])
-
-    return {
+// Remember to check if 'isLoading' and 'errorMsg' before using other properties as they may be undefined or null
+const usePagedFetch = <T>(args: UseFetchPagedArgs<T>) => {
+    const {
         data,
         setData,
         isLoading,
-        errorMsg
+        errorMsg,
+        refetch
+    } = useFetch(args)
+
+    return {
+        data: data?.items || null,
+        pageNumber: data?.pageNumber as unknown as number,
+        pageCount: data?.pageCount as unknown as number,
+        pageSize: data?.pageSize as unknown as number,
+        setData: (newItems: T[]) => setData({ ...data, items: newItems }),
+        isLoading,
+        errorMsg,
+        refetch
     }
 }
 

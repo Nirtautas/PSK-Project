@@ -6,13 +6,14 @@ import styles from './BoardsView.module.scss'
 import { getPageUrl } from '@/constants/urls'
 
 type Props = {
-    boards: Board[] | undefined
+    boards: Board[]
     isLoading: boolean
     errorMsg: string
 }
 
 const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
     const router = useRouter()
+    console.log(boards)
 
     if (isLoading) {
         return (
@@ -39,7 +40,7 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
 
     return (
         <div>
-            {boards?.map((board, index) => (
+            {boards.map((board, index) => (
                 <div className={styles.card_wrapper} key={index}>
                     <BoardCard
                         name={board.title}

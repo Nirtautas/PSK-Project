@@ -7,13 +7,12 @@ import UserProfile from '@/components/templates/NavBarLayout/UserProfile'
 import NotificationButton from '@/components/templates/NavBarLayout/NotificationDropdown'
 import { usePathname, useRouter } from 'next/navigation'
 import { getPageUrl, pathnames } from '@/constants/urls'
-import useFetch from '@/hooks/useFetch'
 import NotificationApi from '@/api/notification.api'
 import { Notification } from '@/types/types'
 import { getUserId, removeUserId } from '@/utils/userId'
 import { deleteCookie } from 'cookies-next'
 import { GetPageUrl } from '@/constants/route'
-import useFetchResponse from '@/hooks/useFetchResponse'
+import useFetch from '@/hooks/useFetch'
 import NotificationDropdown from '@/components/templates/NavBarLayout/NotificationDropdown'
 import UserApi from '@/api/user.api'
 import { useEffect } from 'react'
@@ -28,14 +27,14 @@ const NavBarLayout = ({ children }: Props) => {
     
     const {
         data: user
-    } = useFetchResponse({ resolver: () => UserApi.getById(getUserId())})
+    } = useFetch({ resolver: () => UserApi.getById(getUserId())})
 
     const {
         isLoading,
         errorMsg,
         data: notifications,
         setData: setNotifications
-    } = useFetchResponse({ resolver: () => NotificationApi.getAll() })
+    } = useFetch({ resolver: () => NotificationApi.getAll() })
 
     const handleInvitationAccept = async (subjectNotification: Notification) => {
         const response = await NotificationApi.acceptInvitation(subjectNotification.id)

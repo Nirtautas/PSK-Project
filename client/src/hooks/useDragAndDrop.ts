@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 
 type DragAndDropArgs<T> = {
-    onDrop: (event: MouseEvent, droppedOn: Element | null, targetItem: T) => void
+    onDrop: (event: MouseEvent, droppedOn: Element | null, targetItem: T, targetElement: HTMLElement) => DragAndDropReleaseArgs | Promise<DragAndDropReleaseArgs>
     dropTargets: DropTargets
+}
+
+export type DragAndDropReleaseArgs = {
+    shouldReset?: boolean
 }
 
 type DropTargets = CssSelectorDropTargets
@@ -37,10 +41,19 @@ const useDragAndDrop = <T>({
         target.style.width = `${width}px`
         target.style.height = `${height}px`
     }
-    const handleRelease = () => {
+    const handleRelease = async (e: MouseEvent, dropTarget: Element | null, releaseArgs: DragAndDropReleaseArgs | Promise<DragAndDropReleaseArgs>) => {
+        const parent = target?.parentElement
         setSelectedItem(null)
         target?.remove()
+        if (target) target.style = ''
         setTarget(null)
+
+        // A bit hacky, but works
+        const releaseArgsResult = await releaseArgs
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        if (!dropTarget || releaseArgsResult?.shouldReset) {
+            parent?.appendChild(target as HTMLElement)
+        }
     }
 
     const handleMouseDown = (e: MouseEvent, selectedItem: T) => {
@@ -49,30 +62,31 @@ const useDragAndDrop = <T>({
 
         setTarget(target)
     }
-    const handleMouseUp = async (e: MouseEvent) => {
+    const handleMouseUp = async (event: MouseEvent) => {
         if (!selectedItem || !isDragging) {
             setTarget(null)
             setIsDragging(false)
             return
         }
         setIsDragging(false)
-        let dropTarget: Element
+        let dropTarget: Element | null = null
         const dropTargets = isSelector(dropTargetsUnknown)
             ? document.querySelectorAll(dropTargetsUnknown.dropTargetsSelector)
             : dropTargetsUnknown
         dropTargets.forEach((dropBox) => {
             const rect = dropBox.getBoundingClientRect()
-            if (e.clientX > rect.x && e.clientX < rect.x + rect.width) {
+            if (event.clientX > rect.x && event.clientX < rect.x + rect.width
+                && event.clientY > rect.y && event.clientY < rect.y + rect.height) {
                 dropTarget = dropBox
             }
         })
         try {
             // @ts-ignore
-            onDrop(e, dropTarget || null, selectedItem)
+            const releaseArgs = onDrop(event, dropTarget || null, selectedItem, target)
+            handleRelease(event, dropTarget, releaseArgs)
         } catch (err) {
             console.error(err as Error)
-        } finally {
-            handleRelease()
+            handleRelease(event, dropTarget, { shouldReset: true })
         }
     }
 

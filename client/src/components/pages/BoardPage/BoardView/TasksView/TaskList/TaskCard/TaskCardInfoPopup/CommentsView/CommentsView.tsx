@@ -1,14 +1,14 @@
-import { BoardUser, Comment, User } from "@/types/types";
-import { getUserId } from "@/utils/userId";
-import { Button, TablePagination, TextField } from "@mui/material";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { useEffect, useRef, useState } from "react";
-import CommentDisplay from "./CommentDisplay";
-import CommentApi from "@/api/comment.api";
-import useFetch from "@/hooks/useFetch";
-import BoardOnUserApi from "@/api/boardOnUser.api";
-import usePagedFetch from "@/hooks/usePagedFetch";
+import { BoardUser, Comment } from "@/types/types"
+import { Button, TextField } from "@mui/material"
+import Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
+import { useState } from "react"
+import CommentDisplay from "./CommentDisplay"
+import CommentApi from "@/api/comment.api"
+import BoardOnUserApi from "@/api/boardOnUser.api"
+import useFetch from '@/hooks/useFetch'
+import usePagedFetch from '@/hooks/usePagedFetch'
+import PageChanger from '@/components/shared/PageChanger'
 
 export default function CommentsView
 ({
@@ -18,104 +18,90 @@ export default function CommentsView
     taskId: number,
     boardId: number
 }) {
+    const [commentInputText, setCommentInputText] = useState<string>('')
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
-    const [pageNum, setPageNum] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [cashedComments, setCashedComments] = useState<Comment[]>([]);
-    
-    const { 
+    const [pageNum, setPageNum] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const {
         data: comments,
-        isLoading: loadingComments
+        setData: setComments,
+        isLoading: loadingComments,
+        errorMsg: errorMsgComments,
+        pageCount,
     } = usePagedFetch({
-        resolver: () => CommentApi.getAll(boardId, taskId, pageNum, rowsPerPage), 
-        deps: [taskId, pageNum, rowsPerPage], 
-        pageNum: pageNum, 
-        resultKey: 'comments' 
-    });
-    
-    //TODO: useFetch instead of get all
-    useEffect((() => {
-        console.log(taskId);
-        if (!loadingComments){
-            setCashedComments((comments?.results as Comment[]) || []);
-            setTotalCount(comments?.totalCount || 0);
-        } else {
-            console.log("Loading comments...");
-        }
-    }), [comments])
-
+        resolver: () => CommentApi.getAll(boardId, taskId, pageNum, rowsPerPage),
+        deps: [taskId, pageNum, rowsPerPage]
+    })
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setCashedComments([]);
-        setPageNum(newPage);
-    };
+        setPageNum(newPage)
+    }
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setCashedComments([]);
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageNum(0);
-    };
+        setRowsPerPage(parseInt(event.target.value, 10))
+        setPageNum(0)
+    }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        const commentText = (event.currentTarget[0] as HTMLInputElement).value;
+        event.preventDefault()
         //TODO: the comments taskId returns as 0 all the time
-        const createdComment = await CommentApi.create(boardId, commentText, taskId);
+        const response = await CommentApi.create(boardId, commentInputText, taskId)
 
-        if (createdComment.error) {
-            console.error("Error creating comment:", createdComment.error);
-            return;
+        if (!response.result) {
+            console.error("Error creating comment:", response.error)
+            return
         }
-        if (createdComment.result) {
-            console.log("Created comment:", createdComment.result);
-            setCashedComments((prevComments) => [...prevComments, createdComment.result as Comment]);
-        }
-        //Reset
-        (event.currentTarget[0] as HTMLInputElement).value = '';
+        console.log("Created comment:", response.result)
+        setComments([...comments, response.result as Comment])
+        setCommentInputText('')
     }
 
     const handleDelete = ({commentData} : {commentData: Comment} ) => {
-        const confirmed = window.confirm("Are you sure you want to delete this comment?");
-        if (!confirmed) return;
-        
+        const confirmed = window.confirm("Are you sure you want to delete this comment?")
+        if (!confirmed) return
+
         CommentApi.delete(boardId, commentData.taskId, commentData.id).then((resp) => {
             if (resp.error) {
-                console.error("Error deleting comment:", resp.error);
-                return;
+                console.error("Error deleting comment:", resp.error)
+                return
             }
-            setCashedComments((prevComments) => prevComments.filter((comment) => comment.id !== commentData.id));
-        });
+            setComments(comments.filter((comment) => comment.id !== commentData.id))
+        })
     }
 
-    const getUserImageLink = (userId: number) => {
-        return !loadingUsers ? users.result?.find((user: BoardUser) => user.id === userId)?.imageURL || '' : '';
-    };
-    
+    const getUserImageLink = (userId: number) => (
+        !loadingUsers ? users.find((user: BoardUser) => user.id === userId)?.imageURL || '' : ''
+    )
+
     return (
         <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
-                {cashedComments.map((comment: Comment, index: number) => (
+                {!errorMsgComments && !loadingComments && comments.map((comment: Comment, index: number) => (
                     <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)}/>
                 ))}
+                {/* {JSON.stringify(comments)} */}
             </Box>
             <form onSubmit={handleSubmit}>
-                <TextField variant="outlined" label="Add a comment" fullWidth sx={{ marginBottom: 1 }} />
+                <TextField
+                    variant="outlined"
+                    label="Add a comment"
+                    fullWidth
+                    sx={{ marginBottom: 1 }}
+                    value={commentInputText}
+                    onChange={(e) => setCommentInputText(e.currentTarget.value)}
+                />
                 <Button variant="outlined" type="submit">
                     Post
                 </Button>
             </form>
-            <TablePagination
-                component="div"
-                count={totalCount}
-                page={pageNum}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage="Comments per page"
-                rowsPerPageOptions={[5, 10, 25]}
+            <PageChanger
+                onClickNext={() => setPageNum(pageNum + 1)}
+                onClickPrevious={() => setPageNum(pageNum - 1)}
+                disabledPrevious={pageNum <= 0}
+                disabledNext={pageNum >= pageCount - 1}
+                pageNumber={pageNum}
+                totalPages={pageCount}
             />
         </Box>
-    );
+    )
 }

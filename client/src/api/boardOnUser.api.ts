@@ -4,22 +4,15 @@ import { apiBaseUrl } from '@/constants/api';
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 
 export default class BoardOnUserApi {
-    static async getUserRole(boardId: number, userId: number | null): Promise<FetchResponse<Role | null>> {
-        
-        if (userId === null)
-            return { result: null }
-
-        const userData = await fetch({
+    static async getUserRole(boardId: number, userId: number | null): Promise<FetchResponse<Role>> {
+        if (userId === null) {
+            return { result: Role.VIEWER }
+        }
+        return fetch({
             url: `${apiBaseUrl}/boards/${boardId}/link/${userId}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
         })
-
-        if (!userData.result) {
-            return userData
-        }
-        
-        return { result: userData.result.userRole }
     }
 
     static async getBoardUsers(boardId: number): Promise<FetchResponse<BoardUser[]>> {

@@ -20,12 +20,12 @@ export default class CollaboratorApi {
         });
     }
 
-    static async linkUserToBoard(boardId: number, userId: number, role: string): Promise<FetchResponse<BoardUser[]>> {
+    static async inviteUserToBoard(boardId: number, userId: number, role: string): Promise<FetchResponse<any>> {
         return await fetch({
-            url: `${apiBaseUrl}/boards/${boardId}/link/${userId}`,
+            url: `${apiBaseUrl}/boards/${boardId}/invite`,
             method: HTTPMethod.POST,
             headers: getAuthorizedHeaders(),
-            body: JSON.stringify({ userRole: role }),
+            body: JSON.stringify({ userId, role }),
         });
     }
 
@@ -49,6 +49,14 @@ export default class CollaboratorApi {
     static async transferOwnership(boardId: number, newOwnerId: number): Promise<FetchResponse<any>> {
         return await fetch({
             url: `${apiBaseUrl}/boards/${boardId}/collaborators/${newOwnerId}`,
+            method: HTTPMethod.POST,
+            headers: getAuthorizedHeaders(),
+        });
+    }
+
+    static async removeCollaborator(boardId: number, userId: number): Promise<FetchResponse<any>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/remove/${userId}`,
             method: HTTPMethod.POST,
             headers: getAuthorizedHeaders(),
         });

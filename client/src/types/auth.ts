@@ -38,3 +38,12 @@ export type ResetPasswordRequest = {
 export type ResetPasswordResponse = {
     message: string
 }
+
+export type ChangePasswordRequest = {
+    oldPassword: string,
+    newPassword: string
+}
+
+export type ChangePasswordResponse = {
+    message: string
+}

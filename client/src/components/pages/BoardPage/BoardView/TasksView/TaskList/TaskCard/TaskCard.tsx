@@ -5,7 +5,7 @@ import styles from './TaskCard.module.scss'
 import React, { useState } from 'react'
 import TaskCardInfoPopup from './TaskCardInfoPopup'
 import { FetchResponse } from '@/types/fetch'
-import DeadlineDisplay from './DeadlineDisplay'
+import DeadlineDisplay from '@/components/shared/DeadlineDisplay'
 
 type Props = {
     boardId: number,

@@ -28,3 +28,13 @@ export type ForgotPasswordRequest = {
 export type ForgotPasswordResponse = {
     message: string
 }
+
+export type ResetPasswordRequest = {
+    email: string,
+    resetCode: string,
+    newPassword: string
+}
+
+export type ResetPasswordResponse = {
+    message: string
+}

@@ -11,6 +11,6 @@ namespace WorthBoards.Business.Services.Interfaces
         Task<UserLoginResponse> LoginUserAsync(UserLoginRequest credentials, CancellationToken cancellationToken);
         Task<PasswordRecoveryResponse> ForgotPasswordAsync(ForgotPasswordRequest forgotPasswordRequest, CancellationToken cancellationToken);
         Task<PasswordRecoveryResponse> ResetPasswordAsync(ResetPasswordRequest resetPasswordRequest, CancellationToken cancellationToken);
-        Task<Dtos.Responses.ChangePasswordRequest> ChangePasswordAsync(Dtos.Requests.ChangePasswordRequest passwordChangeRequest, string userEmail, CancellationToken cancellationToken);
+        Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest passwordChangeRequest, string userEmail, CancellationToken cancellationToken);
     }
 }

@@ -14,6 +14,8 @@ using WorthBoards.Business.Utils.EmailService.Interfaces;
 using Microsoft.Extensions.Configuration;
 using WorthBoards.Common.Exceptions;
 using Newtonsoft.Json;
+using WorthBoards.Business.Dtos.Responses;
+using WorthBoards.Business.Dtos.Requests;
 
 namespace WorthBoards.Business.Services
 {
@@ -99,7 +101,7 @@ namespace WorthBoards.Business.Services
                 var frontendBaseUrl = configuration["FrontendBaseUrl"];
                 var token = await userManager.GeneratePasswordResetTokenAsync(user);
                 var resetLink = $"{frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
-                
+
                 await emailService.SendEmailAsync(new SendEmailRequest
                 {
                     RecipientName = user.UserName,
@@ -125,7 +127,7 @@ namespace WorthBoards.Business.Services
             return new PasswordRecoveryResponse(ApplicationMessages.MESSAGE_PASSWORD_RESET_SUCCESSFULL);
         }
 
-        public async Task<Dtos.Responses.ChangePasswordRequest> ChangePasswordAsync(Dtos.Requests.ChangePasswordRequest passwordChangeRequest, string userEmail, CancellationToken cancellationToken)
+        public async Task<ChangePasswordResponse> ChangePasswordAsync(ChangePasswordRequest passwordChangeRequest, string userEmail, CancellationToken cancellationToken)
         {
             var user = await userManager.FindByEmailAsync(userEmail)
                 ?? throw new NotFoundException(ErrorMessageConstants.NOT_FOUND_ERROR);
@@ -135,7 +137,7 @@ namespace WorthBoards.Business.Services
             if (!response.Succeeded)
                 throw new BadRequestException(JsonConvert.SerializeObject(response.Errors));
 
-            return new Dtos.Responses.ChangePasswordRequest(ApplicationMessages.MESSAGE_PASSWORD_CHANGE_SUCCESSFULL);
+            return new ChangePasswordResponse(ApplicationMessages.MESSAGE_PASSWORD_CHANGE_SUCCESSFULL);
         }
     }
 }

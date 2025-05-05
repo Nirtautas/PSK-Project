@@ -159,7 +159,8 @@ return (
                   <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center', backgroundColor: '#262626'}} >
                     {index + 1}.    
                     <Avatar className={styles.img_container} alt={user.userName} src={user.imageURL}  sx={{ marginLeft: 2, marginRight: 3 }}/>
-                    {user.userName} 
+                    <span style={{ marginRight: '20px' }}>{user.userName}</span>
+                    <span>Role: {mapUserRoleEnumToString(user.userRole)}</span>
                     </Paper>
                     <div className={styles.date_container}>
                       <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 2, marginRight: 3 }}>

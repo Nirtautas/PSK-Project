@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, Modal, Typography } from '@mui/material'
+import { Avatar, Box, Card, CardActionArea, Modal, Typography } from '@mui/material'
 import { Role, Task, TaskUser } from '@/types/types'
 
 import styles from './TaskCard.module.scss'
@@ -45,7 +45,7 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
                             </div>
                             <div className={styles.image_box}>
                                 {currentTask.assignedUsers?.slice(0, 3).map(user => (
-                                    <img key={user.id} width={25} height={25} src={user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true'} alt="image" />
+                                    <Avatar className={styles.avatar} key={user.userName} alt={user.userName} src={user.imageURL}/>
                                 ))}
                             </div>
                         </div>

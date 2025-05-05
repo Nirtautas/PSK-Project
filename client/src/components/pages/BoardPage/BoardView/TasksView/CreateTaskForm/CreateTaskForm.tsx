@@ -5,7 +5,7 @@ import TaskApi, { CreateTaskDto } from "@/api/task.api";
 import SelectUsersField from "./SelectUsersField";
 import dayjs from "dayjs";
 import { useState, FormEvent } from "react";
-import { BoardUser, Task, TaskStatus } from "@/types/types";
+import { BoardUser, Task, TaskStatus, TaskUser } from "@/types/types";
 import TaskOnUserApi from "@/api/taskOnUser.api";
 
 type Props = {
@@ -35,7 +35,19 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
             if (response.result) {
                 const userIds = selectedUsers.map(user => user.id)
                 await TaskOnUserApi.linkTaskUser(boardId, response.result.id, userIds)
-                onCreate(response.result)
+                
+                const taskUsers: TaskUser[] = selectedUsers.map(user => ({
+                    id: user.id,
+                    userName: user.userName,
+                    imageURL: user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                    assignedAt: new Date()
+                }))
+                
+                const createdTask: Task = {
+                    ...response.result,
+                    assignedUsers: taskUsers
+                }
+                onCreate(createdTask)
             }
             handleClose()
         } catch (error) {

@@ -85,7 +85,7 @@ namespace WorthBoards.Data.Database
                 .HasOne(n => n.Task)
                 .WithMany()
                 .HasForeignKey(n => n.TaskId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

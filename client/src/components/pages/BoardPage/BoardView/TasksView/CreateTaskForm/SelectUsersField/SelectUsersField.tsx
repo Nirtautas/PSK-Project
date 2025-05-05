@@ -32,7 +32,7 @@ export default function CheckboxesTags({ onUsersChange, selectedUsers, boardId }
 			}
 		}
 		fetchUsers()
-	}, [boardId])
+	}, [boardId, selectedUsers])
 
 	return (
 		<Autocomplete

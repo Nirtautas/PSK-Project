@@ -23,7 +23,8 @@ export default function TaskCardInfoPopup({
     task,
     handleUpdate,
     userRole,
-    onDelete
+    onDelete,
+    onUserChange
 }: {
     boardId: number,
     open: boolean, 
@@ -32,13 +33,13 @@ export default function TaskCardInfoPopup({
     handleUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void
+    onUserChange: (u: TaskUser[]) => void
 }) {
     const [editMode, setEditMode] = useState<boolean>(false)
     const [wasEdited, setWasEdited] = useState<boolean>(false)
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
-    const [assignedUsers, setAssignedUsers] = useState<TaskUser[]>(task.assignedUsers || [])
     
     const handleClose = async () => {
         setOpen(false)
@@ -56,12 +57,6 @@ export default function TaskCardInfoPopup({
             
             if (updatedTask.result)
                 handleUpdate(updatedTask.result)
-            
-            const assignedUserIds = (task.assignedUsers).map(user => user.id)
-            await TaskOnUserApi.unlinkTaskUser(boardId, task.id, assignedUserIds)
-
-            const newAssignedUserIds = assignedUsers.map(user => user.id)
-            const linkResult = await TaskOnUserApi.linkTaskUser(boardId, task.id, newAssignedUserIds)
         }
         setWasEdited(false)
     }
@@ -150,7 +145,7 @@ export default function TaskCardInfoPopup({
                             <Divider orientation="vertical" />
                         </Grid>
                         <Grid size={3}>
-                            <AssignedUsersView users={task.assignedUsers || []} boardId={boardId} onUserChange={setAssignedUsers} editMode={editMode}/>
+                            <AssignedUsersView users={task.assignedUsers || []} boardId={boardId} taskId={task.id} onUserChange={onUserChange} editMode={editMode}/>
                         </Grid>
                     </Grid>
                 </Box>

@@ -9,7 +9,7 @@ namespace WorthBoards.Business.Services.Interfaces
     {
         Task<IEnumerable<LinkUserToTaskResponse>> LinkUsersToTaskAsync(int boardId, int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken);
 
-        Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int boardId, int taskId, IEnumerable<int> userIds, CancellationToken cancellationToken);
+        Task<IEnumerable<LinkUserToTaskResponse>> UnlinkUsersFromTaskAsync(int boardId, int taskId, IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken);
 
         Task<IEnumerable<LinkedUserToTaskResponse>> GetUsersLinkedToTaskAsync(int boardId, int taskId, CancellationToken cancellationToken);
     }

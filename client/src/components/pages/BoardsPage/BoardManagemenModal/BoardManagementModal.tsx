@@ -44,9 +44,11 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         if (!title.trim()) {
             setTitleError('Board title is required.')
             return
-        } 
+        }
 
-        onSubmit({ title, description, imageURL: imageURL?.trim() || placeholderImageUrl })
+        const safeDescription = description.trim() || 'Welcome to the board!'
+
+        onSubmit({ title, description: safeDescription, imageURL: imageURL?.trim() || placeholderImageUrl })
     }
 
     return (

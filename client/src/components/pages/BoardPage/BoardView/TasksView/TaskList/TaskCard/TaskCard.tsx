@@ -28,6 +28,12 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
         setCurrentTask(currentTask)
     }
 
+    const handleTaskUpdate = (updatedTask: Task) => {
+        updatedTask.assignedUsers = currentTask.assignedUsers
+        setCurrentTask(updatedTask)
+        onTaskUpdate(updatedTask)
+    }
+
     return (
         <>
             <Card elevation={2} className={styles.task_card} onMouseDown={(e) => onMouseDown(e as unknown as MouseEvent, task)} onClick={handleOpen}>
@@ -49,7 +55,7 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
                     </div>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={currentTask} handleUpdate={onTaskUpdate} userRole={userRole} onDelete={onDelete} onUserChange={handleUsersChange}/>
+            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={currentTask} handleUpdate={handleTaskUpdate} userRole={userRole} onDelete={onDelete} onUserChange={handleUsersChange}/>
         </>
     )
 }

@@ -11,6 +11,7 @@ import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
 import { getUserId } from '@/utils/userId'
+import CollaboratorApi from '../../../../../api/collaborator.api'
 
 type Props = {
     boardId: number
@@ -26,6 +27,9 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
 
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string>('')
+
+    const [isLeaving, setIsLeaving] = useState(false)
+    const [leaveError, setLeaveError] = useState<string>('')
 
     const router = useRouter()
     const [userId, setUserId] = useState<number | null>(null)
@@ -89,6 +93,24 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         }
     }
 
+    const handleLeave = async () => {
+        if (!confirm('Are you sure you want to leave this board?'))
+            return
+
+        setIsLeaving(true)
+        setLeaveError('')
+        var response = await CollaboratorApi.removeCollaborator(boardId, userId ?? 0)
+
+        if (response.error) {
+            setLeaveError(response.error)
+            setIsLeaving(false)
+            return
+        }
+
+        router.push('/boards')
+        setIsLeaving(false)
+    }
+
     return (
         <div className="board-settings">
             <Typography variant="h5">Board Settings</Typography>
@@ -96,36 +118,65 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             {errorMsg && <Typography color="error">{errorMsg}</Typography>}
             {editError && <Typography color="error">{editError}</Typography>}
 
-            <Box className={styles.info_box}>
-                <Typography variant="body2" className={styles.info_text}>
-                    Selecting this option will allow you to edit board information.
-                </Typography>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleOpenEdit}
-                    disabled={isLoading}
-                >
-                    Edit Board
-                </Button>
-            </Box>
+            {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
+                : userRole.userRole !== Role.VIEWER ?
+                    <Box className={styles.info_box}>
+                        <Typography variant="body2" className={styles.info_text}>
+                            Selecting this option will allow you to edit board information.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={handleOpenEdit}
+                            disabled={isLoading}
+                        >
+                            Edit Board
+                        </Button>
+                    </Box>
+                    : <Typography></Typography>
+            }
 
-            {errorMsg && <Typography color="error">{errorMsg}</Typography>}
             {deleteError && <Typography color="error">{deleteError}</Typography>}
 
-            <Box className={styles.warning_box}>
-                <Typography variant="body2" className={styles.info_text}>
-                    Selecting this option will delete the board including tasks, linked users, and comments!
-                </Typography>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleDelete}
-                    disabled={isDeleting || isLoading}
-                >
-                    {isDeleting ? 'Deleting...' : 'Delete Board'}
-                </Button>
-            </Box>
+            {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
+                : userRole.userRole === Role.OWNER ?
+                    <Box className={styles.warning_box}>
+                        <Typography variant="body2" className={styles.info_text}>
+                            Selecting this option will delete the board including tasks, linked users, and comments!
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleDelete}
+                            disabled={isDeleting || isLoading}
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete Board'}
+                        </Button>
+                    </Box>
+                    : <Typography></Typography>
+            }
+
+            {leaveError && <Typography color="error">{leaveError}</Typography>}
+
+            {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
+                : userRole.userRole !== Role.OWNER ?
+                    <Box className={styles.warning_box}>
+                        <Typography variant="body2" className={styles.info_text}>
+                            Selecting this option will remove you from the board.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleLeave}
+                            disabled={isLeaving || isLoading}
+                        >
+                            {isLeaving ? 'Leaving...' : 'Leave Board'}
+                        </Button>
+                    </Box>
+                : <Typography></Typography>
+            }
+
+            
 
             {userRole === null || userRole === undefined ? (
                 <Typography>Loading user role...</Typography>

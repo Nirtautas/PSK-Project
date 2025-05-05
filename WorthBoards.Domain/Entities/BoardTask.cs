@@ -12,7 +12,7 @@ namespace WorthBoards.Domain.Entities
         public required int BoardId { get; set; }
         [MaxLength(30)]
         public required string Title { get; set; }
-        public required string Description { get; set; }
+        public string? Description { get; set; }
         public required DateTime DeadlineEnd { get; set; }
         public DateTime CreationDate { get; set; }
         public required TaskStatusEnum TaskStatus { get; set; }

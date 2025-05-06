@@ -1,0 +1,34 @@
+@use '@/assets/styles/variables' as *;
+
+$slideDuration: 0.1s;
+
+.state {
+    transition: all $slideDuration ease-in-out;
+    
+    &_initial {
+        @extend .state;
+        transform: translateX(-100%);
+        opacity: 0;
+        height: 2rem;
+    }
+
+    &_shown {
+        @extend .state;
+        opacity: 1;
+        height: 2rem;
+    }
+
+    &_ended {
+        @extend .state;
+        transform: translateX(100%);
+        opacity: 0;
+        height: 0;
+    }
+}
+
+.colors {
+
+    &_error {
+        background-color: red;
+    }
+}

@@ -6,16 +6,16 @@ import BoardOnUserApi from "@/api/boardOnUser.api"
 import { getUserId, setUserId } from "@/utils/userId"
 import { useEffect, useState } from "react"
 import useFetch from '@/hooks/useFetch'
+import TaskApi from "@/api/task.api"
 
 type Props = {
     boardId: number,
-    tasks: Task[],
-    onTaskUpdate: (t: Task) => void,
-    onTaskDelete: (t: Task) => void
+    onTaskUpdate: (t: Task) => void
 }
 
-const ArchivedTasksView = ({ boardId, tasks, onTaskUpdate, onTaskDelete }: Props) => {
+const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
     const [userId, setUserId] = useState<number | null>(null)
+    const [tasks, setTasks] = useState<Task[]>([])
     
     useEffect(() => {
         const userId = getUserId()
@@ -24,7 +24,25 @@ const ArchivedTasksView = ({ boardId, tasks, onTaskUpdate, onTaskDelete }: Props
     
     const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
 
-    console.log(tasks.map(task => task.title))
+    const fetchedTasks = useFetch({ resolver: () => TaskApi.getArchivedTasks(boardId)})
+    
+    useEffect(() => {
+        if (fetchedTasks.data) {
+            setTasks(fetchedTasks.data)
+        }
+    }, [fetchedTasks.data])
+
+    const handleUpdate = (updatedTask: Task) => {
+        const updatedTasks = tasks.map(task => task.id !== updatedTask.id ? task : updatedTask)
+        setTasks(updatedTasks)
+        onTaskUpdate(updatedTask)
+    }
+
+    const handleDelete = (deletedTask: Task) => {
+        const updatedTasks = tasks.filter(task => task.id !== deletedTask.id)
+        setTasks(updatedTasks)
+    }
+
     return (
         <div className={styles.container}>
             <Box>
@@ -32,7 +50,7 @@ const ArchivedTasksView = ({ boardId, tasks, onTaskUpdate, onTaskDelete }: Props
             </Box>
             <Paper className={styles.tasks_container}>
                 <div className={styles.task_list}>
-                    {userRole && userRole.data && tasks.map((task, index) => (
+                    {userRole.data && tasks.map((task, index) => (
                         task.taskStatus == TaskStatus.ARCHIVED
                         &&
                         <div key={index} className={styles.task_card_wrapper}>
@@ -40,9 +58,9 @@ const ArchivedTasksView = ({ boardId, tasks, onTaskUpdate, onTaskDelete }: Props
                                 boardId={boardId}
                                 task={task}
                                 onClick={() => { console.log('clicked task: ', task)}}
-                                onTaskUpdate={onTaskUpdate}
-                                userRole={userRole.userRole}
-                                onDelete={onTaskDelete}/>
+                                onTaskUpdate={handleUpdate}
+                                userRole={userRole.data.userRole}
+                                onDelete={handleDelete}/>
                         </div>
                     ))}
                 </div>

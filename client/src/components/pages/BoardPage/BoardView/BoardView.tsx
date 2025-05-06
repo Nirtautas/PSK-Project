@@ -49,7 +49,7 @@ const BoardView = ({
         
         if (tab === 'Collaborators') return <CollaboratorView boardId={boardId} isLoading={isLoading} errorMsg={errorMsg}/>
 
-        if (tab === 'Archives') return <ArchivedTasksView boardId={boardId} tasks={tasks ?? []} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete}/>
+        if (tab === 'Archives') return <ArchivedTasksView boardId={boardId} onTaskUpdate={onTaskUpdate}/>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />
     }
     return (

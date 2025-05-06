@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
-import { Role, Task, TaskUser } from '@/types/types';
+import { Role, Task, TaskStatus, TaskUser } from '@/types/types';
 import TaskApi, { UpdateTaskDto } from '@/api/task.api';
 import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
@@ -41,22 +41,26 @@ export default function TaskCardInfoPopup({
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
     
-    const handleClose = async () => {
+    const updateTask = async (taskToUpdate: Task) => {
+        const newTask: UpdateTaskDto = {
+            title: title ?? "",
+            description: description,
+            deadlineEnd: deadline,
+            taskStatus: taskToUpdate.taskStatus,
+            version: taskToUpdate.version
+        }
+        const updatedTask = await TaskApi.update(boardId, taskToUpdate.id, newTask)
+        
+        if (updatedTask.result)
+            handleUpdate(updatedTask.result)
+    }
+
+    const handleClose = () => {
         setOpen(false)
         setEditMode(false)
 
         if (wasEdited) {
-            const newTask: UpdateTaskDto = {
-                title: title ?? "",
-                description: description,
-                deadlineEnd: deadline,
-                taskStatus: task.taskStatus,
-                version: task.version
-            }
-            const updatedTask = await TaskApi.update(boardId, task.id, newTask)
-            
-            if (updatedTask.result)
-                handleUpdate(updatedTask.result)
+            updateTask(task)
         }
         setWasEdited(false)
     }
@@ -74,6 +78,13 @@ export default function TaskCardInfoPopup({
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const handleArchive = () => {
+        const newStatus = task.taskStatus !== TaskStatus.ARCHIVED ? TaskStatus.ARCHIVED : TaskStatus.PENDING;
+        const newTask = { ...task, taskStatus: newStatus };
+        updateTask(newTask)
+        setOpen(false)
     }
     
     //TODO: move this to a separate file
@@ -114,6 +125,9 @@ export default function TaskCardInfoPopup({
                     }
                     {userRole !== Role.VIEWER && (
                         <>
+                            <Button variant="outlined" onClick={handleArchive} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                {task.taskStatus === TaskStatus.ARCHIVED ? 'Unarchive' : 'Archive'}
+                            </Button>
                             <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 Edit
                             </Button>

@@ -74,7 +74,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         const response = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
         if (!response.result) {
             setIsEditOpen(false)
-            displayError(`${response.error}. Try again.` || 'Failed to update board.')
+            displayError(`${response.error} Try again.` || 'Failed to update board.')
             return
         }
         setIsEditOpen(false)

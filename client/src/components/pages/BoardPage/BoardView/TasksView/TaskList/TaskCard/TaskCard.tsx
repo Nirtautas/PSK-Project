@@ -11,7 +11,7 @@ type Props = {
     boardId: number,
     task: Task
     onClick: () => void
-    onMouseDown: (e: MouseEvent, task: Task) => void
+    onMouseDown?: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void
@@ -36,7 +36,7 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
 
     return (
         <>
-            <Card elevation={2} className={styles.task_card} onMouseDown={(e) => onMouseDown(e as unknown as MouseEvent, task)} onClick={handleOpen}>
+            <Card elevation={2} className={styles.task_card} onMouseDown={onMouseDown ? (e) => onMouseDown(e as unknown as MouseEvent, task) : undefined} onClick={handleOpen}>
                 <CardActionArea onClick={onClick} className={styles.task_card_clickable}>
                     <div className={styles.task_card_content}>
                         <div className={styles.top_row}>

@@ -12,7 +12,7 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     tasks: Task[]
-    onMouseDown: (e: MouseEvent, task: Task) => void
+    onMouseDown?: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void

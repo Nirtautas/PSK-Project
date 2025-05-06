@@ -6,6 +6,7 @@ import styles from './BoardView.module.scss'
 import { Board, Task } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
 import CollaboratorView from './CollaboratorsView'
+import ArchivedTasksView from './ArchivedTasksView'
 
 type Props = {
     boardId: number
@@ -48,7 +49,7 @@ const BoardView = ({
         
         if (tab === 'Collaborators') return <CollaboratorView boardId={boardId} isLoading={isLoading} errorMsg={errorMsg}/>
 
-        if (tab === 'Archives') return <div>Archives</div>
+        if (tab === 'Archives') return <ArchivedTasksView boardId={boardId} tasks={tasks ?? []} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete}/>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />
     }
     return (

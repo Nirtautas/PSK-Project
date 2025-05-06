@@ -17,10 +17,3 @@ export type FetchParams = {
     headers?: HeadersInit,
     body?: BodyInit
 }
-
-export type PagedResponse<T> = {
-    totalCount: number,
-    pageSize: number,
-    pageNum: number,
-    results: T[]
-}

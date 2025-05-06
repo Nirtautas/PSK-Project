@@ -15,25 +15,6 @@ const TransferOwnershipView = ({ boardId }: { boardId: number }) => {
 
   const { collaborators, error, loading } = useCollaborators(boardId, userName)
 
-  // const handleTransferOwnership = async () => {
-  //   if (!selectedUserId) {
-  //     setTransferError('Please select a user to transfer ownership.')
-  //     return
-  //   }
-
-  //   try {
-  //     setIsTransferring(true)
-  //     await CollaboratorApi.transferOwnership(boardId, selectedUserId)
-  //     setTransferSuccess('Ownership successfully transferred!')
-  //     setTransferError(null)
-  //   } catch (error: any) {
-  //     setTransferError(error?.message || 'Failed to transfer ownership.')
-  //     setTransferSuccess(null)
-  //   } finally {
-  //     setIsTransferring(false)
-  //   }
-  // }
-
   const handleTransferOwnership = async () => {
     if (!selectedUserId) {
       setTransferError('Please select a user to transfer ownership.');

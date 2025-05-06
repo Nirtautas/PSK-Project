@@ -1,5 +1,7 @@
 export const publicRoutes = [
-    '/login'
+    '/login',
+    '/forgot-password',
+    '/reset-password'
 ]
 
 export const GetPageUrl = {

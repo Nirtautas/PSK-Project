@@ -24,12 +24,13 @@ export default class TaskOnUserApi {
     }
 
     static async unlinkTaskUser(boardId: number, taskId: number, userIds: number[]): Promise<FetchResponse<any>> {
-        console.log(userIds)
+        const body = userIds.map(id => ({ userId: id }))
+
         return fetch ({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/users/unlink`,
-            method: HTTPMethod.POST,
+            method: HTTPMethod.DELETE,
             headers: getAuthorizedHeaders(),
-            body: JSON.stringify(userIds)
+            body: JSON.stringify(body)
         })
     }
 }

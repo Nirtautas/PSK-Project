@@ -6,10 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder
     .ConfigureSwagger()
+    .ConfigureGmail()
     .ConfigureAuthentication()
     .ConfigureAuthorization()
-    .ConfigureValidators()
-    .ConfigureGmail();
+    .ConfigureValidators();
 
 // Add services to the container.
 builder.Services.AddApiServices(builder.Configuration);

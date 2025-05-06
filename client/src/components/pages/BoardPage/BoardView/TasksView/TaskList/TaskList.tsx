@@ -14,7 +14,7 @@ type Props = {
     tasks: Task[]
     onMouseDown: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
-    userRole: FetchResponse<Role | null>
+    userRole: Role
     onDelete: (t: Task) => void
 }
 

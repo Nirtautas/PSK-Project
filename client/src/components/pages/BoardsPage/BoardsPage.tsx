@@ -6,12 +6,12 @@ import BoardApi, { CreateBoardDto } from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
 
 import styles from './BoardsPage.module.scss'
-import usePagedFetch from '../../../hooks/usePagedFetch'
 import { Board } from '../../../types/types'
 import { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
 import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
+import usePagedFetch from '@/hooks/usePagedFetch'
 
 type Props = {
     pageNum: number
@@ -22,39 +22,31 @@ const BoardsPage = ({ pageNum }: Props) => {
 
     const {
         data,
-        setData,
         isLoading,
-        errorMsg
+        errorMsg,
+        pageCount,
+        refetch
     } = usePagedFetch<Board>({
-        resolver: () => BoardApi.getBoards(pageNum),
-        pageNum: pageNum,
-        resultKey: 'boards'
+        resolver: () => BoardApi.getBoards(pageNum)
     })
+
     console.log(data)
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-
-    const totalPages = data ? Math.ceil(data.totalCount / data.pageSize) : 0
-    const isLastPage = data ? pageNum >= totalPages - 1 : false
+    const isLastPage = data ? pageNum >= pageCount - 1 : false
 
     const handleBoardCreate = async ({ title, description, imageURL }: CreateBoardDto) => {
-        const res = await BoardApi.createBoard({
+        const response = await BoardApi.createBoard({
             title,
             description,
             imageURL
         })
-
         setIsModalOpen(false)
-
-        if (res?.result && data) {
-            if (data.results.length != data.pageSize) {
-                setData({
-                    ...data,
-                    totalCount: data.totalCount + 1,
-                    results: [res.result, ...data.results]
-                })
-            }
+        if (!response.result) {
+            console.error('Failed to create board.')
+            return
         }
+        refetch()
     }
 
     return (
@@ -69,14 +61,14 @@ const BoardsPage = ({ pageNum }: Props) => {
                 onSubmit={handleBoardCreate}
                 mode="create"
             />
-            <BoardsView boards={data?.results} isLoading={isLoading} errorMsg={errorMsg} />
+            <BoardsView boards={data} isLoading={isLoading} errorMsg={errorMsg} />
             <PageChanger
                 onClickNext={() => router.push(GetPageUrl.boards(pageNum + 1))}
                 onClickPrevious={() => router.push(GetPageUrl.boards(pageNum - 1))}
                 disabledPrevious={pageNum <= 0}
                 disabledNext={isLastPage}
                 pageNumber={pageNum}
-                totalPages={totalPages}
+                totalPages={pageCount}
             />
         </div>
     )

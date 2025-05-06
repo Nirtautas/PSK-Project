@@ -3,10 +3,8 @@ import BoardViewButtons, { BoardViewTab } from '@/components/pages/BoardPage/Boa
 import TasksView from '@/components/pages/BoardPage/BoardView/TasksView'
 
 import styles from './BoardView.module.scss'
-import { Board, Task, User } from '@/types/types'
+import { Board, Task } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
-import { FetchResponse } from '../../../../types/fetch'
-import CollaboratorsView from './CollaboratorsView' 
 import CollaboratorView from './CollaboratorsView'
 
 type Props = {
@@ -14,18 +12,40 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     tasks: Task[] | undefined
-    onUpdate: (updatedBoard: FetchResponse<Board>) => void
-
+    onUpdate: (updatedBoard: Board) => void
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
+    onTaskVersionMismatch: (errorMsg: string) => void
 }
 
-const BoardView = ({ boardId, tasks, isLoading, errorMsg, onUpdate, onCreate, onTaskUpdate, onTaskDelete }: Props) => {
+const BoardView = ({
+    boardId,
+    tasks,
+    isLoading,
+    errorMsg,
+    onUpdate,
+    onCreate,
+    onTaskUpdate,
+    onTaskDelete,
+    onTaskVersionMismatch
+}: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
     const getView = () => {
-        if (tab === 'Tasks') return <TasksView boardId={boardId} tasks={tasks || []} errorMsg={errorMsg} isLoading={isLoading} onCreate={onCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+        if (tab === 'Tasks') return (
+            <TasksView
+                boardId={boardId}
+                tasks={tasks || []}
+                errorMsg={errorMsg}
+                isLoading={isLoading}
+                onCreate={onCreate}
+                onTaskUpdate={onTaskUpdate}
+                onTaskDelete={onTaskDelete}
+                onTaskVersionMismatch={onTaskVersionMismatch}
+            />
+        )
+        
         if (tab === 'Collaborators') return <CollaboratorView boardId={boardId} isLoading={isLoading} errorMsg={errorMsg}/>
 
         if (tab === 'Archives') return <div>Archives</div>

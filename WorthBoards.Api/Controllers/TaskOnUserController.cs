@@ -21,9 +21,9 @@ namespace WorthBoards.Api.Controllers
 
         [HttpDelete("{boardId}/tasks/{taskId}/users/unlink")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]
-        public async Task<IActionResult> UnlinkUsersFromTask(int boardId, int taskId, [FromBody] IEnumerable<int> userIds, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnlinkUsersFromTask(int boardId, int taskId, [FromBody] IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
         {
-            var unlinkResponse = await _taskOnUserService.UnlinkUsersFromTaskAsync(boardId, taskId, userIds, cancellationToken);
+            var unlinkResponse = await _taskOnUserService.UnlinkUsersFromTaskAsync(boardId, taskId, linkList, cancellationToken);
             return Ok(unlinkResponse);
         }
 

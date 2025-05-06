@@ -20,3 +20,30 @@ export type RegisterResponse = {
     email: string
     password: string
 }
+
+export type ForgotPasswordRequest = {
+    email: string
+}
+
+export type ForgotPasswordResponse = {
+    message: string
+}
+
+export type ResetPasswordRequest = {
+    email: string,
+    resetCode: string,
+    newPassword: string
+}
+
+export type ResetPasswordResponse = {
+    message: string
+}
+
+export type ChangePasswordRequest = {
+    oldPassword: string,
+    newPassword: string
+}
+
+export type ChangePasswordResponse = {
+    message: string
+}

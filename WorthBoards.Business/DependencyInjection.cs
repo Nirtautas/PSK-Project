@@ -15,15 +15,14 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IBoardService, BoardService>();
-            services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<IEmailService, GmailService>();
-
             // TODO: Add global user roles
             //services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
             services
+                .AddScoped<IEmailService, GmailService>()
+                .AddScoped<IAuthService, AuthService>()
+                .AddScoped<IBoardService, BoardService>()
+                .AddScoped<ITokenGenerator, TokenGenerator>()
                 .AddScoped<IBoardTaskService, BoardTaskService>()
                 .AddScoped<IBoardService, BoardService>()
                 .AddScoped<ICommentService, CommentService>()

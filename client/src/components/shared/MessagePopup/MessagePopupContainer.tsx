@@ -2,21 +2,17 @@ import React from 'react'
 import { MessagePopupArgs } from './MessagePopupProvider'
 import MessagePopup from './MessagePopup'
 
+import styles from './MessagePopupContainer.module.scss'
 
 type Props = {
-    messages: MessagePopupArgs[]
+    messages: MessagePopupArgs[],
+    onMessageClose: (e: MouseEvent, message: MessagePopupArgs) => void
 }
-
-const MessagePopupContainer = ({ messages }: Props) => {
+const MessagePopupContainer = ({ messages, onMessageClose }: Props) => {
     return (
-        <div style={{
-            position: 'absolute',
-            zIndex: 1000,
-            top: 0,
-            left: 100
-        }}>
+        <div className={styles[`wrapper`]}>
             {messages.map((message, index) => (
-                <MessagePopup key={`message-popup-${index}`} message={message} />
+                <MessagePopup key={`message-popup-${index}`} message={message} onClickClose={(e) => onMessageClose(e, message)} />
             ))}
         </div>
     )

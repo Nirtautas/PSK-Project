@@ -27,8 +27,12 @@ $slideDuration: 0.1s;
 }
 
 .colors {
+    pointer-events: auto;
+    width: 100px;
+    margin: 0 auto;
 
     &_error {
+        @extend .colors;
         background-color: red;
     }
 }

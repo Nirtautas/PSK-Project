@@ -27,7 +27,7 @@ const MessagePopupContext = createContext<MessagePopupContextType | null>(null)
 export const useMessagePopup = () => {
     const messageContext = useContext(MessagePopupContext)
     if (messageContext === null) {
-        throw new Error('"useMessagePopup" must be used with a "MessagePopupProvider"')
+        throw new Error('The "useMessagePopup" hook must be used under a "MessagePopupProvider"')
     }
     return messageContext
 }
@@ -52,12 +52,25 @@ const MessagePopupProvider = ({ children }: Props) => {
         ])
 
         setTimeout(() => {
-            setMessages((messages) => messages.map((prevMessage) => prevMessage.id === currentMessage.id ? { ...currentMessage, state: 'shown' } : prevMessage))
+            setMessages((messages) => messages.map((prevMessage) => prevMessage.id === currentMessage.id
+                ? { ...currentMessage, state: 'shown' }
+                : prevMessage
+            ))
         }, initTime)
 
         setTimeout(() => {
-            setMessages((messages) => messages.map((prevMessage) => prevMessage.id === currentMessage.id ? { ...currentMessage, state: 'ended' } : prevMessage))
+            setMessages((messages) => messages.map((prevMessage) => prevMessage.id === currentMessage.id
+                ? { ...currentMessage, state: 'ended' }
+                : prevMessage
+            ))
         }, durationMs + initTime)
+    }
+
+    const handleMessageClose = (e: MouseEvent, message: MessagePopupArgs) => {
+        setMessages((messages) => messages.map((prevMessage) => prevMessage.id === message.id
+            ? { ...message, state: 'ended' }
+            : prevMessage
+        ))
     }
 
     return (
@@ -66,7 +79,7 @@ const MessagePopupProvider = ({ children }: Props) => {
         }}>
             {children}
             {createPortal(
-                <MessagePopupContainer messages={messages}/>,
+                <MessagePopupContainer messages={messages} onMessageClose={handleMessageClose}/>,
                 document.body
             )}
         </MessagePopupContext.Provider>

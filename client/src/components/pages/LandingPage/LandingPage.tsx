@@ -3,9 +3,9 @@ import {
     Container,
     Typography,
     Paper,
-    Grid,
     Box,
 } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -36,8 +36,8 @@ export default function LandingPage() {
                 <Typography variant="h4" gutterBottom textAlign="center">
                     What you get
                 </Typography>
-                <Grid container spacing={4}>
-                    <Grid item xs={12} md={4}>
+                <Grid container wrap="nowrap" spacing={4}>
+                    <Grid sx={{ xs: 12, md: 4 }}>
                         <Box textAlign="center">
                             <DashboardIcon sx={{ fontSize: 50, mb: 1 }} color="primary" />
                             <Typography variant="h6">Create Boards</Typography>
@@ -46,7 +46,7 @@ export default function LandingPage() {
                             </Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid sx={{ xs: 12, md: 4 }}>
                         <Box textAlign="center">
                             <GroupIcon sx={{ fontSize: 50, mb: 1 }} color="primary" />
                             <Typography variant="h6">Collaborate Easily</Typography>
@@ -55,7 +55,7 @@ export default function LandingPage() {
                             </Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid sx={{ xs: 12, md: 4 }}>
                         <Box textAlign="center">
                             <CheckCircleOutlineIcon sx={{ fontSize: 50, mb: 1 }} color="primary" />
                             <Typography variant="h6">Track Progress</Typography>

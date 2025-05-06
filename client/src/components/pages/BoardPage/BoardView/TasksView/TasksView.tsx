@@ -13,6 +13,7 @@ import CreateTaskForm from './CreateTaskForm'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import useFetch from '@/hooks/useFetch'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     boardId: number
@@ -22,7 +23,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch?: (errMsg: string) => void
+    refetch?: () => void
 }
 
 type TaskColumn = {
@@ -42,13 +43,14 @@ const TasksView = ({
     onCreate,
     onTaskUpdate,
     onTaskDelete,
-    onTaskVersionMismatch
+    refetch
 }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const { displayError } = useMessagePopup()
 
     useEffect(() => {
         const userId = getUserId()
@@ -97,8 +99,9 @@ const TasksView = ({
         }
         const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
-            console.log('Error while updating task')
-            onTaskVersionMismatch?.(response.error || 'Error while updating task')
+            displayError(`${response.error} Reloading page data...`, 5000)
+            refetch?.()
+            
             return {
                 shouldReset: true
             }

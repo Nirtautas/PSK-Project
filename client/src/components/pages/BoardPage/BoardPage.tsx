@@ -9,6 +9,7 @@ import { Board } from '../../../types/types'
 import { Task } from '@/types/types'
 import useFetch from '@/hooks/useFetch'
 import { useState } from 'react'
+import MessagePopupProvider from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     boardId: number
@@ -55,48 +56,47 @@ const BoardPage = ({ boardId }: Props) => {
     }
 
     return (
-        <div className={styles.content}>
-            <Box className={styles.toolbar}>
-                {isBoardLoading
-                    ? <Skeleton variant="rectangular" sx={{ width: '100px', height: '100px' }} />
-                    : <img src={board?.imageURL ?? undefined} alt="Board Image" className={styles.board_image} />}
-                <Typography variant="h3" className={styles.board_title}>
-                    {!isBoardLoading ? board.title || '' : <Skeleton sx={{ width: '10em' }} />}
-                </Typography>
-            </Box>
-            <div className={styles.board_view_container}>
-                <BoardView
-                    boardId={boardId}
-                    tasks={board?.tasks || []}
-                    errorMsg={boardErrorMsg}
-                    isLoading={isBoardLoading}
-                    onCreate={handleTaskCreate}
-                    onUpdate={onUpdate}
-                    onTaskUpdate={handleTaskUpdate}
-                    onTaskDelete={handleTaskDelete}
-                    onTaskVersionMismatch={(errorMsg: string) => {
-                        setSnackbarMsg(`${errorMsg} Reloading tasks...`)
-                        refetchBoard()
-                    }}
-                />
-            </div>
-            <Snackbar
-                open={!!snackbarMsg}
-                autoHideDuration={4000}
-                onClose={() => setSnackbarMsg('')}
-                anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
-            >
-                <Alert
+        <MessagePopupProvider>
+            <div className={styles.content}>
+                <Box className={styles.toolbar}>
+                    {isBoardLoading
+                        ? <Skeleton variant="rectangular" sx={{ width: '100px', height: '100px' }} />
+                        : <img src={board?.imageURL ?? undefined} alt="Board Image" className={styles.board_image} />}
+                    <Typography variant="h3" className={styles.board_title}>
+                        {!isBoardLoading ? board.title || '' : <Skeleton sx={{ width: '10em' }} />}
+                    </Typography>
+                </Box>
+                <div className={styles.board_view_container}>
+                    <BoardView
+                        boardId={boardId}
+                        tasks={board?.tasks || []}
+                        errorMsg={boardErrorMsg}
+                        isLoading={isBoardLoading}
+                        onCreate={handleTaskCreate}
+                        onUpdate={onUpdate}
+                        onTaskUpdate={handleTaskUpdate}
+                        onTaskDelete={handleTaskDelete}
+                        refetch={refetchBoard}
+                    />
+                </div>
+                <Snackbar
+                    open={!!snackbarMsg}
+                    autoHideDuration={4000}
                     onClose={() => setSnackbarMsg('')}
-                    severity="warning"
-                    elevation={6}
-                    variant="filled"
-                    sx={{ width: '100%', fontSize: '1rem' }}
+                    anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
                 >
-                    {snackbarMsg}
-                </Alert>
-            </Snackbar>
-        </div>
+                    <Alert
+                        onClose={() => setSnackbarMsg('')}
+                        severity="warning"
+                        elevation={6}
+                        variant="filled"
+                        sx={{ width: '100%', fontSize: '1rem' }}
+                    >
+                        {snackbarMsg}
+                    </Alert>
+                </Snackbar>
+            </div>
+        </MessagePopupProvider>
     )
 }
 

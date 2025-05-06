@@ -16,7 +16,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch: (errorMsg: string) => void
+    refetch: () => void
 }
 
 const BoardView = ({
@@ -28,7 +28,7 @@ const BoardView = ({
     onCreate,
     onTaskUpdate,
     onTaskDelete,
-    onTaskVersionMismatch
+    refetch
 }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
@@ -42,7 +42,7 @@ const BoardView = ({
                 onCreate={onCreate}
                 onTaskUpdate={onTaskUpdate}
                 onTaskDelete={onTaskDelete}
-                onTaskVersionMismatch={onTaskVersionMismatch}
+                refetch={refetch}
             />
         )
         

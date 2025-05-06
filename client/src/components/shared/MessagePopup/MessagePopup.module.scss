@@ -13,7 +13,7 @@ $slideDuration: 0.3s;
     pointer-events: auto;
     display: flex;
     flex-direction: row;
-    width: 45ch;
+    width: 65ch;
     height: 3rem;
     margin: 0.4rem auto;
     padding: 0.5rem 1rem;
@@ -79,10 +79,14 @@ $slideDuration: 0.3s;
 .icon {
     margin: auto;
     margin-left: 0;
-    height: 1.5rem;
+    height: 2rem;
     aspect-ratio: 1 / 1;
+    padding-right: 0.5rem;
 }
 
 .content {
     margin: auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }

@@ -1,8 +1,6 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import MessagePopup from './MessagePopup'
 import MessagePopupContainer from './MessagePopupContainer'
-
 
 type MessagePopupContextType = {
     displayError: (message: string, durationMs: number) => void
@@ -37,6 +35,10 @@ export const useMessagePopup = () => {
 const MessagePopupProvider = ({ children }: Props) => {
     const initTime = 1
     const [messages, setMessages] = useState<MessagePopupArgs[]>([])
+    const [isMounted, setIsMounted] = useState<boolean>(false)
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
 
     const pushMessage = async (message: string, durationMs: number, type: MessagePopupTypes) => {
         const currentMessage: MessagePopupArgs = {
@@ -78,8 +80,7 @@ const MessagePopupProvider = ({ children }: Props) => {
             displayError: (mesage, duration) => pushMessage(mesage, duration, 'error')
         }}>
             {children}
-            {typeof window !== 'undefined' &&
-                typeof document !== 'undefined' &&
+            {isMounted &&
                 createPortal(
                     <MessagePopupContainer messages={messages} onMessageClose={handleMessageClose} />,
                     document.body

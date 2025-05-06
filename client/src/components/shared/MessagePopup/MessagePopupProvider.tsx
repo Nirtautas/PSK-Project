@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom'
 import MessagePopupContainer from './MessagePopupContainer'
 
 type MessagePopupContextType = {
-    displayError: (message: string, durationMs: number) => void
+    displayErrorWithMs: (message: string, durationMs: number) => void
+    displayError: (message: string) => void
 }
 
 type Props = {
@@ -77,7 +78,8 @@ const MessagePopupProvider = ({ children }: Props) => {
 
     return (
         <MessagePopupContext.Provider value={{
-            displayError: (mesage, duration) => pushMessage(mesage, duration, 'error')
+            displayErrorWithMs: (mesage, duration) => pushMessage(mesage, duration, 'error'),
+            displayError: (mesage) => pushMessage(mesage, 5000, 'error')
         }}>
             {children}
             {isMounted &&

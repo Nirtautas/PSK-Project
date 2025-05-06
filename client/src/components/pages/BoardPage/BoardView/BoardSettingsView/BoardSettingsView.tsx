@@ -12,6 +12,7 @@ import BoardOnUserApi from '@/api/boardOnUser.api'
 import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView'
 import { getUserId } from '@/utils/userId'
 import CollaboratorApi from '../../../../../api/collaborator.api'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     boardId: number
@@ -33,16 +34,18 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
 
     const router = useRouter()
     const [userId, setUserId] = useState<number | null>(null)
+    const { displayError } = useMessagePopup()
 
     useEffect(() => {
-        const userId = getUserId();
-        setUserId(userId);
-    }, []);
+        const userId = getUserId()
+        setUserId(userId)
+    }, [])
 
-    const { data: userRole } = useFetch({
+    const { data } = useFetch({
         resolver: () => BoardOnUserApi.getUserRole(boardId, userId),
         deps: [userId]
-      });
+    })
+    const userRole = data?.userRole
 
     const handleOpenEdit = async () => {
         try {
@@ -71,7 +74,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         const response = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
         if (!response.result) {
             setIsEditOpen(false)
-            setEditError('Failed to update board.')
+            displayError(`${response.error}. Try again.` || 'Failed to update board.')
             return
         }
         setIsEditOpen(false)
@@ -119,7 +122,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             {editError && <Typography color="error">{editError}</Typography>}
 
             {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
-                : userRole.userRole !== Role.VIEWER ?
+                : userRole !== Role.VIEWER ?
                     <Box className={styles.info_box}>
                         <Typography variant="body2" className={styles.info_text}>
                             Selecting this option will allow you to edit board information.
@@ -139,7 +142,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             {deleteError && <Typography color="error">{deleteError}</Typography>}
 
             {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
-                : userRole.userRole === Role.OWNER ?
+                : userRole === Role.OWNER ?
                     <Box className={styles.warning_box}>
                         <Typography variant="body2" className={styles.info_text}>
                             Selecting this option will delete the board including tasks, linked users, and comments!
@@ -159,7 +162,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             {leaveError && <Typography color="error">{leaveError}</Typography>}
 
             {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
-                : userRole.userRole !== Role.OWNER ?
+                : userRole !== Role.OWNER ?
                     <Box className={styles.warning_box}>
                         <Typography variant="body2" className={styles.info_text}>
                             Selecting this option will remove you from the board.
@@ -173,14 +176,14 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                             {isLeaving ? 'Leaving...' : 'Leave Board'}
                         </Button>
                     </Box>
-                : <Typography></Typography>
+                    : <Typography></Typography>
             }
 
-            
+
 
             {userRole === null || userRole === undefined ? (
                 <Typography>Loading user role...</Typography>
-            ) : userRole.userRole === Role.OWNER ? (
+            ) : userRole === Role.OWNER ? (
                 <Box className={styles.warning_box}>
                     <Typography variant="body2" className={styles.info_text} sx={{ marginBottom: 2 }}>
                         Select a user to transfer ownership:

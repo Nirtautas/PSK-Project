@@ -99,7 +99,7 @@ const TasksView = ({
         }
         const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
-            displayError(`${response.error} Reloading page data...`, 5000)
+            displayError(`${response.error} Reloading page data...`)
             refetch?.()
             
             return {

@@ -3,19 +3,31 @@
 $slideDuration: 0.1s;
 
 .state {
-    transition: all $slideDuration ease-in-out;
+    transition:
+        transform $slideDuration ease-in-out,
+        opacity $slideDuration ease-in-out,
+        height $slideDuration ease-in-out $slideDuration,
+        padding $slideDuration ease-in-out $slideDuration,
+        margin $slideDuration ease-in-out $slideDuration;
+
+    pointer-events: auto;
+    display: flex;
+    flex-direction: row;
+    width: 40ch;
+    height: 3rem;
+    margin: 0.4rem auto;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
     
     &_initial {
         @extend .state;
         transform: translateX(-100%);
         opacity: 0;
-        height: 2rem;
     }
 
     &_shown {
         @extend .state;
         opacity: 1;
-        height: 2rem;
     }
 
     &_ended {
@@ -23,16 +35,39 @@ $slideDuration: 0.1s;
         transform: translateX(100%);
         opacity: 0;
         height: 0;
+        padding: 0;
+        margin: 0 auto;
     }
 }
 
 .colors {
-    pointer-events: auto;
-    width: 100px;
-    margin: 0 auto;
-
     &_error {
         @extend .colors;
         background-color: red;
     }
+}
+
+.close_button {
+    margin-left: auto;
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    img {
+        height: 2rem;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+.icon {
+    margin-right: auto;
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+}
+
+.content {
+    color: black;
+    margin: auto;
 }

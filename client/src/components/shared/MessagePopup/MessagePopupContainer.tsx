@@ -11,8 +11,10 @@ type Props = {
 const MessagePopupContainer = ({ messages, onMessageClose }: Props) => {
     return (
         <div className={styles[`wrapper`]}>
-            {messages.map((message, index) => (
-                <MessagePopup key={`message-popup-${index}`} message={message} onClickClose={(e) => onMessageClose(e, message)} />
+            {messages.map((message) => (
+                <div key={`message-popup-${message.id}`}>
+                    <MessagePopup message={message} onClickClose={(e) => onMessageClose(e, message)} />
+                </div>
             ))}
         </div>
     )

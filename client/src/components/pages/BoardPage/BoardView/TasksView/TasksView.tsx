@@ -57,7 +57,8 @@ const TasksView = ({
         setUserId(userId)
     }, []);
 
-    const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const roleResult = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const userRole = roleResult.data?.userRole
 
     useEffect(() => {
         setColumns([
@@ -143,7 +144,7 @@ const TasksView = ({
 
     return (
         <Paper className={styles.container}>
-            { userRole && userRole.data !== Role.VIEWER && (
+            { roleResult && userRole !== Role.VIEWER && (
                 <>
                     <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
                     <Modal open={open} onClose={handleClose}>
@@ -166,12 +167,12 @@ const TasksView = ({
                         <TaskList
                             boardId={boardId}
                             id={column.id}
-                            isLoading={isLoading || userRole.isLoading}
+                            isLoading={isLoading || roleResult.isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
-                            userRole={userRole.data}
+                            userRole={userRole}
                             onDelete={onTaskDelete}
                             />
                     </div>

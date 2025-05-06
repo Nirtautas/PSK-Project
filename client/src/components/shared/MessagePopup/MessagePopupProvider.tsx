@@ -78,10 +78,12 @@ const MessagePopupProvider = ({ children }: Props) => {
             displayError: (mesage, duration) => pushMessage(mesage, duration, 'error')
         }}>
             {children}
-            {createPortal(
-                <MessagePopupContainer messages={messages} onMessageClose={handleMessageClose}/>,
-                document.body
-            )}
+            {typeof window !== 'undefined' &&
+                typeof document !== 'undefined' &&
+                createPortal(
+                    <MessagePopupContainer messages={messages} onMessageClose={handleMessageClose} />,
+                    document.body
+                )}
         </MessagePopupContext.Provider>
     )
 }

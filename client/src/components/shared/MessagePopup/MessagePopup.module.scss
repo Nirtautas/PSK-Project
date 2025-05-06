@@ -1,6 +1,6 @@
 @use '@/assets/styles/variables' as *;
 
-$slideDuration: 0.1s;
+$slideDuration: 0.3s;
 
 .state {
     transition:
@@ -13,11 +13,11 @@ $slideDuration: 0.1s;
     pointer-events: auto;
     display: flex;
     flex-direction: row;
-    width: 40ch;
+    width: 45ch;
     height: 3rem;
     margin: 0.4rem auto;
     padding: 0.5rem 1rem;
-    border-radius: 10px;
+    border-radius: 0.5rem;
     
     &_initial {
         @extend .state;
@@ -41,15 +41,22 @@ $slideDuration: 0.1s;
 }
 
 .colors {
+    background-color: #ffffff;
+    box-shadow: 1px 0.51px 1px black;
+
+    @media screen and (prefers-color-scheme: dark) {
+        background-color: #363636;
+    }
     &_error {
         @extend .colors;
-        background-color: red;
+        color: red;
     }
 }
 
 .close_button {
-    margin-left: auto;
-    height: 2rem;
+    margin: auto;
+    margin-right: 0;
+    height: rem;
     aspect-ratio: 1 / 1;
     background-color: transparent;
     border: none;
@@ -59,15 +66,23 @@ $slideDuration: 0.1s;
         height: 2rem;
         aspect-ratio: 1 / 1;
     }
+
+    &:hover {
+        background-color: lightgrey;
+        @media screen and (prefers-color-scheme: dark) {
+            background-color: #1F1F1F;
+        }
+        border-radius: 5px;
+    }
 }
 
 .icon {
-    margin-right: auto;
-    height: 2rem;
+    margin: auto;
+    margin-left: 0;
+    height: 1.5rem;
     aspect-ratio: 1 / 1;
 }
 
 .content {
-    color: black;
     margin: auto;
 }

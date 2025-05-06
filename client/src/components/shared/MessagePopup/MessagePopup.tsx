@@ -4,7 +4,9 @@ import styles from './MessagePopup.module.scss'
 import { MessagePopupArgs } from './MessagePopupProvider'
 
 import error_icon from './error_icon.svg'
-import cross_icon from './cross_icon.svg'
+import cross_icon_black from './cross_icon_black.svg'
+import cross_icon_white from './cross_icon_white.svg'
+import { useDarkTheme } from '@/hooks/darkTheme'
 
 type MessageType = 'error' | 'warning'
 
@@ -17,6 +19,7 @@ const MessagePopup = ({
     message,
     onClickClose
 }: Props) => {
+    const isDarkTheme = useDarkTheme()
     return (
         <div className={[
             styles[`colors_${message.type}`],
@@ -25,7 +28,7 @@ const MessagePopup = ({
             <img src={error_icon.src} className={styles.icon} />
             <span className={styles.content}>{message.message}</span>
             <button className={styles.close_button} onClick={onClickClose as unknown as MouseEventHandler<HTMLButtonElement>}>
-                <img src={cross_icon.src} />
+                <img src={isDarkTheme ? cross_icon_white.src : cross_icon_black.src} />
             </button>
         </div>
     )

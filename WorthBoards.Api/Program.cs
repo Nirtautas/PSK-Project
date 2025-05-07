@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Diagnostics;
 using WorthBoards.Api.Configurations;
+using WorthBoards.Api.Middlewares;
 using WorthBoards.Api.Utils.ExceptionHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder
+    .ConfigureLogger()
     .ConfigureSwagger()
     .ConfigureGmail()
     .ConfigureAuthentication()
@@ -61,6 +63,10 @@ app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+var useHttpLoggingMiddleware = builder.Configuration.GetValue<bool>("Logger:UseHttpLoggingMiddleware");
+if (useHttpLoggingMiddleware)
+    app.UseMiddleware<HttpLoggingMiddleware>();
 
 app.MapControllers();
 

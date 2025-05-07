@@ -175,7 +175,7 @@ return (
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         label="Role"
                         size="small"
-                        disabled={user.userRole === Role.OWNER}
+                        disabled={user.userRole === Role.OWNER || userRole?.userRole !== Role.OWNER}
                       >
                         <MenuItem value="EDITOR">Editor</MenuItem>
                         <MenuItem value="VIEWER">Viewer</MenuItem>

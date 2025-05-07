@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json.Linq;
 using Serilog.Context;
 using System.Text;
 
@@ -6,6 +9,7 @@ namespace WorthBoards.Api.Middlewares
 {
     public class HttpLoggingMiddleware
     {
+        private string[] sensitiveKeys = ["password", "token", "email", "resetcode"];
         private readonly RequestDelegate _next;
         private readonly ILogger<HttpLoggingMiddleware> _logger;
 
@@ -32,7 +36,7 @@ namespace WorthBoards.Api.Middlewares
                     GetUsername(context),
                     context.Request.Method,
                     context.Request.Path,
-                    context.Request.QueryString,
+                    SanitizeQuery(context.Request.QueryString),
                     GetJSONRequestBody(context));
             }
         }
@@ -74,8 +78,6 @@ namespace WorthBoards.Api.Middlewares
 
         private string SanitizeBody(string body)
         {
-            string[] sensitiveKeys = ["password", "token"];
-
             try
             {
                 var jsonBody = JObject.Parse(body);
@@ -85,7 +87,7 @@ namespace WorthBoards.Api.Middlewares
                 {
                     foreach (var keyword in sensitiveKeys)
                     {
-                        if (prop.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (prop.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                             prop.Value = "***REDACTED***";
                     }
                 }
@@ -96,6 +98,23 @@ namespace WorthBoards.Api.Middlewares
             {
                 return "Sanitation failure! JSON body redacted for security.";
             }
+        }
+
+        private string SanitizeQuery(QueryString queryString)
+        {
+            var queryCollection = QueryHelpers.ParseQuery(queryString.ToString());
+
+            var sanitizedQuery = queryCollection.Select(qr => {
+                foreach (var key in sensitiveKeys)
+                {
+                    if (qr.Key.Contains(key, StringComparison.OrdinalIgnoreCase))
+                        return new KeyValuePair<string, StringValues>(qr.Key, "***REDACTED***");
+                }
+
+                return qr;
+            });
+
+            return string.Join("&", sanitizedQuery.Select(qr => $"{qr.Key}={qr.Value}"));
         }
     }
 }

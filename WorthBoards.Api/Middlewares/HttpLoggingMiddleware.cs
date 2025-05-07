@@ -31,11 +31,12 @@ namespace WorthBoards.Api.Middlewares
         {
             using (LogContext.PushProperty("LogType", "Http"))
             {
-                _logger.LogInformation("HTTP Request - User: {User}, Method: {Method}, Path: {Path}, QueryString: {QueryString}, \n RequestBody: {requestBody}",
+                _logger.LogInformation("HTTP Request - IP: {ipAddress}, User: {User}, Method: {Method}, Path: {Path}, QueryString: {QueryString}, \n RequestBody: {requestBody}",
+                    context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
                     GetUsername(context),
                     context.Request.Method,
                     context.Request.Path,
-                    SanitizeQuery(context.Request.QueryString),
+                    string.IsNullOrEmpty(context.Request.QueryString.Value) ? "None" : SanitizeQuery(context.Request.QueryString),
                     GetJSONRequestBody(context));
             }
         }
@@ -44,7 +45,8 @@ namespace WorthBoards.Api.Middlewares
         {
             using (LogContext.PushProperty("LogType", "Http"))
             {
-                _logger.LogInformation("HTTP Response - User: {User}, StatusCode: {StatusCode}",
+                _logger.LogInformation("HTTP Response - IP: {ipAddress}, User: {User}, StatusCode: {StatusCode}",
+                   context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
                    GetUsername(context),
                    context.Response.StatusCode);
             }

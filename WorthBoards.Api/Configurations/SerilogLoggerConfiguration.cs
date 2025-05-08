@@ -11,13 +11,17 @@ namespace WorthBoards.Api.Configurations
                 .MinimumLevel.Information()
                 .Enrich.FromLogContext()
                 .WriteTo.Logger(lc => lc
-                    .Filter.ByExcluding(Matching.WithProperty<string>("LogType", p => p == "Http"))
+                    .Filter.ByExcluding(Matching.WithProperty<string>("LogType", p => p == "Http" && p == "Controller"))
                     .WriteTo.File("Logs/General/general.log", rollingInterval: RollingInterval.Hour)
 
                 )
                 .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(Matching.WithProperty<string>("LogType", p => p == "Http"))
                     .WriteTo.File("Logs/Http/http.log", rollingInterval: RollingInterval.Hour)
+                )
+                .WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(Matching.WithProperty<string>("LogType", p => p == "Controller"))
+                    .WriteTo.File("Logs/Controller/controller.log", rollingInterval: RollingInterval.Hour)
                 )
                 .WriteTo.Console()
                 .CreateLogger();

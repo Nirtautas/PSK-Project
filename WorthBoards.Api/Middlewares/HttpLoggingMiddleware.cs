@@ -31,7 +31,7 @@ namespace WorthBoards.Api.Middlewares
         {
             using (LogContext.PushProperty("LogType", "Http"))
             {
-                _logger.LogInformation("HTTP Request - IP: {ipAddress}, User: {User}, Method: {Method}, Path: {Path}, QueryString: {QueryString}, \n RequestBody: {requestBody}",
+                _logger.LogInformation("HTTP Request - IP: {ipAddress}, User: {User}, Method: {Method}, Path: {Path}, QueryString: {QueryString},\nRequestBody: {requestBody}",
                     context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
                     GetUsername(context),
                     context.Request.Method,

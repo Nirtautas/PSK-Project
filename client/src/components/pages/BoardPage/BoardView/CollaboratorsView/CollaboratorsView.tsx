@@ -154,7 +154,7 @@ return (
         ) : (
           <Box className={styles.card_container}>
               {Array.isArray(collaborators) && collaborators.map((user: BoardUser, index: number) => (
-                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: '#262626', width: '70%' }}>
+                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: '#262626', width: '60%' }}>
                   <CardContent className={styles.card_Content}>
                   <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center', backgroundColor: '#262626'}} >
                     {index + 1}.    
@@ -175,7 +175,7 @@ return (
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         label="Role"
                         size="small"
-                        disabled={user.userRole === Role.OWNER}
+                        disabled={user.userRole === Role.OWNER || userRole?.userRole !== Role.OWNER}
                       >
                         <MenuItem value="EDITOR">Editor</MenuItem>
                         <MenuItem value="VIEWER">Viewer</MenuItem>

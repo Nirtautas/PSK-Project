@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.tasks_container {
+    position: absolute;
+    top: 2rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.task_list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+
+    @media only screen and (max-width: 900px) {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.task_card_wrapper {
+    margin-bottom: 0;
+}

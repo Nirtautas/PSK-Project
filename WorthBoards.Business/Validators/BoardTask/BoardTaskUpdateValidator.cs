@@ -15,8 +15,6 @@ namespace WorthBoards.Business.Validators.BoardTask
                 .WithMessage(ValidationMessages.TitleTooLong);
 
             RuleFor(x => x.Description)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.DescriptionRequired)
                 .MaximumLength(ValidationConstants.DescriptionMaxLength)
                 .WithMessage(ValidationMessages.DescriptionTooLong);
 

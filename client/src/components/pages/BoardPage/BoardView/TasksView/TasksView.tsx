@@ -13,6 +13,7 @@ import CreateTaskForm from './CreateTaskForm'
 import { getUserId } from '@/utils/userId'
 import BoardOnUserApi from '@/api/boardOnUser.api'
 import useFetch from '@/hooks/useFetch'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     boardId: number
@@ -22,7 +23,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch?: (errMsg: string) => void
+    refetch?: () => void
 }
 
 type TaskColumn = {
@@ -42,20 +43,22 @@ const TasksView = ({
     onCreate,
     onTaskUpdate,
     onTaskDelete,
-    onTaskVersionMismatch
+    refetch
 }: Props) => {
     const [columns, setColumns] = useState<TaskColumn[]>([])
     const [userId, setUserId] = useState<number | null>(null)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const { displayError } = useMessagePopup()
 
     useEffect(() => {
         const userId = getUserId()
-        setUserId(userId)
-    }, []);
+        setUserId(userId || null)
+    }, [])
 
-    const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const roleResult = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
+    const userRole = roleResult.data?.userRole
 
     useEffect(() => {
         setColumns([
@@ -97,8 +100,9 @@ const TasksView = ({
         }
         const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
-            console.log('Error while updating task')
-            onTaskVersionMismatch?.(response.error || 'Error while updating task')
+            displayError(`${response.error} Reloading page data...`)
+            refetch?.()
+            
             return {
                 shouldReset: true
             }
@@ -140,7 +144,7 @@ const TasksView = ({
 
     return (
         <Paper className={styles.container}>
-            { userRole && userRole.data !== Role.VIEWER && (
+            { roleResult && userRole !== Role.VIEWER && (
                 <>
                     <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
                     <Modal open={open} onClose={handleClose}>
@@ -163,14 +167,14 @@ const TasksView = ({
                         <TaskList
                             boardId={boardId}
                             id={column.id}
-                            isLoading={isLoading || userRole.isLoading}
+                            isLoading={isLoading || roleResult.isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
-                            onMouseDown={handleMouseDown}
+                            onMouseDown={userRole === Role.VIEWER ? undefined : handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
-                            userRole={userRole.data}
+                            userRole={userRole}
                             onDelete={onTaskDelete}
-                            />
+                        />
                     </div>
                 ))
             }

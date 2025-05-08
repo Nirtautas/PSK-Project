@@ -1,12 +1,13 @@
 'use client'
 
+import LandingPage from '@/components/pages/LandingPage'
+import GuestNavBarLayout from '@/components/templates/GuestNavBarLayout'
 import {Button, Paper} from '@mui/material'
 
 export default function Home() {
     return (
-        <Paper>
-            <h1>Hello World!</h1>
-            <Button onClick={() => console.log('Hello World!')}></Button>
-        </Paper>
+        <GuestNavBarLayout>
+            <LandingPage />
+        </GuestNavBarLayout>
     )
 }

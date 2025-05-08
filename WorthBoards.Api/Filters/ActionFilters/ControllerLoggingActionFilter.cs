@@ -69,13 +69,10 @@ namespace WorthBoards.Api.Filters.ActionFilters
         private async Task<UserRoleEnum?> GetRoleAsync(HttpContext context)
         {
             var userId = UserHelper.GetUserId(context.User).Value;
-            _logger.LogInformation("USER ID {id}", userId);
 
             var boardIdString = context.Request.RouteValues
                 .FirstOrDefault(rv => rv.Key.EndsWith("boardId"))
                 .Value?.ToString();
-
-            _logger.LogInformation("BOARD ID {id}", boardIdString);
 
             if (!int.TryParse(boardIdString, out var boardId))
                 return null;

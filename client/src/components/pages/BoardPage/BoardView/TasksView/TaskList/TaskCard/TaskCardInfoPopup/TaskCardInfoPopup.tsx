@@ -128,9 +128,12 @@ export default function TaskCardInfoPopup({
                             <Button variant="outlined" onClick={handleArchive} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 {task.taskStatus === TaskStatus.ARCHIVED ? 'Unarchive' : 'Archive'}
                             </Button>
-                            <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                Edit
-                            </Button>
+                            {
+                                task.taskStatus !== TaskStatus.ARCHIVED &&
+                                <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                    Edit
+                                </Button>
+                            }
                             <Button variant="outlined" onClick={handleDelete} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 Delete
                             </Button>

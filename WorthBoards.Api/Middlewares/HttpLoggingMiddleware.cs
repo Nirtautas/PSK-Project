@@ -22,9 +22,13 @@ namespace WorthBoards.Api.Middlewares
         {
             LogRequest(context);
 
-            await _next(context);
+            context.Response.OnCompleted(() =>
+            {
+                LogResponse(context);
+                return Task.CompletedTask;
+            });
 
-            LogResponse(context);
+            await _next(context);
         }
 
         private void LogRequest(HttpContext context)

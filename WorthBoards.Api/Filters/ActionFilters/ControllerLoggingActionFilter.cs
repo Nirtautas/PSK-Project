@@ -28,15 +28,18 @@ namespace WorthBoards.Api.Filters.ActionFilters
 
         public async Task OnActionExecuting(ActionExecutingContext context)
         {
-            var role = (await GetRoleAsync(context.HttpContext)).ToString();
+            var role = await GetRoleWithBoardIdAsync(context.HttpContext);
+            var roleString = string.IsNullOrWhiteSpace(role.Item1.ToString()) ? "NONE" : role.Item1.ToString();
+            var boardIdString = string.IsNullOrWhiteSpace(role.Item2.ToString()) ? "NONE" : role.Item2.ToString();
 
             using (LogContext.PushProperty("LogType", "Controller"))
             {
-                _logger.LogInformation("Executing action - {ActionName}, Controller: {ControllerName}, User: {UserName}, BoardRole: {BoardRole}",
+                _logger.LogInformation("Executing action - {ActionName}, Controller: {ControllerName}, User: {UserName}, BoardRole: {BoardRole}, BoardId: {BoardId}",
                     GetActionName(context),
                     GetControllerName(context),
                     GetUsername(context.HttpContext),
-                    role);
+                    roleString,
+                    boardIdString);
             }
         }
 
@@ -66,7 +69,7 @@ namespace WorthBoards.Api.Filters.ActionFilters
             return context.User.Identity?.Name ?? "Anonymous";
         }
 
-        private async Task<UserRoleEnum?> GetRoleAsync(HttpContext context)
+        private async Task<(UserRoleEnum?, int?)> GetRoleWithBoardIdAsync(HttpContext context)
         {
             var userId = UserHelper.GetUserId(context.User).Value;
 
@@ -75,11 +78,11 @@ namespace WorthBoards.Api.Filters.ActionFilters
                 .Value?.ToString();
 
             if (!int.TryParse(boardIdString, out var boardId))
-                return null;
+                return (null, null);
 
             var role = await _boardService.GetUserRoleByBoardIdAndUserIdAsync(boardId, userId);
 
-            return role;
+            return (role, boardId);
         }
     }
 }

@@ -53,7 +53,7 @@ const TasksView = ({
     useEffect(() => {
         const userId = getUserId()
         setUserId(userId)
-    }, []);
+    }, [])
 
     const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
 
@@ -140,7 +140,7 @@ const TasksView = ({
 
     return (
         <Paper className={styles.container}>
-            { userRole && userRole.data !== Role.VIEWER && (
+            { userRole && userRole.data && userRole.data.userRole !== Role.VIEWER && (
                 <>
                     <Button onClick={handleOpen} sx={{margin: 1}}>Create new task</Button>
                     <Modal open={open} onClose={handleClose}>
@@ -155,7 +155,7 @@ const TasksView = ({
             )}
             <Box className={styles.tasks_container}>
             {
-                columns.map((column, index) => (
+                userRole.data && columns.map((column, index) => (
                     <div className={[styles.tasks_list, 'task_list_droppable'].join(' ')} key={index} id={column.id}>
                         <div className={styles.label_wrapper}>
                             <Typography variant="h6" className={styles.label}>{column.label}</Typography>
@@ -168,7 +168,7 @@ const TasksView = ({
                             errorMsg={errorMsg}
                             onMouseDown={handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
-                            userRole={userRole.data}
+                            userRole={userRole.data.userRole}
                             onDelete={onTaskDelete}
                             />
                     </div>

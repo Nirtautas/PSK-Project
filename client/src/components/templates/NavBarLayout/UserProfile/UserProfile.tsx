@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardActionArea, Menu, MenuItem, Typography } from '@mui/material'
+import { Avatar, Card, CardActionArea, Menu, MenuItem, Typography } from '@mui/material'
 import {useState} from 'react'
 
 import styles from './UserProfile.module.scss'
@@ -40,7 +40,7 @@ const UserProfile = ({
             >
                 <div className={styles.content}>
                     <Typography variant="h6">{name}</Typography>
-                    <img width={50} height={50} src={imageUrl} alt="image" />
+                    <Avatar className={styles.avatar} alt={name} src={imageUrl}/>
                 </div>
             </CardActionArea>
 

@@ -39,7 +39,7 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
                 const taskUsers: TaskUser[] = selectedUsers.map(user => ({
                     id: user.id,
                     userName: user.userName,
-                    imageURL: user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true',
+                    imageURL: user.imageURL ?? '',
                     assignedAt: new Date()
                 }))
                 

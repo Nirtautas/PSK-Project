@@ -1,0 +1,92 @@
+@use '@/assets/styles/variables' as *;
+
+$slideDuration: 0.3s;
+
+.state {
+    transition:
+        transform $slideDuration ease-in-out,
+        opacity $slideDuration ease-in-out,
+        height $slideDuration ease-in-out $slideDuration,
+        padding $slideDuration ease-in-out $slideDuration,
+        margin $slideDuration ease-in-out $slideDuration;
+
+    pointer-events: auto;
+    display: flex;
+    flex-direction: row;
+    width: 65ch;
+    height: 3rem;
+    margin: 0.4rem auto;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    
+    &_initial {
+        @extend .state;
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    &_shown {
+        @extend .state;
+        opacity: 1;
+    }
+
+    &_ended {
+        @extend .state;
+        transform: translateX(100%);
+        opacity: 0;
+        height: 0;
+        padding: 0;
+        margin: 0 auto;
+    }
+}
+
+.colors {
+    background-color: #ffffff;
+    box-shadow: 1px 0.51px 1px black;
+
+    @media screen and (prefers-color-scheme: dark) {
+        background-color: #363636;
+    }
+    &_error {
+        @extend .colors;
+        color: red;
+    }
+}
+
+.close_button {
+    margin: auto;
+    margin-right: 0;
+    height: rem;
+    aspect-ratio: 1 / 1;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    img {
+        height: 2rem;
+        aspect-ratio: 1 / 1;
+    }
+
+    &:hover {
+        background-color: lightgrey;
+        @media screen and (prefers-color-scheme: dark) {
+            background-color: #1F1F1F;
+        }
+        border-radius: 5px;
+    }
+}
+
+.icon {
+    margin: auto;
+    margin-left: 0;
+    height: 2rem;
+    aspect-ratio: 1 / 1;
+    padding-right: 0.5rem;
+}
+
+.content {
+    margin: auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

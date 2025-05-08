@@ -93,6 +93,12 @@ const NavBarLayout = ({ children }: Props) => {
                                         }
                                     },
                                     {
+                                        label: 'Profile',
+                                        onClick: () => {
+                                            router.push(getPageUrl.profile())
+                                        }
+                                    },
+                                    {
                                         label: 'Settings',
                                         onClick: () => {
                                             router.push(getPageUrl.settings())

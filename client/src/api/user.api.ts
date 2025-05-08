@@ -11,4 +11,16 @@ export default class UserApi {
             headers: getAuthorizedHeaders()
         })
     }
+
+    static async updateUser(userId: number, patchDoc: any[]): Promise<FetchResponse<User>> {
+        return await fetch({
+          url: `${apiBaseUrl}/users/${userId}`,
+          method: HTTPMethod.PUT,
+          headers: {
+            ...getAuthorizedHeaders(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(patchDoc),
+        });
+      }
 }

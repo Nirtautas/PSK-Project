@@ -6,7 +6,8 @@ export const getPageUrl = {
     settings: () => '/settings',
     login: () => '/login',
     register: () => '/register',
-    logout: () => '/logout'
+    logout: () => '/logout',
+    profile: () => '/users'
 }
 
 export const pathnames = {

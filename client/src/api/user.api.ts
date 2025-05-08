@@ -11,4 +11,17 @@ export default class UserApi {
             headers: getAuthorizedHeaders()
         })
     }
+
+    static async updateUser(userId: number, updatedUser: Partial<User>): Promise<FetchResponse<User>> {
+        return await fetch({
+            url: `${apiBaseUrl}/users/${userId}`,  
+            method: HTTPMethod.PUT,  
+            headers: {
+                ...getAuthorizedHeaders(),
+                'Content-Type': 'application/json',  
+            },
+            body: JSON.stringify(updatedUser), 
+        });
+    }
+    
 }

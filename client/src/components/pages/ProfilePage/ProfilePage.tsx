@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const [userName, setUserName] = useState('');
   const [imageURL, setImageURL] = useState('');
   const [email, setEmail] = useState('');
+  const [originalUser, setOriginalUser] = useState<PatchUserDto | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,12 +25,20 @@ const ProfilePage = () => {
         if (userId) {
           const response = await UserApi.getById(Number(userId)); 
           if (response.result) {
-            const user = response.result; 
+            const user = response.result;
             setFirstName(user.firstName);
             setLastName(user.lastName);
             setEmail(user.email);
             setUserName(user.userName);
             setImageURL(user.imageURL);
+    
+            setOriginalUser({
+              firstName: user.firstName,
+              lastName: user.lastName,
+              userName: user.userName,
+              email: user.email,
+              imageURL: user.imageURL,
+            });
           } else {
             console.error('Failed to fetch user data', response.error);
           }
@@ -42,21 +51,42 @@ const ProfilePage = () => {
     fetchUserData();
   }, [userId]); 
   
-  const handleSaveChanges = async () => {
-    const patchUserDto = [
-      { op: 'replace', path: '/firstName', value: firstName },
-      { op: 'replace', path: '/lastName', value: lastName },
-      { op: 'replace', path: '/userName', value: userName },
-      { op: 'replace', path: '/email', value: email },
-      { op: 'replace', path: '/imageURL', value: imageURL },
-    ];
-    
+  const buildPatchDocument = (): any[] => {
+    if (!originalUser) return [];
+  
+    const patch: any[] = [];
+  
+    if (firstName !== originalUser.firstName) {
+      patch.push({ op: 'replace', path: '/firstName', value: firstName });
+    }
+    if (lastName !== originalUser.lastName) {
+      patch.push({ op: 'replace', path: '/lastName', value: lastName });
+    }
+    if (userName !== originalUser.userName) {
+      patch.push({ op: 'replace', path: '/userName', value: userName });
+    }
+    if (email !== originalUser.email) {
+      patch.push({ op: 'replace', path: '/email', value: email });
+    }
+    if (imageURL !== originalUser.imageURL) {
+      patch.push({ op: 'replace', path: '/imageURL', value: imageURL });
+    }
+  
+    return patch;
+  };
 
+  const handleSaveChanges = async () => {
+    const patchUserDto = buildPatchDocument();
+    if (patchUserDto.length === 0) {
+      setIsEditMode(false);
+      return; 
+    }
+  
     try {
       const response = await UserApi.updateUser(Number(userId), patchUserDto);
-      
       if (response) {
-        setIsEditMode(false); 
+        setIsEditMode(false);
+        setOriginalUser({ firstName, lastName, userName, email, imageURL }); 
       } else {
         console.error('Failed to update user:', response);
       }

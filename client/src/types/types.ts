@@ -44,6 +44,7 @@ export type User = {
     userName: string
     creationDate: Date
     imageURL: string
+    email: string
 }
 
 export type BoardUser = {

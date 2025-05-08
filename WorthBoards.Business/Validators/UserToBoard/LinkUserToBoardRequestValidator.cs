@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System.Diagnostics;
+using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Common.Enums;
 

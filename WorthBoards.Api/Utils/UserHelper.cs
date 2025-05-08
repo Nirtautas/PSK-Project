@@ -14,5 +14,10 @@ namespace WorthBoards.Api.Utils
             }
             return parsedUserId;
         }
+
+        public static string GetUsername(HttpContext context)
+        {
+            return context.User.Identity?.Name ?? "Anonymous";
+        }
     }
 }

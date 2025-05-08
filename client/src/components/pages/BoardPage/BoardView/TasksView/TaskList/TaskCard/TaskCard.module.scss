@@ -32,18 +32,20 @@
   display: flex;
 }
 
-.image_box img {
+.image_box .avatar {
   border-radius: 50%;
   margin-left: -0.7rem;
   border: 1px solid black;
   z-index: 2;
+  width: 2rem;
+  height: 2rem;
 }
 
-.image_box img:first-child {
+.image_box .avatar:first-child {
   margin-left: 0;
   z-index: 3;
 }
 
-.image_box img:last-child {
+.image_box .avatar:last-child {
   z-index: 1;
 }

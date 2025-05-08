@@ -42,9 +42,14 @@ const BoardPage = ({ boardId }: Props) => {
     }
 
     const handleTaskUpdate = (updatedTask: Task) => {
+        const tasksContainUpdated =  board.tasks.some(t => t.id === updatedTask.id)
+        const updateExistingTask = board.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+        
+        const updatedTasks = tasksContainUpdated ? updateExistingTask : [...board.tasks, updatedTask]
+
         setBoard({
             ...board,
-            tasks: board.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+            tasks: updatedTasks
         })
     }
 

@@ -84,12 +84,18 @@ const NavBarLayout = ({ children }: Props) => {
                         <Box className={styles.centered_wrapper}>
                             {user && <UserProfile
                                 name={user.userName ?? "placeholder"}
-                                imageUrl={user.imageURL ?? "https://preview.colorkit.co/color/ff0000.png?static=true"}
+                                imageUrl={user.imageURL}
                                 buttons={[
                                     {
                                         label: 'My Boards',
                                         onClick: () => {
                                             router.push(getPageUrl.boards())
+                                        }
+                                    },
+                                    {
+                                        label: 'Profile',
+                                        onClick: () => {
+                                            router.push(getPageUrl.profile())
                                         }
                                     },
                                     {

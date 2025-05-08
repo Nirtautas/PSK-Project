@@ -1,22 +1,31 @@
 using Microsoft.AspNetCore.Diagnostics;
 using WorthBoards.Api.Configurations;
+using WorthBoards.Api.Filters.ActionFilters;
+using WorthBoards.Api.Middlewares;
 using WorthBoards.Api.Utils.ExceptionHandler;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder
+    .ConfigureLogger()
     .ConfigureSwagger()
     .ConfigureGmail()
     .ConfigureAuthentication()
     .ConfigureAuthorization()
     .ConfigureValidators();
 
-// Add services to the container.
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddDataServices(builder.Configuration);
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers(options =>
+{
+    var useControllerLoggingActionFilter = builder.Configuration.GetValue<bool>("Logger:UseControllerLoggingActionFilter");
+    if (useControllerLoggingActionFilter)
+        options.Filters.Add<ControllerLoggingActionFilter>();
+}
+).AddNewtonsoftJson();
+builder.Services.AddScoped<ControllerLoggingActionFilter>();
 
 var baseUrl = builder.Configuration.GetValue<string>("BaseUrl") ?? string.Empty;
 builder.WebHost.UseUrls(baseUrl);
@@ -33,7 +42,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -61,6 +69,10 @@ app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+var useHttpLoggingMiddleware = builder.Configuration.GetValue<bool>("Logger:UseHttpLoggingMiddleware");
+if (useHttpLoggingMiddleware)
+    app.UseMiddleware<HttpLoggingMiddleware>();
 
 app.MapControllers();
 

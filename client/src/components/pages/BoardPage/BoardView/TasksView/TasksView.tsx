@@ -54,8 +54,8 @@ const TasksView = ({
 
     useEffect(() => {
         const userId = getUserId()
-        setUserId(userId)
-    }, []);
+        setUserId(userId || null)
+    }, [])
 
     const roleResult = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
     const userRole = roleResult.data?.userRole
@@ -170,11 +170,11 @@ const TasksView = ({
                             isLoading={isLoading || roleResult.isLoading}
                             tasks={column.items}
                             errorMsg={errorMsg}
-                            onMouseDown={handleMouseDown}
+                            onMouseDown={userRole === Role.VIEWER ? undefined : handleMouseDown}
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}
                             onDelete={onTaskDelete}
-                            />
+                        />
                     </div>
                 ))
             }

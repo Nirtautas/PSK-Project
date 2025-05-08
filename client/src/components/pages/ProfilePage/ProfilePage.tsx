@@ -103,12 +103,30 @@ const ProfilePage = () => {
         </Typography>
         {isEditMode ? (
           <>
-            <Button variant="contained" color="primary" onClick={() => setIsEditMode(false)}>
+          <Box 
+            display="flex" 
+            justifyContent="flex-end" 
+            gap={1} 
+            mt={2}
+            sx={{ ml: 'auto' }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveChanges}
+              sx={{ width: '100px', height: '36px' }}
+            >
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setIsEditMode(false)}
+              sx={{ width: '100px', height: '36px' }}
+            >
               Cancel
             </Button>
-            <Button variant="contained" color="primary" onClick={handleSaveChanges}>
-              Save Changes
-            </Button>
+          </Box>
           </>
         ) : (
           <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setIsEditMode(true)}>

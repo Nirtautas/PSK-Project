@@ -37,7 +37,7 @@ namespace WorthBoards.Api.Filters.ActionFilters
                 _logger.LogInformation("Executing action - {ActionName}, Controller: {ControllerName}, User: {UserName}, BoardRole: {BoardRole}, BoardId: {BoardId}",
                     GetActionName(context),
                     GetControllerName(context),
-                    GetUsername(context.HttpContext),
+                    UserHelper.GetUsername(context.HttpContext),
                     roleString,
                     boardIdString);
             }
@@ -50,7 +50,7 @@ namespace WorthBoards.Api.Filters.ActionFilters
                 _logger.LogInformation("Finished executing action - {ActionName}, Controller: {ControllerName}, User: {UserName}",
                     GetActionName(context),
                     GetControllerName(context),
-                    GetUsername(context.HttpContext));
+                    UserHelper.GetUsername(context.HttpContext));
             }
         }
 
@@ -62,11 +62,6 @@ namespace WorthBoards.Api.Filters.ActionFilters
         private static string GetActionName(FilterContext context)
         {
             return context.RouteData.Values["action"]?.ToString() ?? "None";
-        }
-
-        private static string GetUsername(HttpContext context)
-        {
-            return context.User.Identity?.Name ?? "Anonymous";
         }
 
         private async Task<(UserRoleEnum?, int?)> GetRoleWithBoardIdAsync(HttpContext context)

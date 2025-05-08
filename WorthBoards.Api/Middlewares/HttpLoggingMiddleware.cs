@@ -3,6 +3,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using Serilog.Context;
 using System.Text;
+using WorthBoards.Api.Utils;
 
 namespace WorthBoards.Api.Middlewares
 {
@@ -37,7 +38,7 @@ namespace WorthBoards.Api.Middlewares
             {
                 _logger.LogInformation("HTTP Request - IP: {ipAddress}, User: {User}, Method: {Method}, Path: {Path}, QueryString: {QueryString},\nRequestBody: {requestBody}",
                     context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
-                    GetUsername(context),
+                    UserHelper.GetUsername(context),
                     context.Request.Method,
                     context.Request.Path,
                     string.IsNullOrEmpty(context.Request.QueryString.Value) ? "None" : SanitizeQuery(context.Request.QueryString),
@@ -51,14 +52,9 @@ namespace WorthBoards.Api.Middlewares
             {
                 _logger.LogInformation("HTTP Response - IP: {ipAddress}, User: {User}, StatusCode: {StatusCode}",
                    context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
-                   GetUsername(context),
+                   UserHelper.GetUsername(context),
                    context.Response.StatusCode);
             }
-        }
-
-        private string GetUsername(HttpContext context)
-        {
-            return context.User.Identity?.Name ?? "Anonymous";
         }
 
         private string GetJSONRequestBody(HttpContext context)

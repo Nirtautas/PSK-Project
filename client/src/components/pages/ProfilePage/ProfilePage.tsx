@@ -5,11 +5,15 @@ import styles from './ProfilePage.module.scss';
 import UserApi from '@/api/user.api';
 import { getUserId } from '@/utils/userId'; 
 import { User } from '@/types/types';
+import router from 'next/router';
+import { GetPageUrl } from '../../../constants/route';
+import { useRouter } from 'next/navigation';
 
 export type PatchUserDto = Omit<User, 'id' | 'creationDate' >
 
 const ProfilePage = () => {
-  const userId = getUserId(); 
+  const userId = getUserId();
+  const router = useRouter();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -203,8 +207,8 @@ const ProfilePage = () => {
 
             {!isEditMode && (
               <Grid item xs={12}>
-                <Button variant="contained" color="primary">
-                  Reset Password
+                <Button variant="contained" color="primary" onClick={() => router.push(GetPageUrl.changePassword(email))}>
+                  Change Password
                 </Button>
               </Grid>
             )}

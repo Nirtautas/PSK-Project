@@ -6,7 +6,7 @@ using WorthBoards.Common.Enums;
 
 namespace WorthBoards.Api.Filters.ActionFilters
 {
-    public class ControllerLoggingActionFilter : IActionFilter
+    public class ControllerLoggingActionFilter : IAsyncActionFilter
     {
         private readonly ILogger<ControllerLoggingActionFilter> _logger;
         private readonly IBoardService _boardService;
@@ -17,15 +17,26 @@ namespace WorthBoards.Api.Filters.ActionFilters
             _boardService = boardService;
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            await OnActionExecuting(context);
+
+            var resultContext = await next();
+
+            OnActionExecuted(resultContext);
+        }
+
+        public async Task OnActionExecuting(ActionExecutingContext context)
+        {
+            var role = (await GetRoleAsync(context.HttpContext)).ToString();
+
             using (LogContext.PushProperty("LogType", "Controller"))
             {
                 _logger.LogInformation("Executing action - {ActionName}, Controller: {ControllerName}, User: {UserName}, BoardRole: {BoardRole}",
                     GetActionName(context),
                     GetControllerName(context),
                     GetUsername(context.HttpContext),
-                    GetRole(context.HttpContext).ToString());
+                    role);
             }
         }
 
@@ -55,13 +66,16 @@ namespace WorthBoards.Api.Filters.ActionFilters
             return context.User.Identity?.Name ?? "Anonymous";
         }
 
-        private async Task<UserRoleEnum?> GetRole(HttpContext context)
+        private async Task<UserRoleEnum?> GetRoleAsync(HttpContext context)
         {
             var userId = UserHelper.GetUserId(context.User).Value;
+            _logger.LogInformation("USER ID {id}", userId);
 
             var boardIdString = context.Request.RouteValues
-                .FirstOrDefault(rv => rv.Key.ToLower().EndsWith("boardId"))
+                .FirstOrDefault(rv => rv.Key.EndsWith("boardId"))
                 .Value?.ToString();
+
+            _logger.LogInformation("BOARD ID {id}", boardIdString);
 
             if (!int.TryParse(boardIdString, out var boardId))
                 return null;

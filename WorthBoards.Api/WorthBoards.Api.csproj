@@ -25,8 +25,4 @@
     <ProjectReference Include="..\WorthBoards.Common\WorthBoards.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Logs\" />
-  </ItemGroup>
-
 </Project>

@@ -67,12 +67,11 @@ export default function TaskCardInfoPopup({
     }
 
     const handleDelete = async () => {
-        try {
-            await TaskApi.delete(boardId, task.id)
+        const response = await TaskApi.delete(boardId, task.id)
+        if (response.result) {
             onDelete(task)
             handleClose()
-        } catch (error) {
-            console.log(error)
+            return
         }
     }
     

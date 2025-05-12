@@ -65,7 +65,7 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
                         variant="outlined"
                         color="primary"
                         onClick={handleAllDelete}
-                        disabled={isLoading}
+                        disabled={isLoading || fetchedTasks.length === 0}
                     >
                         Delete All
                     </Button>

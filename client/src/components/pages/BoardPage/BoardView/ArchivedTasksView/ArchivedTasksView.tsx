@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Button, Paper, Typography } from "@mui/material"
 import styles from './ArchivedTasksView.module.scss'
 import { Role, Task, TaskStatus } from "@/types/types"
 import TaskCard from "../TasksView/TaskList/TaskCard"
@@ -24,13 +24,16 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
     
     const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
 
-    const fetchedTasks = useFetch({ resolver: () => TaskApi.getArchivedTasks(boardId)})
+    const {
+        isLoading: isLoading,
+        data: fetchedTasks
+    } = useFetch({ resolver: () => TaskApi.getArchivedTasks(boardId)})
     
     useEffect(() => {
-        if (fetchedTasks.data) {
-            setTasks(fetchedTasks.data)
+        if (fetchedTasks) {
+            setTasks(fetchedTasks)
         }
-    }, [fetchedTasks.data])
+    }, [fetchedTasks])
 
     const handleUpdate = (updatedTask: Task) => {
         const updatedTasks = tasks.map(task => task.id !== updatedTask.id ? task : updatedTask)
@@ -43,10 +46,24 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
         setTasks(updatedTasks)
     }
 
+    const handleAllDelete = () => {
+        const confirmMsg = `${fetchedTasks.length} archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
+        if (!confirm(confirmMsg))
+            return
+    }
+
     return (
         <div className={styles.container}>
-            <Box>
+            <Box className={styles.header}>
                 <Typography variant="h5">Archived Tasks</Typography>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleAllDelete}
+                        disabled={isLoading}
+                    >
+                        Delete All
+                    </Button>
             </Box>
             <Paper className={styles.tasks_container}>
                 <div className={styles.task_list}>

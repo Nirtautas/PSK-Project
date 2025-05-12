@@ -1,9 +1,4 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.JsonPatch;
-using System.ComponentModel.Design;
-using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
@@ -157,6 +152,13 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 BoardId = (int)invitationNotification.BoardId,
                 UserId = userId,
             },
+            cancellationToken
+        );
+
+        await NotifyUserAdded(
+            (int)invitationNotification.BoardId,
+            userId,
+            invitationNotification.SenderId,
             cancellationToken
         );
 

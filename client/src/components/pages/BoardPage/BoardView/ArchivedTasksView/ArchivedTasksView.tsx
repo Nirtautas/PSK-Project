@@ -46,10 +46,15 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
         setTasks(updatedTasks)
     }
 
-    const handleAllDelete = () => {
+    const handleAllDelete = async () => {
         const confirmMsg = `${fetchedTasks.length} archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
         if (!confirm(confirmMsg))
             return
+
+        const deleted = await TaskApi.deleteArchived(boardId)
+        if (deleted.result) {
+            setTasks([])
+        }
     }
 
     return (

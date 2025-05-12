@@ -155,15 +155,17 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             cancellationToken
         );
 
+        _unitOfWork.NotificationRepository.Delete(invitationNotification);
+        await _unitOfWork.SaveChangesAsync();
+
+        //Bad, but cannot call from NotificationController as I need board OWNER id (aka. SenderId below), which is not returned with notificationResponse.
+        //Mandatory userId seems to much if we are only sending this notification to the owner or everyone in the board.
         await NotifyUserAdded(
             (int)invitationNotification.BoardId,
             userId,
             invitationNotification.SenderId,
             cancellationToken
         );
-
-        _unitOfWork.NotificationRepository.Delete(invitationNotification);
-        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)

@@ -6,7 +6,7 @@ import TaskApi from './task.api'
 import { Paginated } from '@/types/api'
 import { resourceLimits } from 'worker_threads'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'| 'collaborators'>
+export type CreateBoardDto = Pick<Board, 'title' | 'description'> & { imageName: string }
 export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'| 'collaborators'>
 
 export default class BoardApi {

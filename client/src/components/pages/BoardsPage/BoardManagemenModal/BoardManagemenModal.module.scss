@@ -55,5 +55,11 @@
 
 .image_section {
   padding: 0.5rem;
-  max-width: 100%; 
+  max-width: 100%;
+  overflow: hidden;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

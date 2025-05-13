@@ -19,11 +19,11 @@ namespace WorthBoards.Business.Validators.Board
                 .MaximumLength(ValidationConstants.DescriptionMaxLength)
                 .WithMessage(ValidationMessages.DescriptionTooLong);
 
-            RuleFor(x => x.ImageURL)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.ImageURLRequired)
-                .Must(IsValidUrl)
-                .WithMessage(ValidationMessages.ImageURLInvalid);
+            // RuleFor(x => x.ImageName)
+            //     .NotEmpty()
+            //     .WithMessage(ValidationMessages.ImageURLRequired)
+            //     .Must(IsValidUrl)
+            //     .WithMessage(ValidationMessages.ImageURLInvalid);
 
             static bool IsValidUrl(string url)
             {

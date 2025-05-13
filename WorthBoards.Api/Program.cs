@@ -42,6 +42,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.ConfigureStaticImages();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

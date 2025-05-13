@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WorthBoards.Data.Database;
 using WorthBoards.Data.Identity;
 using WorthBoards.Data.Repositories.Interfaces;
 using WorthBoards.Data.Repositories;
+using WorthBoards.Common.Constrants;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -55,6 +58,22 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScoped<IUserRepository, UserRepository>();
 
             return services;
+        }
+
+        public static IApplicationBuilder ConfigureStaticImages(this IApplicationBuilder app)
+        {
+            var staticFilesDir = ImageFiles.STATIC_IMAGE_DIR;
+            if (!Directory.Exists(staticFilesDir))
+            {
+                Directory.CreateDirectory(staticFilesDir);
+            }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(staticFilesDir),
+                RequestPath = ImageFiles.STATIC_IMAGE_REQUEST_PATH
+            });
+            return app;
         }
     }
 }

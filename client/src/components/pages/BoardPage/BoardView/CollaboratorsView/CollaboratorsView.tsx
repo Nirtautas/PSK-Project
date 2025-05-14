@@ -95,8 +95,16 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
       displayError(collaboratorsResponse.error || 'Failed to fetch collaborators after role update.');
       return;
     }
+    
+      let updatedCollaborators = collaboratorsResponse.result || [];
 
-    setCollaborators(collaboratorsResponse.result || []);
+    const owner = updatedCollaborators.find(user => user.userRole === Role.OWNER);
+    if (owner) {
+      updatedCollaborators = updatedCollaborators.filter(user => user.userRole !== Role.OWNER);
+      updatedCollaborators.unshift(owner);
+    }
+
+    setCollaborators(updatedCollaborators);
   };
 
   const handleUserSelection = (userId: number) => {

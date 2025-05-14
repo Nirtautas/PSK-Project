@@ -2,6 +2,7 @@ import type {Metadata} from 'next'
 import {Geist, Geist_Mono} from 'next/font/google'
 import './globals.css'
 import MuiThemeProvider from '@/components/templates/mui'
+import MessagePopupProvider from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: Readonly<{
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
                 <MuiThemeProvider>
-                    {children}
+                    <MessagePopupProvider>
+                        {children}
+                    </MessagePopupProvider>
                 </MuiThemeProvider>
             </body>
         </html>

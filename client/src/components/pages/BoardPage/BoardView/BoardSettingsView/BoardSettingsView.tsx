@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
+import BoardApi, { UpdateBoardDto } from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
-import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal, { CreateBoardFormArgs } from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
 import { Board, Role } from '../../../../../types/types'
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api'
@@ -13,6 +13,7 @@ import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView
 import { getUserId } from '@/utils/userId'
 import CollaboratorApi from '../../../../../api/collaborator.api'
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
+import UploadApi from '@/api/upload.api'
 
 type Props = {
     boardId: number
@@ -55,7 +56,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             const boardData: UpdateBoardDto = {
                 title: result.title,
                 description: result.description,
-                imageURL: result.imageURL || null,
+                imageName: '',
                 version: result.version
             }
             setEditData(boardData)
@@ -65,9 +66,20 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         }
     }
 
-    const handleUpdateBoard = async (updatedData: CreateBoardDto) => {
+    const handleUpdateBoard = async ({ description, image, title}: CreateBoardFormArgs) => {
+        let imageName = ''
+        if (image) {
+            const imageResponse = await UploadApi.uploadImage(image)
+            if (!imageResponse.result) {
+                displayError(imageResponse.error || 'An error occured')
+                return
+            }
+            imageName = imageResponse.result
+        }
         const updatedDataWithVersion: UpdateBoardDto = {
-            ...updatedData,
+            title,
+            description,
+            imageName,
             version: editData?.version ?? 0
         }
 

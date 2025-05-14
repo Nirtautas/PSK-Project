@@ -12,7 +12,7 @@ namespace WorthBoards.Domain.Entities
         [MaxLength(100)]
         public required string Title { get; set; }
         public required string Description { get; set; }
-        public required string ImageURL { get; set; }
+        public required string ImageName { get; set; }
         public DateTime CreationDate { get; set; }
 
         //Navigation properties

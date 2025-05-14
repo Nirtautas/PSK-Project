@@ -13,17 +13,17 @@ namespace WorthBoards.Business.Validators.Board
                 .MaximumLength(ValidationConstants.TitleMaxLength)
                 .WithMessage(ValidationMessages.TitleTooLong);
 
-            RuleFor(x => x.Description)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.DescriptionRequired)
-                .MaximumLength(ValidationConstants.DescriptionMaxLength)
-                .WithMessage(ValidationMessages.DescriptionTooLong);
+            // RuleFor(x => x.Description)
+            //     .NotEmpty()
+            //     .WithMessage(ValidationMessages.DescriptionRequired)
+            //     .MaximumLength(ValidationConstants.DescriptionMaxLength)
+            //     .WithMessage(ValidationMessages.DescriptionTooLong);
 
-            RuleFor(x => x.ImageURL)
-                .NotEmpty()
-                .WithMessage(ValidationMessages.ImageURLRequired)
-                .Must(IsValidUrl)
-                .WithMessage(ValidationMessages.ImageURLInvalid);
+            // RuleFor(x => x.ImageName)
+            //     .NotEmpty()
+            //     .WithMessage(ValidationMessages.ImageURLRequired)
+            //     .Must(IsValidUrl)
+            //     .WithMessage(ValidationMessages.ImageURLInvalid);
 
             static bool IsValidUrl(string url)
             {

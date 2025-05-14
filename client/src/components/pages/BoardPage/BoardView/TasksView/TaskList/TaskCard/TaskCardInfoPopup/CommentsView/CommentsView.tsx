@@ -1,4 +1,4 @@
-import { BoardUser, Comment } from "@/types/types"
+import { BoardUser, Comment, TaskStatus } from "@/types/types"
 import { Button, TextField } from "@mui/material"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
@@ -13,10 +13,12 @@ import PageChanger from '@/components/shared/PageChanger'
 export default function CommentsView
 ({
     taskId,
-    boardId
+    boardId,
+    taskStatus
 }: {
     taskId: number,
-    boardId: number
+    boardId: number,
+    taskStatus: TaskStatus
 }) {
     const [commentInputText, setCommentInputText] = useState<string>('')
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
@@ -77,23 +79,26 @@ export default function CommentsView
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {!errorMsgComments && !loadingComments && comments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)}/>
+                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)} taskStatus={taskStatus}/>
                 ))}
                 {/* {JSON.stringify(comments)} */}
             </Box>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    variant="outlined"
-                    label="Add a comment"
-                    fullWidth
-                    sx={{ marginBottom: 1 }}
-                    value={commentInputText}
-                    onChange={(e) => setCommentInputText(e.currentTarget.value)}
-                />
-                <Button variant="outlined" type="submit">
-                    Post
-                </Button>
-            </form>
+            {taskStatus !== TaskStatus.ARCHIVED &&
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        variant="outlined"
+                        label="Add a comment"
+                        fullWidth
+                        sx={{ marginBottom: 1 }}
+                        value={commentInputText}
+                        onChange={(e) => setCommentInputText(e.currentTarget.value)}
+                    />
+                    <Button variant="outlined" type="submit">
+                        Post
+                    </Button>
+                </form>
+            }
+
             <PageChanger
                 onClickNext={() => setPageNum(pageNum + 1)}
                 onClickPrevious={() => setPageNum(pageNum - 1)}

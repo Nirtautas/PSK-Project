@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
-import { Comment } from "@/types/types";
+import { Comment, TaskStatus } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -14,12 +14,14 @@ export default function CommentDisplay({
     commentData,
     boardId,
     handleDelete,
-    pfpLink
+    pfpLink,
+    taskStatus
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
-    pfpLink: string
+    pfpLink: string,
+    taskStatus: TaskStatus
 }) {
     const userId = getUserId();
     const [editing, setEditing] = useState(false);
@@ -71,7 +73,7 @@ export default function CommentDisplay({
                             </Typography>
                         </Box>
                     </Box>
-                    {commentData.userId === userId && (
+                    {commentData.userId === userId && taskStatus !== TaskStatus.ARCHIVED && (
                     <Box sx={{ display: 'flex', gap: 1, marginTop: 1 }}>
                         <Button
                             variant="text"

@@ -4,7 +4,7 @@ import { User } from "@/types/types";
 import { fetch, getAuthorizedHeaders } from "@/utils/fetch";
 
 export default class UserApi {
-    static async getById(userId: number): Promise<FetchResponse<User>> {
+    static async getById(userId: number | undefined): Promise<FetchResponse<User>> {
         return await fetch ({
             url: `${apiBaseUrl}/users/${userId}`,
             method: HTTPMethod.GET,

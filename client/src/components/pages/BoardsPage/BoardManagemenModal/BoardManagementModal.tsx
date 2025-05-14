@@ -2,15 +2,24 @@
 
 import { Alert, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
-import styles from './BoardManagemenModal.module.scss'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { placeholderImageUrl } from '@/constants/placeholders'
 import { CreateBoardDto } from '../../../../api/board.api'
+import FileUpload from '@/components/shared/FileUpload/'
+import { CloudUpload as CloudUploadIcon } from '@mui/icons-material'
+
+import styles from './BoardManagemenModal.module.scss'
+
+export type CreateBoardFormArgs = {
+    title: string
+    description: string
+    image: File | null
+}
 
 type Props = {
     open: boolean
     onClose: () => void
-    onSubmit: (args: CreateBoardDto) => void
+    onSubmit: (args: CreateBoardFormArgs) => void
     initialData?: CreateBoardDto
     mode: 'create' | 'edit'
 }
@@ -19,16 +28,14 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     const [title, setTitle] = useState(initialData?.title || '')
     const [titleError, setTitleError] = useState<string>('')
     const [description, setDescription] = useState(initialData?.description || '')
-    const [imageURL, setImageURL] = useState<string | null>(initialData?.imageURL ?? '')
 
-    //const [image, setImage] = useState<File | null>(null)
-    //const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
+    const [image, setImage] = useState<File | null>(null)
+    const imageUrl = useMemo(() => image && URL.createObjectURL(image) || placeholderImageUrl, [image])
 
-    //const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //    if (event.target.files && event.target.files.length > 0) {
-    //        setImage(event.target.files[0])
-    //    }
-    //}
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const image = e.target.files![0]
+        setImage(image)
+    }
 
     useEffect(() => {
         setTitleError('')
@@ -36,7 +43,6 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         if (initialData) {
             setTitle(initialData.title)
             setDescription(initialData.description)
-            setImageURL(initialData.imageURL)
         }
     }, [initialData, open])
 
@@ -46,9 +52,9 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
             return
         }
 
-        const safeDescription = description.trim() || 'Welcome to the board!'
+        const safeDescription = description.trim() || ''
 
-        onSubmit({ title, description: safeDescription, imageURL: imageURL?.trim() || placeholderImageUrl })
+        onSubmit({ title, description: safeDescription, image: image })
     }
 
     return (
@@ -76,15 +82,22 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        <TextField
-                            label="Image URL"
-                            variant="outlined"
-                            fullWidth
-                            value={imageURL ?? ''}
-                            onChange={(e) => setImageURL(e.target.value)}
+                        {/* <div className={styles.image_section}>
+                            <div className={styles.upload}>
+                                <img src={imageUrl} alt="img" />
+                                <Button startIcon={<CloudUploadIcon />} variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
+                                    Upload Image
+                                    <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
+                                </Button>
+                            </div>
+                            {image && <p>{image.name}</p>}
+                        </div> */}
+                        <FileUpload
+                            image={image}
+                            imageUrl={imageUrl}
+                            onUpload={(img) => setImage(img)}
                         />
                     </Stack>
-
                     <div className={styles.buttons}>
                         <Button variant="outlined" onClick={onClose}>
                             Cancel
@@ -98,19 +111,5 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         </Modal>
     )
 }
-
-/*
-<div className={styles.image_section}>
-    <div className={styles.upload}>
-        <img src={imageUrl} alt="img"/>
-        <Button variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
-            Upload Image
-            <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
-        </Button>
-    </div>
-    {image && <p>{image.name}</p>}
-</div>
-*/
-
 
 export default BoardManagementModal

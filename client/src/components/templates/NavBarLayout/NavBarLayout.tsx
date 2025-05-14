@@ -112,12 +112,6 @@ const NavBarLayout = ({ children }: Props) => {
                                         }
                                     },
                                     {
-                                        label: 'Settings',
-                                        onClick: () => {
-                                            router.push(getPageUrl.settings())
-                                        }
-                                    },
-                                    {
                                         label: 'Log out',
                                         onClick: handleLogOut
                                     },

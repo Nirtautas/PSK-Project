@@ -8,7 +8,7 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards")]
-    public class TaskOnUserController(ITaskOnUserService _taskOnUserService) : ControllerBase
+    public class TaskOnUserController(ITaskOnUserService _taskOnUserService, INotificationService _notificationService) : ControllerBase
     {
 
         [HttpPost("{boardId}/tasks/{taskId}/users/link")]
@@ -16,6 +16,17 @@ namespace WorthBoards.Api.Controllers
         public async Task<IActionResult> LinkUsersToTask(int boardId, int taskId, [FromBody] IEnumerable<LinkUserToTaskRequest> linkList, CancellationToken cancellationToken)
         {
             var linkResponse = await _taskOnUserService.LinkUsersToTaskAsync(boardId, taskId, linkList, cancellationToken);
+
+            var userId = UserHelper.GetUserId(User);
+            if (userId.Result is UnauthorizedObjectResult unauthorizedResult)
+                return unauthorizedResult;
+
+            foreach (var response in linkResponse)
+            {
+                if (response.UserId != userId.Value)
+                    await _notificationService.NotifyTaskAssigned(boardId, taskId, response.UserId, userId.Value, cancellationToken);
+            }
+
             return Ok(linkResponse);
         }
 

@@ -1,1 +1,1 @@
-export const placeholderImageUrl = 'https://onlinetools.com/images/examples-onlineimagetools/empty-translucent-image.png'
+export const placeholderImageUrl = '/placeholder_image.png'

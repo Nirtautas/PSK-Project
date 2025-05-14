@@ -16,13 +16,15 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
         })
 
         if (response.ok) {
+            const body = await response.text()
             try {
                 return {
-                    result: await response.json()
+                    result: JSON.parse(body)
                 }
             } catch (e) {
                 return {
-                    result: response.statusText as unknown as T
+                    // @ts-ignore
+                    result: body
                 }
             }
         } else {
@@ -39,10 +41,14 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
 
 export { fetchWrapper as fetch }
 
-export const getAuthorizedHeaders = () => {
+export const getAuthorizedHeaders = (type?: 'multipart/form-data') => {
+    let headers = defaultHeaders
+    if (type === 'multipart/form-data') {
+        headers = {}
+    }
     const token = getCookie('jwtToken')
     return {
-        ...defaultHeaders,
+        ...headers,
         Authorization: `Bearer ${token}`
     }
 }

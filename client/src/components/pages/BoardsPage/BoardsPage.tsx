@@ -10,8 +10,9 @@ import { Board } from '../../../types/types'
 import { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
-import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal, { CreateBoardFormArgs } from './BoardManagemenModal/BoardManagementModal'
 import usePagedFetch from '@/hooks/usePagedFetch'
+import UploadApi from '@/api/upload.api'
 
 type Props = {
     pageNum: number
@@ -30,16 +31,24 @@ const BoardsPage = ({ pageNum }: Props) => {
         resolver: () => BoardApi.getBoards(pageNum)
     })
 
-    console.log(data)
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const isLastPage = data ? pageNum >= pageCount - 1 : false
 
-    const handleBoardCreate = async ({ title, description, imageURL }: CreateBoardDto) => {
+    const handleBoardCreate = async ({ title, description, image }: CreateBoardFormArgs) => {
+        let imageName = ''
+        if (image) {
+            const imageUploadResponse = await UploadApi.uploadImage(image)
+            if (!imageUploadResponse.result) {
+                console.error(imageUploadResponse.error)
+                return
+            }
+            imageName = imageUploadResponse.result
+            console.log(imageName)
+        }
         const response = await BoardApi.createBoard({
             title,
             description,
-            imageURL
+            imageName
         })
         setIsModalOpen(false)
         if (!response.result) {

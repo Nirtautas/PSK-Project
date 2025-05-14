@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
-import { Comment } from "@/types/types";
+import { Comment, TaskStatus } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -14,12 +14,14 @@ export default function CommentDisplay({
     commentData,
     boardId,
     handleDelete,
-    pfpLink
+    pfpLink,
+    taskStatus
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
-    pfpLink: string
+    pfpLink: string,
+    taskStatus: TaskStatus
 }) {
     const userId = getUserId();
     const [editing, setEditing] = useState(false);
@@ -63,15 +65,15 @@ export default function CommentDisplay({
                         <Box sx={{ flex: 1 }}>
                             <Typography variant="body1" 
                               sx={{
-                                wordBreak: 'break-word', // allows long words to wrap
-                                whiteSpace: 'pre-wrap',  // respects line breaks and wraps text
+                                wordBreak: 'break-word',
+                                whiteSpace: 'pre-wrap',
                               }}>{commentData.content}</Typography>
                             <Typography variant="body2" sx={{ color: 'gray' }}>
                                 {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
                             </Typography>
                         </Box>
                     </Box>
-                    {commentData.userId === userId && (
+                    {commentData.userId === userId && taskStatus !== TaskStatus.ARCHIVED && (
                     <Box sx={{ display: 'flex', gap: 1, marginTop: 1 }}>
                         <Button
                             variant="text"

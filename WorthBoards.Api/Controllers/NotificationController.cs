@@ -37,4 +37,13 @@ public class NotificationController(INotificationService _notificationService) :
         await _notificationService.UnlinkNotification(userId.Value, notificationId, cancellationToken);
         return Ok();
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAllNotifications(CancellationToken cancellationToken = default)
+    {
+        var userId = UserHelper.GetUserId(User);
+        await _notificationService.UnlinkAllNotifications(userId.Value, cancellationToken);
+        return Ok();
+    }
+
 }

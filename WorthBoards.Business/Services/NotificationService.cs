@@ -198,4 +198,29 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         }
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UnlinkAllNotifications(int userId, CancellationToken cancellationToken)
+    {
+        var userNotifications = await _unitOfWork.NotificationOnUserRepository
+            .GetAllByExpressionAsync(nou => nou.UserId == userId, cancellationToken);
+
+        if (!userNotifications.Any())
+            return;
+
+        _unitOfWork.NotificationOnUserRepository.DeleteRange(userNotifications);
+
+        var notificationIds = userNotifications.Select(n => n.NotificationId).ToList();
+        foreach (var id in notificationIds)
+        {
+            var notification = await _unitOfWork.NotificationRepository
+                .GetByExpressionWithIncludesAsync(n => n.Id == id, cancellationToken, n => n.NotificationsOnUsers);
+
+            if (notification is not null && notification.NotificationsOnUsers.Count == 1)
+            {
+                _unitOfWork.NotificationRepository.Delete(notification);
+            }
+        }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
 }

@@ -63,8 +63,8 @@ export default function CommentDisplay({
                         <Box sx={{ flex: 1 }}>
                             <Typography variant="body1" 
                               sx={{
-                                wordBreak: 'break-word', // allows long words to wrap
-                                whiteSpace: 'pre-wrap',  // respects line breaks and wraps text
+                                wordBreak: 'break-word',
+                                whiteSpace: 'pre-wrap',
                               }}>{commentData.content}</Typography>
                             <Typography variant="body2" sx={{ color: 'gray' }}>
                                 {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, Card, CircularProgress, IconButton, Menu, Skeleton } from '@mui/material'
+import { Badge, Button, Card, CircularProgress, Divider, IconButton, Menu, Skeleton } from '@mui/material'
 import { Notifications as NotificationsIcon } from '@mui/icons-material'
 
 import styles from './NotificationDropdown.module.scss'
@@ -28,6 +28,10 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
     }
 
     const handleDeleteAllNotifications = () => {
+        const confirmMsg = `${notifications.length} notifications will be deleted. Are you sure you want to delete ALL notifications?`
+        if (!confirm(confirmMsg))
+            return
+
         onDeleteAllNotifications(); 
     }
 
@@ -45,12 +49,10 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
                 {'You have '}
                 <span className={notifications.length > 0 ? styles.notification_number_active : styles.notification_number}>{notifications.length}</span>
                 {` ${notifications.length === 1 ? 'notification' : 'notifications'}:`}
-
                 <span className={styles.notification_text}>
-   
                 {notifications.length > 0 && (
                     <Button
-                        sx={{ marginLeft: '1rem' }}
+                        sx={{ marginLeft: '1rem'}}
                         variant="contained"
                         color="error"
                         onClick={handleDeleteAllNotifications}
@@ -59,7 +61,7 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
                     </Button>
                 )}
             </span>
-
+            <Divider sx={{ marginTop: '1rem' }} />
             </span>
         )
     }

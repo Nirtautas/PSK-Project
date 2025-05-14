@@ -26,7 +26,8 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
 
     const {
         isLoading: isLoading,
-        data: fetchedTasks
+        data: fetchedTasks,
+        setData: setFetchedTasks
     } = useFetch({ resolver: () => TaskApi.getArchivedTasks(boardId)})
     
     useEffect(() => {
@@ -54,6 +55,7 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
         const deleted = await TaskApi.deleteArchived(boardId)
         if (deleted.result) {
             setTasks([])
+            setFetchedTasks([])
         }
     }
 

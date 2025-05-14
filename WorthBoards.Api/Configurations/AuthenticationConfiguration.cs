@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json;
 
 namespace WorthBoards.Api.Configurations
 {
@@ -27,6 +28,27 @@ namespace WorthBoards.Api.Configurations
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue!)),
                     ClockSkew = TimeSpan.Zero,
                     RequireExpirationTime = true
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = async context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.StatusCode = 401;
+
+                            context.Response.ContentType = "application/json";
+
+                            var response = new
+                            {
+                                status = 401,
+                                title = "Token has expired",
+                                details = "token_expired"
+                            };
+
+                            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                        }
+                    }
                 };
             });
 

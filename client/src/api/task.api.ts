@@ -65,6 +65,14 @@ export default class TaskApi {
         })
     }
 
+    static async deleteArchived(boardId: number): Promise<FetchResponse<any>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks/archived`,
+            method: HTTPMethod.DELETE,
+            headers: getAuthorizedHeaders()
+        })
+    }
+
     private static async getAllFiltered(url: string, boardId: number): Promise<FetchResponse<Task[]>> {
         const tasksResponse = await fetch({
             url: url,

@@ -51,6 +51,8 @@ namespace WorthBoards.Data.Repositories.Base
         Task CreateRangeAsync(List<T> range);
 
         void Delete(T entity);
+
+        void DeleteRange(List<T> entities);
     }
 }
 

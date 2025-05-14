@@ -58,6 +58,14 @@ namespace WorthBoards.Api.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{boardId}/tasks/archived")]
+        [AuthorizeRole(UserRoleEnum.EDITOR)]
+        public async Task<IActionResult> DeleteArchivedBoardTasks(int boardId, CancellationToken cancellationToken)
+        {
+            await _boardTaskService.DeleteArchivedBoardTasks(boardId, cancellationToken);
+            return NoContent();
+        }
+
         [HttpPut("{boardId}/tasks/{boardTaskId}")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]
         public async Task<IActionResult> UpdateBoardTask(int boardId, int boardTaskId, [FromBody] BoardTaskUpdateRequest boardTaskRequest, CancellationToken cancellationToken)

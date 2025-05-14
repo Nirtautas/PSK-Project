@@ -6,6 +6,11 @@
     position: relative;
 }
 
+.header {
+    display: flex;
+    gap: 1rem;
+}
+
 .tasks_container {
     position: absolute;
     top: 2rem;

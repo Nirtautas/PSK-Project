@@ -1,3 +1,5 @@
+'use client'
+
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import MessagePopup from './MessagePopup'
 

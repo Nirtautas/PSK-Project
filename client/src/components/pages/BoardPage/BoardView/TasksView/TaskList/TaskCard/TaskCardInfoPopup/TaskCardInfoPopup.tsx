@@ -41,6 +41,12 @@ export default function TaskCardInfoPopup({
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
     
+    useEffect(() => {
+        setDeadline(task.deadlineEnd)
+        setDescription(task.description)
+        setTitle(task.title)
+    }, [task])
+
     const updateTask = async (taskToUpdate: Task) => {
         const newTask: UpdateTaskDto = {
             title: title ?? "",

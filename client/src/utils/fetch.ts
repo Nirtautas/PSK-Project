@@ -4,11 +4,6 @@ import { getCookie } from 'cookies-next/client'
 
 async function fetchWrapper<T = any, U = string>({ url, method, headers, body }: FetchParams): Promise<FetchResponse<T, U>> {
     try {
-        console.log('Request URL:', url)
-        console.log('Request Method:', method)
-        console.log('Request Headers:', headers)
-        console.log('Request Body:', body)
-
         const response = await fetch(url, {
             method,
             body,
@@ -24,7 +19,7 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
             } catch (e) {
                 return {
                     // @ts-ignore
-                    result: body
+                    result: body || 'No Content'
                 }
             }
         } else {

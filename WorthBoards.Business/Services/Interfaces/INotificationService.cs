@@ -28,4 +28,6 @@ public interface INotificationService {
     Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
     Task UnlinkNotification(int userId, int notificationId, CancellationToken cancellationToken);
+
+    Task UnlinkAllNotifications(int userId, CancellationToken cancellationToken);
 }

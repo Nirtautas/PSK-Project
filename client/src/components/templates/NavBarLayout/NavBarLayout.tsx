@@ -4,7 +4,6 @@ import { Box, Button, MenuItem, Paper, Skeleton, Typography } from '@mui/materia
 
 import styles from './NavBarLayout.module.scss'
 import UserProfile from '@/components/templates/NavBarLayout/UserProfile'
-import NotificationButton from '@/components/templates/NavBarLayout/NotificationDropdown'
 import { usePathname, useRouter } from 'next/navigation'
 import { getPageUrl, pathnames } from '@/constants/urls'
 import NotificationApi from '@/api/notification.api'
@@ -15,7 +14,6 @@ import { GetPageUrl } from '@/constants/route'
 import useFetch from '@/hooks/useFetch'
 import NotificationDropdown from '@/components/templates/NavBarLayout/NotificationDropdown'
 import UserApi from '@/api/user.api'
-import { useEffect } from 'react'
 
 type Props = {
     children: React.ReactNode
@@ -47,6 +45,7 @@ const NavBarLayout = ({ children }: Props) => {
             window.location.reload()
         }
     }
+
     const handleInvitationDecline = async (subjectNotification: Notification) => {
         const response = await NotificationApi.declineInvitation(subjectNotification.id)
         if (response.error) {
@@ -54,6 +53,15 @@ const NavBarLayout = ({ children }: Props) => {
             return
         }
         setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
+    }
+
+    const handleNotificationsDelete = async () => {
+        const response = await NotificationApi.deleteAll()
+        if (response.error) {
+            console.error('An error occurred when deleting all notifications.')
+            return
+        }
+        setNotifications([])
     }
 
     const handleLogOut = () => {
@@ -79,6 +87,7 @@ const NavBarLayout = ({ children }: Props) => {
                                 errorMsg={errorMsg}
                                 onInvitationAccept={handleInvitationAccept}
                                 onInvitationDecline={handleInvitationDecline}
+                                onDeleteAllNotifications={handleNotificationsDelete}
                             />
                         </Box>
                         <Box className={styles.centered_wrapper}>

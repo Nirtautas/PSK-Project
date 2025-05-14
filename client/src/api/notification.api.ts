@@ -27,4 +27,12 @@ export default class NotificationApi {
             headers: getAuthorizedHeaders()
         })
     }
+
+    public static async deleteAll() {
+        return fetch({
+            method: HTTPMethod.DELETE,
+            url: `${apiBaseUrl}/notifications`,
+            headers: getAuthorizedHeaders()
+        })
+    }
 }

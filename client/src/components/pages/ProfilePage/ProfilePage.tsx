@@ -22,39 +22,39 @@ const ProfilePage = () => {
   const [imageURL, setImageURL] = useState('');
   const [email, setEmail] = useState('');
   const [originalUser, setOriginalUser] = useState<PatchUserDto | null>(null);
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        if (userId) {
-          const response = await UserApi.getById(Number(userId)); 
-          if (response.result) {
-            const user = response.result;
-            setFirstName(user.firstName);
-            setLastName(user.lastName);
-            setEmail(user.email);
-            setUserName(user.userName);
-            setImageURL(user.imageURL);
-    
-            setOriginalUser({
-              firstName: user.firstName,
-              lastName: user.lastName,
-              userName: user.userName,
-              email: user.email,
-              imageURL: user.imageURL,
-            });
-          } else {
-            console.error('Failed to fetch user data', response.error);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      if (!userId) return;
+
+      const response = await UserApi.getById(Number(userId));
+
+      if (response.error) {
+        console.error("Error fetching user data:", response.error || 'Failed to fetch user data.');
+        return;
       }
+
+      const user = response.result;
+      if (!user) return;
+
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      setEmail(user.email);
+      setUserName(user.userName);
+      setImageURL(user.imageURL);
+
+      setOriginalUser({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
+        email: user.email,
+        imageURL: user.imageURL,
+      });
     };
-  
+
     fetchUserData();
-  }, [userId]); 
-  
+  }, [userId]);
+    
   const buildPatchDocument = (): any[] => {
     if (!originalUser) return [];
   
@@ -81,22 +81,21 @@ const ProfilePage = () => {
 
   const handleSaveChanges = async () => {
     const patchUserDto = buildPatchDocument();
+
     if (patchUserDto.length === 0) {
       setIsEditMode(false);
-      return; 
+      return;
     }
-  
-    try {
-      const response = await UserApi.updateUser(Number(userId), patchUserDto);
-      if (response) {
-        setIsEditMode(false);
-        setOriginalUser({ firstName, lastName, userName, email, imageURL }); 
-      } else {
-        console.error('Failed to update user:', response);
-      }
-    } catch (error) {
-      console.error('Error saving changes:', error);
-    }
+
+    const response = await UserApi.updateUser(Number(userId), patchUserDto);
+
+  if (response?.error) {
+    console.error("Error updating user:", response.error || 'Failed to update user.');
+    return;
+  }
+
+    setIsEditMode(false);
+    setOriginalUser({ firstName, lastName, userName, email, imageURL });
   };
 
   return (

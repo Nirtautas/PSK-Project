@@ -53,6 +53,7 @@ const BoardPage = ({ boardId }: Props) => {
     }
 
     const handleTaskDelete = (deletedTask: Task) => {
+        console.log('ahoiuerhjiasudhfiasuhdfliashdfiluh')
         setBoard({
             ...board,
             tasks: board.tasks.filter(task => task.id !== deletedTask.id)

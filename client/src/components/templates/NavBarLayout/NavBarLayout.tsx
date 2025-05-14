@@ -47,10 +47,10 @@ const NavBarLayout = ({ children }: Props) => {
     }
 
     const handleInvitationDecline = async (subjectNotification: Notification) => {
-        const confirmMsg = `${notifications.length} invitation will be declined. Are you sure you want to decline the invitation to join board?`
+        const confirmMsg = `Notification will be deleted. Are you sure?`
         if (!confirm(confirmMsg))
             return
-        
+
         const response = await NotificationApi.declineInvitation(subjectNotification.id)
         if (response.error) {
             console.error('An error occured when accepting board invitation.')
@@ -58,6 +58,7 @@ const NavBarLayout = ({ children }: Props) => {
         }
         setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
     }
+
 
     const handleNotificationsDelete = async () => {
         const response = await NotificationApi.deleteAll()

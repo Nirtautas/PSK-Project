@@ -15,6 +15,7 @@ import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
 import TaskOnUserApi from '@/api/taskOnUser.api';
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -40,6 +41,7 @@ export default function TaskCardInfoPopup({
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
+    const messagePopup = useMessagePopup()
     
     useEffect(() => {
         setDeadline(task.deadlineEnd)

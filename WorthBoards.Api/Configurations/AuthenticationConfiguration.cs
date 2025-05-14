@@ -24,7 +24,9 @@ namespace WorthBoards.Api.Configurations
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = TryGetConfigValue(builder.Configuration, "WBIssuer"),
                     ValidAudience = TryGetConfigValue(builder.Configuration, "WBAudience"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue!))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue!)),
+                    ClockSkew = TimeSpan.Zero,
+                    RequireExpirationTime = true
                 };
             });
 

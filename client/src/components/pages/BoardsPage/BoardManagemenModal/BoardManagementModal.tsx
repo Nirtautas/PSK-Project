@@ -2,11 +2,13 @@
 
 import { Alert, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
-import styles from './BoardManagemenModal.module.scss'
 import React, { useEffect, useMemo, useState } from 'react'
 import { placeholderImageUrl } from '@/constants/placeholders'
 import { CreateBoardDto } from '../../../../api/board.api'
+import FileUpload from '@/components/shared/FileUpload/'
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material'
+
+import styles from './BoardManagemenModal.module.scss'
 
 export type CreateBoardFormArgs = {
     title: string
@@ -80,7 +82,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        <div className={styles.image_section}>
+                        {/* <div className={styles.image_section}>
                             <div className={styles.upload}>
                                 <img src={imageUrl} alt="img" />
                                 <Button startIcon={<CloudUploadIcon />} variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
@@ -89,7 +91,12 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                                 </Button>
                             </div>
                             {image && <p>{image.name}</p>}
-                        </div>
+                        </div> */}
+                        <FileUpload
+                            image={image}
+                            imageUrl={imageUrl}
+                            onUpload={(img) => setImage(img)}
+                        />
                     </Stack>
                     <div className={styles.buttons}>
                         <Button variant="outlined" onClick={onClose}>

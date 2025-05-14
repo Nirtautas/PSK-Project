@@ -56,7 +56,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             const boardData: UpdateBoardDto = {
                 title: result.title,
                 description: result.description,
-                imageURL: result.imageURL || null,
+                imageName: '',
                 version: result.version
             }
             setEditData(boardData)

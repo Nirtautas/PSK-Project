@@ -23,7 +23,7 @@ namespace WorthBoards.Business.Utils
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 

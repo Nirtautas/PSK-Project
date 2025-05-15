@@ -97,15 +97,15 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         if (!confirm('Are you sure you want to delete this board?'))
             return
 
-        try {
-            setIsDeleting(true)
-            await BoardApi.deleteBoard(boardId)
-            router.push('/boards')
-        } catch (err: any) {
-            setDeleteError(err?.message || 'Failed to delete board.')
-        } finally {
-            setIsDeleting(false)
+        setIsDeleting(true)
+        const result = await BoardApi.deleteBoard(boardId)
+        if (result.error) {
+            displayError(result.error || 'Failed to delete board.')
         }
+        else {
+            router.push('/boards')
+        }
+        setIsDeleting(false)
     }
 
     const handleLeave = async () => {
@@ -150,8 +150,6 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     </Box>
                     : <Typography></Typography>
             }
-
-            {deleteError && <Typography color="error">{deleteError}</Typography>}
 
             {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
                 : userRole === Role.OWNER ?

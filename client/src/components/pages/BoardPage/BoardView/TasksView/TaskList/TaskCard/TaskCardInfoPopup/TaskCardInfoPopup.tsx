@@ -16,6 +16,7 @@ import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
 import TaskOnUserApi from '@/api/taskOnUser.api';
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
+import styles from './TaskCardInfoPopup.module.scss'
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -132,21 +133,21 @@ export default function TaskCardInfoPopup({
                     }
                     {userRole !== Role.VIEWER && (
                         <>
+                            <Button variant="outlined" onClick={handleDelete} color='error' sx={{ mt: 2, height: 1, ml: 1 }}>
+                                Delete
+                            </Button>
                             <Button variant="outlined" onClick={handleArchive} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 {task.taskStatus === TaskStatus.ARCHIVED ? 'Unarchive' : 'Archive'}
                             </Button>
                             {
                                 task.taskStatus !== TaskStatus.ARCHIVED &&
-                                <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                    Edit
+                                <Button variant={editMode ? "contained" : "outlined"} onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                    {editMode ? "Save" : "Edit"}
                                 </Button>
                             }
-                            <Button variant="outlined" onClick={handleDelete} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                Delete
-                            </Button>
                         </>
                     )}
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
+                    <Button className={styles.close_button} variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Close
                     </Button>
                 </Box>

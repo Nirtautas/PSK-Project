@@ -14,6 +14,7 @@ import { getUserId } from '@/utils/userId'
 import CollaboratorApi from '../../../../../api/collaborator.api'
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 import UploadApi from '@/api/upload.api'
+import TaskApi from '@/api/task.api'
 
 type Props = {
     boardId: number
@@ -30,6 +31,8 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string>('')
 
+    const [isArchTaskDeleting, setIsArchTaskDeleting] = useState(false)
+
     const [isLeaving, setIsLeaving] = useState(false)
     const [leaveError, setLeaveError] = useState<string>('')
 
@@ -42,11 +45,19 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         setUserId(userId)
     }, [])
 
-    const { data } = useFetch({
+    const { data: userRoleData } = useFetch({
         resolver: () => BoardOnUserApi.getUserRole(boardId, userId),
         deps: [userId]
     })
-    const userRole = data?.userRole
+    const userRole = userRoleData?.userRole
+
+    const { 
+        data: archTaskData,
+        setData: setArchTaskData,
+        isLoading: isArchTasksLoading,
+    } = useFetch({
+        resolver: () => TaskApi.getArchivedTasks(boardId)
+    })
 
     const handleOpenEdit = async () => {
         try {
@@ -106,6 +117,22 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             router.push('/boards')
         }
         setIsDeleting(false)
+    }
+
+    const handleArchivedDelete = async () => {
+        const confirmMsg = `All archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
+        if (!confirm(confirmMsg))
+            return
+
+        setIsArchTaskDeleting(true)
+        const result = await TaskApi.deleteArchived(boardId)
+        if (result.error) {
+            displayError('Error deleting archived tasks!')
+        }
+        else {
+            setArchTaskData([])
+        }
+        setIsArchTaskDeleting(false)
     }
 
     const handleLeave = async () => {
@@ -189,7 +216,23 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     : <Typography></Typography>
             }
 
-
+            {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
+                : userRole !== Role.VIEWER ?
+                    <Box className={styles.warning_box}>
+                        <Typography variant="body2" className={styles.info_text}>
+                            Selecting this option will permanently delete all archived tasks.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleArchivedDelete}
+                            disabled={isArchTaskDeleting || isArchTasksLoading || isLoading || archTaskData?.length === 0}
+                        >
+                            {isDeleting ? 'Deleting Archived Tasks...' : 'Delete Archived Tasks'}
+                        </Button>
+                    </Box>
+                    : <Typography></Typography>
+            }
 
             {userRole === null || userRole === undefined ? (
                 <Typography>Loading user role...</Typography>

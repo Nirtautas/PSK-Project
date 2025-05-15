@@ -6,13 +6,13 @@ using WorthBoards.Business.Utils.EmailService.Interfaces;
 using WorthBoards.Common.Exceptions.Custom;
 using MailKit.Security;
 
-namespace WorthBoards.Business.Utils.EmailService
+namespace WorthBoards.Business.Utils.EmailService.Services
 {
-    public class GmailService : IEmailService
+    public class GmailServiceStrategy : IEmailService
     {
         private readonly GmailOptions _options;
 
-        public GmailService(IOptions<GmailOptions> options)
+        public GmailServiceStrategy(IOptions<GmailOptions> options)
         {
             _options = options.Value;
 
@@ -33,7 +33,8 @@ namespace WorthBoards.Business.Utils.EmailService
                     await client.SendAsync(emailMessage, cancellationToken);
                     await client.DisconnectAsync(true, cancellationToken);
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 //Log in the future...
                 throw new FailedToSendEmailException(sendEmailRequest.RecipientEmail);

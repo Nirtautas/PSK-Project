@@ -5,7 +5,7 @@ using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Business.Utils.Interfaces;
 using WorthBoards.Business.Utils;
 using WorthBoards.Business.Utils.EmailService.Interfaces;
-using WorthBoards.Business.Utils.EmailService;
+using WorthBoards.Business.Utils.EmailService.Services;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,7 +19,8 @@ namespace Microsoft.Extensions.DependencyInjection
             //services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
             services
-                .AddScoped<IEmailService, GmailService>()
+                .AddScoped<GmailServiceStrategy>()
+                .AddScoped<OutlookServiceStrategy>()
                 .AddScoped<IAuthService, AuthService>()
                 .AddScoped<IBoardService, BoardService>()
                 .AddScoped<ITokenGenerator, TokenGenerator>()

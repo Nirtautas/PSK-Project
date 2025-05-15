@@ -27,7 +27,8 @@ namespace WorthBoards.Api.Controllers
             }
 
             var (boards, totalCount) = await _boardService.GetUserBoardsAsync(userId.Value, pageNum, pageSize, cancellationToken);
-            return Ok(new { TotalCount = totalCount, Boards = boards });
+            var result = new { Boards = boards, TotalCount = totalCount, PageSize = pageSize, PageNumber = pageNum };
+            return Ok(result);
         }
 
         [HttpGet("{boardId}")]

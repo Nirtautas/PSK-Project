@@ -7,11 +7,12 @@ import { Paginated } from '@/types/api'
 
 export type CreateBoardDto = Pick<Board, 'title' | 'description'> & { imageName: string }
 export type UpdateBoardDto = Pick<Board, 'title' | 'description' | 'version'> & { imageName: string }
+export type BoardWithTotalCount = { boards: Board[], totalCount: number, pageSize: number, pageNumber: number }
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<Paginated<Board>>> {
         // FIXME: fix when actual backend pagination is implemented
-        const response = await fetch<Board[]>({
+        const response = await fetch<BoardWithTotalCount>({
             url: `${apiBaseUrl}/boards?pageNum=${pageNumber}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
@@ -22,10 +23,10 @@ export default class BoardApi {
         const result = response.result!
         return {
             result: {
-                pageNumber: 0,
-                pageSize: 5,
+                pageNumber: result.pageNumber,
+                pageSize: result.pageSize,
                 items: (result as any).boards,
-                pageCount: Math.ceil((result as any).boards.length / 5),
+                pageCount: Math.ceil(result.totalCount / result.pageSize),
             }
         }
     }

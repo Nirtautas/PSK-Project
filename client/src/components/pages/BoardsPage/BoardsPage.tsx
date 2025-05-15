@@ -28,7 +28,8 @@ const BoardsPage = ({ pageNum }: Props) => {
         pageCount,
         refetch
     } = usePagedFetch<Board>({
-        resolver: () => BoardApi.getBoards(pageNum)
+        resolver: () => BoardApi.getBoards(pageNum),
+        deps: [pageNum]
     })
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -78,6 +79,7 @@ const BoardsPage = ({ pageNum }: Props) => {
                 disabledNext={isLastPage}
                 pageNumber={pageNum}
                 totalPages={pageCount}
+                isLoading={isLoading}
             />
         </div>
     )

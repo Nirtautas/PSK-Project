@@ -36,8 +36,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             NotificationType = NotificationEventTypeEnum.TASK_CREATED,
             SenderId = responsibleUserId
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -52,8 +53,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             BoardId = boardId,
             TaskId = taskId,
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -66,8 +68,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             SubjectUserId = userId,
             BoardId = boardId,
         };
+        var excpludedUserIds = new List<int> { userId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -82,8 +85,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 TaskId = taskId,
                 BoardId = boardId,
             };
+            var excpludedUserIds = new List<int> { responsibleUserId };
             await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }

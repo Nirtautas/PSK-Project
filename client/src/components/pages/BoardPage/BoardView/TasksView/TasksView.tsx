@@ -100,9 +100,6 @@ const TasksView = ({
         }
         const response = await TaskApi.update(targetTask.boardId, targetTask.id, updateDto)
         if (!response.result) {
-            if (response.error === 'token_expired') {
-                window.location.href = '/login'
-            }
             displayError(`${response.error} Reloading page data...`)
             refetch?.()
             

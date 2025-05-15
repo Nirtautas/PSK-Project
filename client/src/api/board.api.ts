@@ -10,8 +10,8 @@ export type UpdateBoardDto = Pick<Board, 'title' | 'description' | 'version'> & 
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<Paginated<Board>>> {
-        // FIXME: fix when actual backend pagination is implemented
-        const response = await fetch<Board[]>({
+
+        const response = await fetch<Paginated<Board>>({
             url: `${apiBaseUrl}/boards?pageNum=${pageNumber}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
@@ -22,10 +22,10 @@ export default class BoardApi {
         const result = response.result!
         return {
             result: {
-                pageNumber: 0,
-                pageSize: 5,
-                items: (result as any).boards,
-                pageCount: Math.ceil((result as any).boards.length / 5),
+                items: result.items,
+                pageNumber: result.pageNumber,
+                pageSize: result.pageSize,
+                pageCount: result.pageCount
             }
         }
     }

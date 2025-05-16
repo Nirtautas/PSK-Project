@@ -34,8 +34,8 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
 
     return (
         <div className={styles.tasks_list}>
-                {tasks.map((task, index) => (
-                    <div key={index} className={styles.task_card_wrapper}>
+                {tasks.map((task) => (
+                    <div key={`task-card-id-${task.id}`} className={styles.task_card_wrapper}>
                         <TaskCard
                             boardId={boardId}
                             task={task}

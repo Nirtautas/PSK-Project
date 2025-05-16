@@ -52,6 +52,7 @@ const BoardView = ({
         if (tab === 'Archives') return <ArchivedTasksView boardId={boardId} onTaskUpdate={onTaskUpdate}/>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />
     }
+
     return (
         <div className={styles.wrapper}>
             <BoardViewButtons current={tab} onClick={(tab) => setTab(tab)} />

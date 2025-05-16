@@ -16,7 +16,7 @@ namespace WorthBoards.Domain.Entities
         // Event type derived properties
         public UserRoleEnum? InvitationRole { get; set; }
         public int? SubjectUserId { get; set; }
-        public int? BoardId { get; set; }
+        public int BoardId { get; set; }
         public int? TaskId { get; set; }
         public TaskStatusEnum OldTaskStatus { get; set; }
         public TaskStatusEnum NewTaskStatus { get; set; }

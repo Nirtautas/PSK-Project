@@ -143,7 +143,7 @@ const TasksView = ({
         boxShadow: 24,
         p: 4,
     };
-    // console.log('cols: ', columns.map(col => col.items))
+
     return (
         <Paper className={styles.container}>
             { roleResult && userRole !== Role.VIEWER && (

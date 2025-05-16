@@ -107,12 +107,14 @@ const TasksView = ({
                 shouldReset: true
             }
         }
+
+        targetTask.taskStatus = response.result.taskStatus
         targetTask.version = response.result.version
         const newColumns: TaskColumn[] = [
             ...columns.filter((column) => column.id !== targetColumn.id)
                 .map((column) => ({
                     ...column,
-                    items: column.items
+                    items: column.items.filter(task => task.id !== targetTask.id)
                 })),
             { ...targetColumn, items: [...targetColumn.items, targetTask] }
         ].sort(compareTaskColumnsByLabel)
@@ -141,7 +143,7 @@ const TasksView = ({
         boxShadow: 24,
         p: 4,
     };
-
+    // console.log('cols: ', columns.map(col => col.items))
     return (
         <Paper className={styles.container}>
             { roleResult && userRole !== Role.VIEWER && (

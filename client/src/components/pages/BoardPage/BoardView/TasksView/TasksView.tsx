@@ -91,6 +91,11 @@ const TasksView = ({
         if (!targetColumn || !targetTask) {
             return {}
         }
+        if (targetTask.taskStatus === targetColumn.enumId) {
+            return {
+                shouldReset: true
+            }
+        }
         const updateDto: UpdateTaskDto = {
             title: targetTask.title,
             description: targetTask.description,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import BoardApi, { CreateBoardDto } from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
@@ -31,6 +31,8 @@ const BoardsPage = ({ pageNum }: Props) => {
         resolver: () => BoardApi.getBoards(pageNum),
         deps: [pageNum]
     })
+
+    useEffect(() => {refetch()}, [pageNum])
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const isLastPage = data ? pageNum >= pageCount - 1 : false

@@ -11,8 +11,8 @@ export type BoardWithTotalCount = { boards: Board[], totalCount: number, pageSiz
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<Paginated<Board>>> {
-        // FIXME: fix when actual backend pagination is implemented
-        const response = await fetch<BoardWithTotalCount>({
+
+        const response = await fetch<Paginated<Board>>({
             url: `${apiBaseUrl}/boards?pageNum=${pageNumber}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
@@ -23,10 +23,10 @@ export default class BoardApi {
         const result = response.result!
         return {
             result: {
+                items: result.items,
                 pageNumber: result.pageNumber,
                 pageSize: result.pageSize,
-                items: (result as any).boards,
-                pageCount: Math.ceil(result.totalCount / result.pageSize),
+                pageCount: result.pageCount
             }
         }
     }

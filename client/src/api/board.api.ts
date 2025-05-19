@@ -7,6 +7,7 @@ import { Paginated } from '@/types/api'
 
 export type CreateBoardDto = Pick<Board, 'title' | 'description'> & { imageName: string }
 export type UpdateBoardDto = Pick<Board, 'title' | 'description' | 'version'> & { imageName: string }
+export type BoardWithTotalCount = { boards: Board[], totalCount: number, pageSize: number, pageNumber: number }
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<Paginated<Board>>> {

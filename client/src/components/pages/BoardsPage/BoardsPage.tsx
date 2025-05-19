@@ -28,7 +28,8 @@ const BoardsPage = ({ pageNum }: Props) => {
         pageCount,
         refetch
     } = usePagedFetch<Board>({
-        resolver: () => BoardApi.getBoards(pageNum)
+        resolver: () => BoardApi.getBoards(pageNum),
+        deps: [pageNum]
     })
 
     useEffect(() => {refetch()}, [pageNum])
@@ -80,6 +81,7 @@ const BoardsPage = ({ pageNum }: Props) => {
                 disabledNext={isLastPage}
                 pageNumber={pageNum}
                 totalPages={pageCount}
+                isLoading={isLoading}
             />
         </div>
     )

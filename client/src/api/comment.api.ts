@@ -7,8 +7,7 @@ import { getAuthorizedHeaders, fetch } from "@/utils/fetch";
 export default class CommentApi {
 
     public static async getAll(boardId: Board['id'], taskId: Task['id'], pageNum: Number, pageSize: Number): Promise<FetchResponse<Paginated<Comment>>> {
-        // FIXME: fix when actual backend pagination is implemented
-        const response = await fetch({
+        const response = await fetch<Paginated<Comment>>({
             url: `${apiBaseUrl}/boards/${boardId}/tasks/${taskId}/comments?pageNum=${pageNum}&pageSize=${pageSize}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders() as HeadersInit,
@@ -17,13 +16,13 @@ export default class CommentApi {
         if (!response.result) {
             return response
         }
-        const comments = response.result.comments
+        const result = response.result!
         return {
             result: {
-                pageNumber: 0,
-                pageSize: 5,
-                pageCount: 999,
-                items: comments as Comment[]
+                pageNumber: result.pageNumber,
+                pageSize: result.pageSize,
+                pageCount: result.pageCount,
+                items: result.items
             }
         }
     }

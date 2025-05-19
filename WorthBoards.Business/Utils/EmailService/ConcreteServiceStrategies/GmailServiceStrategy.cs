@@ -36,8 +36,7 @@ namespace WorthBoards.Business.Utils.EmailService.Services
             }
             catch (Exception ex)
             {
-                //Log in the future...
-                throw new FailedToSendEmailException(sendEmailRequest.RecipientEmail);
+                throw new FailedToSendEmailException(sendEmailRequest.RecipientEmail, ex);
             }
 
         }

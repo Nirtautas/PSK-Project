@@ -3,8 +3,6 @@ using WorthBoards.Api.Configurations;
 using WorthBoards.Api.Filters.ActionFilters;
 using WorthBoards.Api.Middlewares;
 using WorthBoards.Api.Utils.ExceptionHandler;
-using WorthBoards.Business.Utils.EmailService;
-using WorthBoards.Business.Utils.EmailService.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +17,6 @@ builder
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddDataServices(builder.Configuration);
-builder.Services.AddScoped<IEmailService, EmailContextService>();
 
 builder.Services.AddControllers(options =>
 {

@@ -103,7 +103,7 @@ const NavBarLayout = ({ children }: Props) => {
                                     {
                                         label: 'My Boards',
                                         onClick: () => {
-                                            router.push(getPageUrl.boards())
+                                            router.push(GetPageUrl.boards(0))
                                         }
                                     },
                                     {

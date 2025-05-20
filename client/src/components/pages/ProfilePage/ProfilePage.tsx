@@ -55,42 +55,22 @@ const ProfilePage = () => {
     fetchUserData();
   }, [userId]); 
   
-  const buildPatchDocument = (): any[] => {
-    if (!originalUser) return [];
-  
-    const patch: any[] = [];
-  
-    if (firstName !== originalUser.firstName) {
-      patch.push({ op: 'replace', path: '/firstName', value: firstName });
-    }
-    if (lastName !== originalUser.lastName) {
-      patch.push({ op: 'replace', path: '/lastName', value: lastName });
-    }
-    if (userName !== originalUser.userName) {
-      patch.push({ op: 'replace', path: '/userName', value: userName });
-    }
-    if (email !== originalUser.email) {
-      patch.push({ op: 'replace', path: '/email', value: email });
-    }
-    if (imageURL !== originalUser.imageURL) {
-      patch.push({ op: 'replace', path: '/imageURL', value: imageURL });
-    }
-  
-    return patch;
-  };
+  const buildUserPutDto = (): UserUpdateRequest => ({
+    firstName,
+    lastName,
+    userName,
+    email,
+    imageURL,
+  });
 
   const handleSaveChanges = async () => {
-    const patchUserDto = buildPatchDocument();
-    if (patchUserDto.length === 0) {
-      setIsEditMode(false);
-      return; 
-    }
-  
+    const updatedUserDto = buildUserPutDto();
+
     try {
-      const response = await UserApi.updateUser(Number(userId), patchUserDto);
+      const response = await UserApi.updateUser(Number(userId), updatedUserDto);
       if (response) {
         setIsEditMode(false);
-        setOriginalUser({ firstName, lastName, userName, email, imageURL }); 
+        setOriginalUser(updatedUserDto); // assumes updatedUserDto has the same shape
       } else {
         console.error('Failed to update user:', response);
       }

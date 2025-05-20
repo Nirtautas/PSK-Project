@@ -5,22 +5,22 @@ import { fetch, getAuthorizedHeaders } from "@/utils/fetch";
 
 export default class UserApi {
     static async getById(userId: number): Promise<FetchResponse<User>> {
-        return await fetch ({
+        return await fetch({
             url: `${apiBaseUrl}/users/${userId}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
         })
     }
 
-    static async updateUser(userId: number, patchDoc: any[]): Promise<FetchResponse<User>> {
+    static async updateUser(userId: number, updatedUserData: User): Promise<FetchResponse<User>> {
         return await fetch({
-          url: `${apiBaseUrl}/users/${userId}`,
-          method: HTTPMethod.PUT,
-          headers: {
-            ...getAuthorizedHeaders(),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(patchDoc),
+            url: `${apiBaseUrl}/users/${userId}`,
+            method: HTTPMethod.PUT,
+            headers: {
+                ...getAuthorizedHeaders(),
+                'Content-Type': 'application/json', 
+            },
+            body: JSON.stringify(updatedUserData),
         });
-      }
+    }
 }

@@ -9,22 +9,25 @@ import { useRouter } from 'next/navigation';
 import { GetPageUrl } from '../../../constants/route';
 import UploadApi from '@/api/upload.api';
 import FileUpload from '@/components/shared/FileUpload';
+import ImageIcon from '@mui/icons-material/Image';
+import PersonIcon from '@mui/icons-material/Person';
 
 export type UserUpdateRequest = Omit<User, 'id' | 'creationDate'>;
 
 const ProfilePage = () => {
-  const userId = getUserId();
-  const router = useRouter();
+  const userId = getUserId()
+  const router = useRouter()
 
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [userName, setUserName] = useState('');
-  const [imageURL, setImageURL] = useState('');
-  const [email, setEmail] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [userName, setUserName] = useState('')
+  const [imageURL, setImageURL] = useState('')
+  const [email, setEmail] = useState('')
   const [image, setImage] = useState<File | null>(null)
-  const [joinedDate, setJoinedDate] = useState<string>(''); 
+  const [joinedDate, setJoinedDate] = useState<string>('')
   const imageUrl = image && URL.createObjectURL(image) || ''
+  const [originalUser, setOriginalUser] = useState<User | null>(null)
 
     const handleImageUpload = (image: File) => {
       setImage(image)
@@ -37,6 +40,7 @@ const ProfilePage = () => {
       const response = await UserApi.getById(Number(userId));
       if (response.result) {
         const user = response.result;
+        setOriginalUser(user);
         setFirstName(user.firstName);
         setLastName(user.lastName);
         setUserName(user.userName);
@@ -82,7 +86,7 @@ const ProfilePage = () => {
   const response = await UserApi.updateUser(Number(userId), updatedUserDto);
     if (response.result) {
       setIsEditMode(false);
-      setImageURL(imageURL); 
+      setImage(null); 
     } else {
       console.error('Failed to update user:', response.error);
     }
@@ -114,11 +118,22 @@ const ProfilePage = () => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => setIsEditMode(false)}
+                                onClick={() => {
+                                    setIsEditMode(false);
+                                    setImage(null);
+
+                                    if (originalUser) {
+                                    setFirstName(originalUser.firstName);
+                                    setLastName(originalUser.lastName);
+                                    setUserName(originalUser.userName);
+                                    setEmail(originalUser.email);
+                                    setImageURL(originalUser.imageURL);
+                                    }
+                                }}
                                 sx={{ width: '100px', height: '36px' }}
-                            >
+                                >
                                 Cancel
-                            </Button>
+                                </Button>
                         </Box>
                     </>
                 ) : (
@@ -133,7 +148,9 @@ const ProfilePage = () => {
                     <Grid item>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
-                                <Avatar sx={{ width: 64, height: 64 }}>TR</Avatar>
+                                <Avatar sx={{ width: 64, height: 64, bgcolor: 'grey.300' }}>
+                                    <PersonIcon sx={{ fontSize: 40, color: 'grey.600' }} />
+                                </Avatar>
                             </Grid>
                             <Grid item>
                                 <Typography variant="h6">{firstName} {lastName}</Typography>
@@ -184,20 +201,57 @@ const ProfilePage = () => {
                                 InputProps={{ readOnly: !isEditMode }}
                             />
                         </Grid>
+
+                        {isEditMode && (
                         <Grid item xs={12}>
-                            <FileUpload
-                                image={image}
-                                imageUrl={imageUrl}
-                                onUpload={handleImageUpload}
-                            />
-                            {/* <TextField
-                                label="Image URL"
-                                value={imageURL}
-                                onChange={(e) => setImageURL(e.target.value)}
-                                fullWidth
-                                InputProps={{ readOnly: !isEditMode }}
-                            /> */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            {imageUrl ? (
+                                <img
+                                src={imageUrl}
+                                alt="Uploaded"
+                                style={{
+                                    width: 64,
+                                    height: 64,
+                                    objectFit: 'cover',
+                                    borderRadius: 8,
+                                }}
+                                />
+                            ) : (
+                                <Box
+                                sx={{
+                                    width: 64,
+                                    height: 64,
+                                    backgroundColor: '#e0e0e0',
+                                    borderRadius: 1,
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                                >
+                                    <ImageIcon sx={{ color: '#9e9e9e', fontSize: 32 }} />
+                                </Box>
+                            )}
+
+                            {/* Upload button */}
+                            <label htmlFor="upload-input">
+                                <input
+                                id="upload-input"
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                onChange={(e) => {
+                                    if (e.target.files?.[0]) {
+                                    handleImageUpload(e.target.files[0]);
+                                    }
+                                }}
+                                />
+                                <Button variant="contained" component="span">
+                                Upload Image
+                                </Button>
+                            </label>
+                            </Box>
                         </Grid>
+                        )}
 
                         {!isEditMode && (
                             <Grid item xs={12}>

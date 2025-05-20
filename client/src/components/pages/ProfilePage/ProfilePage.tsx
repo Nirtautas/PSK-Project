@@ -1,71 +1,58 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Typography, Paper, Avatar, Grid, TextField, Button } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import styles from './ProfilePage.module.scss'
-import UserApi from '@/api/user.api'
-import { getUserId } from '@/utils/userId'
-import { User } from '@/types/types'
-import { GetPageUrl } from '../../../constants/route'
-import { useRouter } from 'next/navigation'
-import UploadApi from '@/api/upload.api'
-import FileUpload from '@/components/shared/FileUpload'
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, Avatar, Grid, TextField, Button } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import styles from './ProfilePage.module.scss';
+import UserApi from '@/api/user.api';
+import { getUserId } from '@/utils/userId'; 
+import { User } from '@/types/types';
+import { useRouter } from 'next/navigation';
+import { GetPageUrl } from '../../../constants/route';
+import UploadApi from '@/api/upload.api';
+import FileUpload from '@/components/shared/FileUpload';
 
-export type PatchUserDto = Omit<User, 'id' | 'creationDate'>
+export type UserUpdateRequest = Omit<User, 'id' | 'creationDate'>;
 
 const ProfilePage = () => {
-    const userId = getUserId()
-    const router = useRouter()
+  const userId = getUserId();
+  const router = useRouter();
 
-    const [isEditMode, setIsEditMode] = useState(false)
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [userName, setUserName] = useState('')
-    const [imageURL, setImageURL] = useState('')
-    const [email, setEmail] = useState('')
-    const [originalUser, setOriginalUser] = useState<PatchUserDto | null>(null)
-    const [image, setImage] = useState<File | null>(null)
-    const imageUrl = image && URL.createObjectURL(image) || ''
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [userName, setUserName] = useState('');
+  const [imageURL, setImageURL] = useState('');
+  const [email, setEmail] = useState('');
+  const [image, setImage] = useState<File | null>(null)
+  const [joinedDate, setJoinedDate] = useState<string>(''); 
+  const imageUrl = image && URL.createObjectURL(image) || ''
 
     const handleImageUpload = (image: File) => {
-        setImage(image)
-    }
+      setImage(image)
+  }
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (!userId) {
-                return
-            }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!userId) return;
 
-            const response = await UserApi.getById(Number(userId))
-            if (response.result) {
-                const user = response.result
-                setFirstName(user.firstName)
-                setLastName(user.lastName)
-                setEmail(user.email)
-                setUserName(user.userName)
-                setImageURL(user.imageURL)
-
-                setOriginalUser({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    userName: user.userName,
-                    email: user.email,
-                    imageURL: user.imageURL,
-                })
-            } else {
-                console.error('Failed to fetch user data', response.error)
-            }
-        }
-<<<<<<< HEAD
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+      const response = await UserApi.getById(Number(userId));
+      if (response.result) {
+        const user = response.result;
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+        setUserName(user.userName);
+        setEmail(user.email);
+        setImageURL(user.imageURL);
+        const isoDate = new Date(user.creationDate).toISOString().split('T')[0];
+        setJoinedDate(isoDate);
+      } else {
+        console.error('Failed to fetch user data:', response.error);
       }
     };
-  
+
     fetchUserData();
-  }, [userId]); 
-  
-  const buildUserPutDto = (): UserUpdateRequest => ({
+  }, [userId]);
+
+  const buildUserUpdateRequest = (): UserUpdateRequest => ({
     firstName,
     lastName,
     userName,
@@ -74,51 +61,6 @@ const ProfilePage = () => {
   });
 
   const handleSaveChanges = async () => {
-    const updatedUserDto = buildUserPutDto();
-
-    try {
-      const response = await UserApi.updateUser(Number(userId), updatedUserDto);
-      if (response) {
-        setIsEditMode(false);
-        setOriginalUser(updatedUserDto); // assumes updatedUserDto has the same shape
-      } else {
-        console.error('Failed to update user:', response);
-      }
-    } catch (error) {
-      console.error('Error saving changes:', error);
-    }
-  };
-=======
-
-        fetchUserData()
-    }, [userId])
->>>>>>> 4a46acb37cafdddb689b3f3183728d2872496ff0
-
-    const buildPatchDocument = (): any[] => {
-        if (!originalUser) return []
-
-        const patch: any[] = []
-
-        if (firstName !== originalUser.firstName) {
-            patch.push({ op: 'replace', path: '/firstName', value: firstName })
-        }
-        if (lastName !== originalUser.lastName) {
-            patch.push({ op: 'replace', path: '/lastName', value: lastName })
-        }
-        if (userName !== originalUser.userName) {
-            patch.push({ op: 'replace', path: '/userName', value: userName })
-        }
-        if (email !== originalUser.email) {
-            patch.push({ op: 'replace', path: '/email', value: email })
-        }
-        if (imageURL !== originalUser.imageURL) {
-            patch.push({ op: 'replace', path: '/imageURL', value: imageURL })
-        }
-
-        return patch
-    }
-
-    const handleSaveChanges = async () => {
         let imageName = ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
@@ -129,26 +71,24 @@ const ProfilePage = () => {
             imageName = imageResponse.result
         }
 
-        const patchUserDto = buildPatchDocument()
-        if (patchUserDto.length === 0) {
-            setIsEditMode(false)
-            return
-        }
+    const updatedUserDto: UserUpdateRequest = {
+      firstName,
+      lastName,
+      userName,
+      email,
+      imageURL: imageURL,
+    };
 
-        try {
-            const response = await UserApi.updateUser(Number(userId), patchUserDto)
-            if (response) {
-                setIsEditMode(false)
-                setOriginalUser({ firstName, lastName, userName, email, imageURL })
-            } else {
-                console.error('Failed to update user:', response)
-            }
-        } catch (error) {
-            console.error('Error saving changes:', error)
-        }
+  const response = await UserApi.updateUser(Number(userId), updatedUserDto);
+    if (response.result) {
+      setIsEditMode(false);
+      setImageURL(imageURL); 
+    } else {
+      console.error('Failed to update user:', response.error);
     }
+  };
 
-    return (
+ return (
         <Box sx={{ p: 4, maxWidth: 800 }}>
             <Box className={styles.toolbar}>
                 <Typography variant="h3">
@@ -198,7 +138,7 @@ const ProfilePage = () => {
                             <Grid item>
                                 <Typography variant="h6">{firstName} {lastName}</Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Joined since 2025-04-08
+                                      Joined since {joinedDate}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -273,4 +213,4 @@ const ProfilePage = () => {
     )
 }
 
-export default ProfilePage
+export default ProfilePage;

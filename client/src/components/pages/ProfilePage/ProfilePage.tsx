@@ -65,8 +65,9 @@ const ProfilePage = () => {
   });
 
   const handleSaveChanges = async () => {
-        let imageName = ''
+        let imageName = imageURL;
         if (image) {
+            console.log('Uploading image:', image); 
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {
                 console.error(imageResponse.error)
@@ -80,13 +81,14 @@ const ProfilePage = () => {
       lastName,
       userName,
       email,
-      imageURL: imageURL,
+      imageURL: imageName,
     };
 
   const response = await UserApi.updateUser(Number(userId), updatedUserDto);
     if (response.result) {
       setIsEditMode(false);
       setImage(null); 
+      setImageURL(imageName);
     } else {
       console.error('Failed to update user:', response.error);
     }
@@ -148,9 +150,16 @@ const ProfilePage = () => {
                     <Grid item>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
-                                <Avatar sx={{ width: 64, height: 64, bgcolor: 'grey.300' }}>
-                                    <PersonIcon sx={{ fontSize: 40, color: 'grey.600' }} />
-                                </Avatar>
+                            <Avatar
+                                className={styles.avatar}
+                                alt={userName}
+                                src={`http://localhost:5000/images/${imageURL}`}
+                                sx={{ width: 56, height: 56 }}
+                            >
+                                {!imageURL && (
+                                <PersonIcon sx={{ fontSize: 40, color: 'grey.600' }} />
+                                )}
+                            </Avatar>
                             </Grid>
                             <Grid item>
                                 <Typography variant="h6">{firstName} {lastName}</Typography>
@@ -232,7 +241,6 @@ const ProfilePage = () => {
                                 </Box>
                             )}
 
-                            {/* Upload button */}
                             <label htmlFor="upload-input">
                                 <input
                                 id="upload-input"

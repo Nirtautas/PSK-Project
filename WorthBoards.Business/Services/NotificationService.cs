@@ -1,9 +1,4 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.JsonPatch;
-using System.ComponentModel.Design;
-using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
@@ -41,8 +36,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             NotificationType = NotificationEventTypeEnum.TASK_CREATED,
             SenderId = responsibleUserId
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -57,8 +53,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             BoardId = boardId,
             TaskId = taskId,
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -71,8 +68,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             SubjectUserId = userId,
             BoardId = boardId,
         };
+        var excpludedUserIds = new List<int> { userId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -87,8 +85,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 TaskId = taskId,
                 BoardId = boardId,
             };
+            var excpludedUserIds = new List<int> { responsibleUserId };
             await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
@@ -162,6 +161,15 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
 
         _unitOfWork.NotificationRepository.Delete(invitationNotification);
         await _unitOfWork.SaveChangesAsync();
+
+        //Bad, but cannot call from NotificationController as I need board OWNER id (aka. SenderId below), which is not returned with notificationResponse.
+        //Mandatory userId seems to much if we are only sending this notification to the owner or everyone in the board.
+        await NotifyUserAdded(
+            (int)invitationNotification.BoardId,
+            userId,
+            invitationNotification.SenderId,
+            cancellationToken
+        );
     }
 
     public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)

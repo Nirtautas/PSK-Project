@@ -8,6 +8,7 @@ import { useCollaborators } from '@/hooks/useCollaborators'
 import { getUserId } from '@/utils/userId';
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api';
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider';
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value) 
@@ -42,6 +43,7 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const debouncedUserName = useDebounce(userName, 500) 
   const [removeErrors, setRemoveErrors] = useState<{ [userId: number]: string }>({});
   const [userId, setUserId] = useState<number | null>(null)
+  const { displayError } = useMessagePopup();
 
   useEffect(() => {
       const userId = getUserId();
@@ -56,17 +58,19 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   useEffect(() => {
     const fetchUsers = async () => {
       if (debouncedUserName.length > 0) {
-        try {
-          const { result } = await CollaboratorApi.getUsersByUserName(boardId, debouncedUserName)
-          setUsers(result || [])
-        } catch (error) {
-          setLinkErrorMsg('Failed to fetch users')
-        }
-      }
-    }
+        const response = await CollaboratorApi.getUsersByUserName(boardId, debouncedUserName);
 
-  fetchUsers()
-  }, [debouncedUserName, boardId])
+        if (response.error) {
+          displayError(response.error || 'Failed to fetch users. Try again.');
+          return;
+        }
+
+        setUsers(response.result || []);
+      }
+    };
+
+    fetchUsers();
+  }, [debouncedUserName, boardId]);
 
   const handleRoleSelection = (userId: number, newRole: string) => {
     setRoleMapping(prevState => ({
@@ -76,19 +80,31 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   }
 
   const handleRoleChange = async (userId: number, newRole: string) => {
-    try {
-      const response = await CollaboratorApi.updateUserRole(boardId, userId, newRole);
-      if (response.result) {
-        setRoleMapping((prev) => ({ ...prev, [userId]: newRole }));
-        setRoleErrors((prev) => ({ ...prev, [userId]: '' })); 
-        const { result } = await CollaboratorApi.getCollaborators(boardId);
-        setCollaborators(result || []);
-      } else {
-        setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
-      }
-    } catch (error) {
-      setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
+    const updateResponse = await CollaboratorApi.updateUserRole(boardId, userId, newRole);
+
+    if (updateResponse.error) {
+      displayError(updateResponse.error || 'Failed to update role.');
+      return;
     }
+
+    setRoleMapping((prev) => ({ ...prev, [userId]: newRole }));
+    setRoleErrors((prev) => ({ ...prev, [userId]: '' }));
+
+    const collaboratorsResponse = await CollaboratorApi.getCollaborators(boardId);
+    if (collaboratorsResponse.error) {
+      displayError(collaboratorsResponse.error || 'Failed to fetch collaborators after role update.');
+      return;
+    }
+    
+      let updatedCollaborators = collaboratorsResponse.result || [];
+
+    const owner = updatedCollaborators.find(user => user.userRole === Role.OWNER);
+    if (owner) {
+      updatedCollaborators = updatedCollaborators.filter(user => user.userRole !== Role.OWNER);
+      updatedCollaborators.unshift(owner);
+    }
+
+    setCollaborators(updatedCollaborators);
   };
 
   const handleUserSelection = (userId: number) => {
@@ -132,13 +148,14 @@ const mapUserRoleEnumToString = (role: string | null): RoleString => {
 };
 
 const handleRemoveCollaborator = async (userId: number) => {
-  try {
-    await CollaboratorApi.removeCollaborator(boardId, userId);
-    setCollaborators((prev) => prev.filter((user) => user.id !== userId));
-    setRemoveErrors((prev) => ({ ...prev, [userId]: '' }));
-  } catch (error) {
-    setRemoveErrors((prev) => ({ ...prev, [userId]: 'Failed to remove collaborator. Please try again.' }));
+  const response = await CollaboratorApi.removeCollaborator(boardId, userId);
+
+  if (response.error) {
+    displayError(response.error || 'Failed to remove collaborator. Please try again.');
+    return;
   }
+
+  setCollaborators((prev) => prev.filter((user) => user.id !== userId));
 };
 
 return (

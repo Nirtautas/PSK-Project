@@ -47,6 +47,10 @@ const NavBarLayout = ({ children }: Props) => {
     }
 
     const handleInvitationDecline = async (subjectNotification: Notification) => {
+        const confirmMsg = `Notification will be deleted. Are you sure?`
+        if (!confirm(confirmMsg))
+            return
+
         const response = await NotificationApi.declineInvitation(subjectNotification.id)
         if (response.error) {
             console.error('An error occured when accepting board invitation.')
@@ -54,6 +58,7 @@ const NavBarLayout = ({ children }: Props) => {
         }
         setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
     }
+
 
     const handleNotificationsDelete = async () => {
         const response = await NotificationApi.deleteAll()
@@ -98,19 +103,13 @@ const NavBarLayout = ({ children }: Props) => {
                                     {
                                         label: 'My Boards',
                                         onClick: () => {
-                                            router.push(getPageUrl.boards())
+                                            router.push(GetPageUrl.boards(0))
                                         }
                                     },
                                     {
                                         label: 'Profile',
                                         onClick: () => {
                                             router.push(getPageUrl.profile())
-                                        }
-                                    },
-                                    {
-                                        label: 'Settings',
-                                        onClick: () => {
-                                            router.push(getPageUrl.settings())
                                         }
                                     },
                                     {

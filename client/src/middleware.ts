@@ -3,10 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifyJwtToken } from './utils/jwtToken'
 import { publicRoutes, GetPageUrl } from './constants/route'
 
-const isPublicRoute = (path: string) => !!publicRoutes.find((publicPath) => path.startsWith(publicPath))
+const isPublicRoute = (path: string) => (!!publicRoutes.find((publicPath) => path.startsWith(publicPath))) || path === '/'
 
 export async function middleware(request: NextRequest) {
-
     const currentRoute = request.nextUrl.pathname
 
     if (currentRoute.startsWith('/_next')) {
@@ -16,7 +15,7 @@ export async function middleware(request: NextRequest) {
     if (currentRoute.startsWith('/register')) {
         return NextResponse.next()
     }
-
+  
     if (process.env.REQUIRE_AUTH === 'NO') {
         return NextResponse.next()
     }
@@ -27,7 +26,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
-    if (!isAuthenticated) {
+    if (!isPublicRoute(currentRoute) && !isAuthenticated) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 

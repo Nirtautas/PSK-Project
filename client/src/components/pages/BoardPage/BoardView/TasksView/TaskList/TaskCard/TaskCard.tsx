@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardActionArea, Modal, Typography } from '@mui/mater
 import { Role, Task, TaskUser } from '@/types/types'
 
 import styles from './TaskCard.module.scss'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TaskCardInfoPopup from './TaskCardInfoPopup'
 import { FetchResponse } from '@/types/fetch'
 import DeadlineDisplay from '@/components/shared/DeadlineDisplay'
@@ -22,6 +22,10 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
     const [open, setOpen] = useState(false)
     const [currentTask, setCurrentTask] = useState<Task>(task)
     const handleOpen = () => setOpen(true);
+
+    useEffect(() => {
+        setCurrentTask(task)
+    }, [task])
 
     const handleUsersChange = (taskUsers: TaskUser[]) => {
         currentTask.assignedUsers = taskUsers

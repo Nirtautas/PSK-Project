@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import BoardApi, { CreateBoardDto, UpdateBoardDto } from '@/api/board.api'
+import BoardApi, { UpdateBoardDto } from '@/api/board.api'
 import { Typography, Button, Box } from '@mui/material'
 import styles from './BoardSettingsView.module.scss'
-import BoardManagementModal from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal, { CreateBoardFormArgs } from '../../../BoardsPage/BoardManagemenModal/BoardManagementModal'
 import { Board, Role } from '../../../../../types/types'
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api'
@@ -13,6 +13,8 @@ import TransferOwnershipView from './TransferOwnershipView/TransferOwnershipView
 import { getUserId } from '@/utils/userId'
 import CollaboratorApi from '../../../../../api/collaborator.api'
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
+import UploadApi from '@/api/upload.api'
+import TaskApi from '@/api/task.api'
 
 type Props = {
     boardId: number
@@ -29,6 +31,8 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string>('')
 
+    const [isArchTaskDeleting, setIsArchTaskDeleting] = useState(false)
+
     const [isLeaving, setIsLeaving] = useState(false)
     const [leaveError, setLeaveError] = useState<string>('')
 
@@ -41,11 +45,19 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         setUserId(userId)
     }, [])
 
-    const { data } = useFetch({
+    const { data: userRoleData } = useFetch({
         resolver: () => BoardOnUserApi.getUserRole(boardId, userId),
         deps: [userId]
     })
-    const userRole = data?.userRole
+    const userRole = userRoleData?.userRole
+
+    const { 
+        data: archTaskData,
+        setData: setArchTaskData,
+        isLoading: isArchTasksLoading,
+    } = useFetch({
+        resolver: () => TaskApi.getArchivedTasks(boardId)
+    })
 
     const handleOpenEdit = async () => {
         try {
@@ -55,7 +67,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
             const boardData: UpdateBoardDto = {
                 title: result.title,
                 description: result.description,
-                imageURL: result.imageURL || null,
+                imageName: '',
                 version: result.version
             }
             setEditData(boardData)
@@ -65,9 +77,20 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         }
     }
 
-    const handleUpdateBoard = async (updatedData: CreateBoardDto) => {
+    const handleUpdateBoard = async ({ description, image, title}: CreateBoardFormArgs) => {
+        let imageName = ''
+        if (image) {
+            const imageResponse = await UploadApi.uploadImage(image)
+            if (!imageResponse.result) {
+                displayError(imageResponse.error || 'An error occured')
+                return
+            }
+            imageName = imageResponse.result
+        }
         const updatedDataWithVersion: UpdateBoardDto = {
-            ...updatedData,
+            title,
+            description,
+            imageName,
             version: editData?.version ?? 0
         }
 
@@ -85,15 +108,31 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         if (!confirm('Are you sure you want to delete this board?'))
             return
 
-        try {
-            setIsDeleting(true)
-            await BoardApi.deleteBoard(boardId)
-            router.push('/boards')
-        } catch (err: any) {
-            setDeleteError(err?.message || 'Failed to delete board.')
-        } finally {
-            setIsDeleting(false)
+        setIsDeleting(true)
+        const result = await BoardApi.deleteBoard(boardId)
+        if (result.error) {
+            displayError(result.error || 'Failed to delete board.')
         }
+        else {
+            router.push('/boards')
+        }
+        setIsDeleting(false)
+    }
+
+    const handleArchivedDelete = async () => {
+        const confirmMsg = `All archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
+        if (!confirm(confirmMsg))
+            return
+
+        setIsArchTaskDeleting(true)
+        const result = await TaskApi.deleteArchived(boardId)
+        if (result.error) {
+            displayError('Error deleting archived tasks!')
+        }
+        else {
+            setArchTaskData([])
+        }
+        setIsArchTaskDeleting(false)
     }
 
     const handleLeave = async () => {
@@ -139,8 +178,6 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     : <Typography></Typography>
             }
 
-            {deleteError && <Typography color="error">{deleteError}</Typography>}
-
             {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
                 : userRole === Role.OWNER ?
                     <Box className={styles.warning_box}>
@@ -179,7 +216,23 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
                     : <Typography></Typography>
             }
 
-
+            {userRole === null || userRole === undefined ? <Typography>Loading user role...</Typography>
+                : userRole !== Role.VIEWER ?
+                    <Box className={styles.warning_box}>
+                        <Typography variant="body2" className={styles.info_text}>
+                            Selecting this option will permanently delete all archived tasks.
+                        </Typography>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleArchivedDelete}
+                            disabled={isArchTaskDeleting || isArchTasksLoading || isLoading || archTaskData?.length === 0}
+                        >
+                            {isDeleting ? 'Deleting Archived Tasks...' : 'Delete Archived Tasks'}
+                        </Button>
+                    </Box>
+                    : <Typography></Typography>
+            }
 
             {userRole === null || userRole === undefined ? (
                 <Typography>Loading user role...</Typography>

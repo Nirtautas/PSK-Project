@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useContext, useRef } from 'react'
 import MessagePopupContainer, { MessagePopupRef } from './MessagePopupContainer'
 

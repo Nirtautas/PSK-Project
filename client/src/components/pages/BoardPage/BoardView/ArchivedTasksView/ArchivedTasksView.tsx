@@ -26,7 +26,8 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
 
     const {
         isLoading: isLoading,
-        data: fetchedTasks
+        data: fetchedTasks,
+        setData: setFetchedTasks
     } = useFetch({ resolver: () => TaskApi.getArchivedTasks(boardId)})
     
     useEffect(() => {
@@ -46,29 +47,10 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
         setTasks(updatedTasks)
     }
 
-    const handleAllDelete = async () => {
-        const confirmMsg = `${fetchedTasks.length} archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
-        if (!confirm(confirmMsg))
-            return
-
-        const deleted = await TaskApi.deleteArchived(boardId)
-        if (deleted.result) {
-            setTasks([])
-        }
-    }
-
     return (
         <div className={styles.container}>
             <Box className={styles.header}>
                 <Typography variant="h5">Archived Tasks</Typography>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={handleAllDelete}
-                        disabled={isLoading || fetchedTasks.length === 0}
-                    >
-                        Delete All
-                    </Button>
             </Box>
             <Paper className={styles.tasks_container}>
                 <div className={styles.task_list}>

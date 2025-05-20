@@ -23,6 +23,10 @@ namespace WorthBoards.Api.Configurations
                     .Filter.ByIncludingOnly(Matching.WithProperty<string>("LogType", p => p == "Controller"))
                     .WriteTo.File("Logs/Controller/controller.log", rollingInterval: RollingInterval.Hour)
                 )
+                .WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(Matching.WithProperty<string>("LogType", p => p == "Email"))
+                    .WriteTo.File("Logs/Email/email.log", rollingInterval: RollingInterval.Hour)
+                )
                 .WriteTo.Console()
                 .CreateLogger();
 

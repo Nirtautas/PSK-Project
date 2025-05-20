@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
-using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Controllers;

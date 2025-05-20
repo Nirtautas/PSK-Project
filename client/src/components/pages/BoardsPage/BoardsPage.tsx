@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import BoardApi, { CreateBoardDto } from '@/api/board.api'
 import BoardsView from '@/components/pages/BoardsPage/BoardsView/BoardsView'
@@ -10,8 +10,9 @@ import { Board } from '../../../types/types'
 import { useRouter } from 'next/navigation'
 import { GetPageUrl } from '../../../constants/route'
 import PageChanger from '../../shared/PageChanger'
-import BoardManagementModal from './BoardManagemenModal/BoardManagementModal'
+import BoardManagementModal, { CreateBoardFormArgs } from './BoardManagemenModal/BoardManagementModal'
 import usePagedFetch from '@/hooks/usePagedFetch'
+import UploadApi from '@/api/upload.api'
 
 type Props = {
     pageNum: number
@@ -27,19 +28,30 @@ const BoardsPage = ({ pageNum }: Props) => {
         pageCount,
         refetch
     } = usePagedFetch<Board>({
-        resolver: () => BoardApi.getBoards(pageNum)
+        resolver: () => BoardApi.getBoards(pageNum),
+        deps: [pageNum]
     })
 
-    console.log(data)
+    useEffect(() => {refetch()}, [pageNum])
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const isLastPage = data ? pageNum >= pageCount - 1 : false
 
-    const handleBoardCreate = async ({ title, description, imageURL }: CreateBoardDto) => {
+    const handleBoardCreate = async ({ title, description, image }: CreateBoardFormArgs) => {
+        let imageName = ''
+        if (image) {
+            const imageUploadResponse = await UploadApi.uploadImage(image)
+            if (!imageUploadResponse.result) {
+                console.error(imageUploadResponse.error)
+                return
+            }
+            imageName = imageUploadResponse.result
+            console.log(imageName)
+        }
         const response = await BoardApi.createBoard({
             title,
             description,
-            imageURL
+            imageName
         })
         setIsModalOpen(false)
         if (!response.result) {
@@ -69,6 +81,7 @@ const BoardsPage = ({ pageNum }: Props) => {
                 disabledNext={isLastPage}
                 pageNumber={pageNum}
                 totalPages={pageCount}
+                isLoading={isLoading}
             />
         </div>
     )

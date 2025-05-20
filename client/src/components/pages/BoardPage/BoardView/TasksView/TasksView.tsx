@@ -91,6 +91,11 @@ const TasksView = ({
         if (!targetColumn || !targetTask) {
             return {}
         }
+        if (targetTask.taskStatus === targetColumn.enumId) {
+            return {
+                shouldReset: true
+            }
+        }
         const updateDto: UpdateTaskDto = {
             title: targetTask.title,
             description: targetTask.description,
@@ -107,12 +112,14 @@ const TasksView = ({
                 shouldReset: true
             }
         }
+
+        targetTask.taskStatus = response.result.taskStatus
         targetTask.version = response.result.version
         const newColumns: TaskColumn[] = [
             ...columns.filter((column) => column.id !== targetColumn.id)
                 .map((column) => ({
                     ...column,
-                    items: column.items
+                    items: column.items.filter(task => task.id !== targetTask.id)
                 })),
             { ...targetColumn, items: [...targetColumn.items, targetTask] }
         ].sort(compareTaskColumnsByLabel)

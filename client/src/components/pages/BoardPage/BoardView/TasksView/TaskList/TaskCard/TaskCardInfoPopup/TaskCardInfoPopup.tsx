@@ -15,6 +15,8 @@ import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
 import TaskOnUserApi from '@/api/taskOnUser.api';
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
+import styles from './TaskCardInfoPopup.module.scss'
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -40,7 +42,14 @@ export default function TaskCardInfoPopup({
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
+    const messagePopup = useMessagePopup()
     
+    useEffect(() => {
+        setDeadline(task.deadlineEnd)
+        setDescription(task.description)
+        setTitle(task.title)
+    }, [task])
+
     const updateTask = async (taskToUpdate: Task) => {
         const newTask: UpdateTaskDto = {
             title: title ?? "",
@@ -124,21 +133,21 @@ export default function TaskCardInfoPopup({
                     }
                     {userRole !== Role.VIEWER && (
                         <>
+                            <Button variant="outlined" onClick={handleDelete} color='error' sx={{ mt: 2, height: 1, ml: 1 }}>
+                                Delete
+                            </Button>
                             <Button variant="outlined" onClick={handleArchive} sx={{ mt: 2, height: 1, ml: 1 }}>
                                 {task.taskStatus === TaskStatus.ARCHIVED ? 'Unarchive' : 'Archive'}
                             </Button>
                             {
                                 task.taskStatus !== TaskStatus.ARCHIVED &&
-                                <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                    Edit
+                                <Button variant={editMode ? "contained" : "outlined"} onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                    {editMode ? "Save" : "Edit"}
                                 </Button>
                             }
-                            <Button variant="outlined" onClick={handleDelete} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                Delete
-                            </Button>
                         </>
                     )}
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
+                    <Button className={styles.close_button} variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Close
                     </Button>
                 </Box>
@@ -154,7 +163,7 @@ export default function TaskCardInfoPopup({
                                     description={description}
                                     setDescription={setDescription}
                                 />
-                                <CommentsView taskId={task.id} boardId={boardId}/>
+                                <CommentsView taskId={task.id} boardId={boardId} taskStatus={task.taskStatus} />
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>

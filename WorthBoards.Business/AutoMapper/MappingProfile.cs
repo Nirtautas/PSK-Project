@@ -2,6 +2,7 @@
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
+using WorthBoards.Common.Constrants;
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 
@@ -12,7 +13,8 @@ namespace WorthBoards.Business.AutoMapper
         public MappingProfile()
         {
             // User
-            CreateMap<ApplicationUser, UserResponse>();
+            CreateMap<ApplicationUser, UserResponse>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageURL)));
             CreateMap<UserRequest, ApplicationUser>();
             CreateMap<UserRegisterRequest, ApplicationUser>();
             CreateMap<ApplicationUser, LinkedUserToTaskResponse>();
@@ -28,7 +30,8 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<BoardTaskUpdateRequest, BoardTask>();
 
             //Board
-            CreateMap<Board, BoardResponse>();
+            CreateMap<Board, BoardResponse>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
             CreateMap<BoardRequest, Board>();
 
             CreateMap<Board, BoardUpdateRequest>();

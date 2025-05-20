@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useCollaborators } from '@/hooks/useCollaborators'
 import CollaboratorApi from '@/api/collaborator.api'
 import { Select, MenuItem, Button, Typography, TextField, Paper } from '@mui/material'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider';
 
 const TransferOwnershipView = ({ boardId }: { boardId: number }) => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
@@ -12,46 +13,37 @@ const TransferOwnershipView = ({ boardId }: { boardId: number }) => {
   const [transferSuccess, setTransferSuccess] = useState<string | null>(null)
   const [userName, setUserName] = useState('')
   const [openMenu, setOpenMenu] = useState(false)
+  const { displayError } = useMessagePopup();
 
   const { collaborators, error, loading } = useCollaborators(boardId, userName)
 
   const handleTransferOwnership = async () => {
     if (!selectedUserId) {
-      setTransferError('Please select a user to transfer ownership.');
+      displayError('Please select a user to transfer ownership.');
       return;
     }
-  
-    try {
-      setIsTransferring(true);
-      const response = await CollaboratorApi.transferOwnership(boardId, selectedUserId);
 
-      if (response.error) {
-        setTransferError(response.error); 
-        setTransferSuccess(null);
-      } else if (response.result) {
-        setTransferSuccess('Ownership successfully transferred!');
-        setTransferError(null);
-        setSelectedUserId(null);
-        setUserName('');
-      } else {
-        setTransferError('An unexpected error occurred.');
-        setTransferSuccess(null);
-      }
-    } catch (error: any) {
-      console.error('Ownership transfer failed:', error);
-  
-      if (error instanceof SyntaxError) {
-        setTransferError('Failed to parse response. The server may not have returned valid JSON.');
-      } else if (error?.message) {
-        setTransferError(error.message || 'Failed to transfer ownership.');
-      } else {
-        setTransferError('Failed to transfer ownership due to an unknown error.');
-      }
-  
+    setIsTransferring(true);
+
+    const response = await CollaboratorApi.transferOwnership(boardId, selectedUserId);
+
+    if (response.error) {
+      displayError(`${response.error} Try again.`);
       setTransferSuccess(null);
-    } finally {
       setIsTransferring(false);
+      return;
     }
+
+    if (response.result) {
+      setTransferSuccess('Ownership successfully transferred!');
+      setSelectedUserId(null);
+      setUserName('');
+    } else {
+      displayError('An unexpected error occurred when transferring ownership.');
+      setTransferSuccess(null);
+    }
+
+    setIsTransferring(false);
   };
   
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -4,11 +4,6 @@ import { getCookie } from 'cookies-next/client'
 
 async function fetchWrapper<T = any, U = string>({ url, method, headers, body }: FetchParams): Promise<FetchResponse<T, U>> {
     try {
-        console.log('Request URL:', url)
-        console.log('Request Method:', method)
-        console.log('Request Headers:', headers)
-        console.log('Request Body:', body)
-
         const response = await fetch(url, {
             method,
             body,
@@ -16,17 +11,22 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
         })
 
         if (response.ok) {
+            const body = await response.text()
             try {
                 return {
-                    result: await response.json()
+                    result: JSON.parse(body)
                 }
             } catch (e) {
                 return {
-                    result: response.statusText as unknown as T
+                    // @ts-ignore
+                    result: body || 'No Content'
                 }
             }
         } else {
             const responseJson = await response.json()
+            if (responseJson.details === 'token_expired') {
+                window.location.href = '/login'
+            }
             return {
                 error: responseJson.details || responseJson.title || response.statusText
             }
@@ -39,10 +39,14 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
 
 export { fetchWrapper as fetch }
 
-export const getAuthorizedHeaders = () => {
+export const getAuthorizedHeaders = (type?: 'multipart/form-data') => {
+    let headers = defaultHeaders
+    if (type === 'multipart/form-data') {
+        headers = {}
+    }
     const token = getCookie('jwtToken')
     return {
-        ...defaultHeaders,
+        ...headers,
         Authorization: `Bearer ${token}`
     }
 }

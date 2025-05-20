@@ -1,8 +1,8 @@
-import { BoardUser, Comment } from "@/types/types"
+import { BoardUser, Comment, TaskStatus } from "@/types/types"
 import { Button, TextField } from "@mui/material"
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CommentDisplay from "./CommentDisplay"
 import CommentApi from "@/api/comment.api"
 import BoardOnUserApi from "@/api/boardOnUser.api"
@@ -13,10 +13,12 @@ import PageChanger from '@/components/shared/PageChanger'
 export default function CommentsView
 ({
     taskId,
-    boardId
+    boardId,
+    taskStatus
 }: {
     taskId: number,
-    boardId: number
+    boardId: number,
+    taskStatus: TaskStatus
 }) {
     const [commentInputText, setCommentInputText] = useState<string>('')
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
@@ -28,30 +30,29 @@ export default function CommentsView
         isLoading: loadingComments,
         errorMsg: errorMsgComments,
         pageCount,
+        refetch
     } = usePagedFetch({
         resolver: () => CommentApi.getAll(boardId, taskId, pageNum, rowsPerPage),
         deps: [taskId, pageNum, rowsPerPage]
     })
 
-    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPageNum(newPage)
-    }
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10))
-        setPageNum(0)
-    }
+    useEffect(() => {
+        if(pageNum + 1 >= pageCount) {
+            setPageNum(pageCount - 1)
+        }}, [comments]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         //TODO: the comments taskId returns as 0 all the time
         const response = await CommentApi.create(boardId, commentInputText, taskId)
-
+        console.log("Response:", response)
         if (!response.result) {
             console.error("Error creating comment:", response.error)
             return
         }
+
         console.log("Created comment:", response.result)
-        setComments([...comments, response.result as Comment])
+        refetch()
         setCommentInputText('')
     }
 
@@ -64,7 +65,7 @@ export default function CommentsView
                 console.error("Error deleting comment:", resp.error)
                 return
             }
-            setComments(comments.filter((comment) => comment.id !== commentData.id))
+            refetch()
         })
     }
 
@@ -76,24 +77,26 @@ export default function CommentsView
         <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
-                {!errorMsgComments && !loadingComments && comments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)}/>
+                {!errorMsgComments && !loadingComments && Array.isArray(comments) && comments.map((comment: Comment, index: number) => (
+                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)} taskStatus={taskStatus}/>
                 ))}
-                {/* {JSON.stringify(comments)} */}
             </Box>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    variant="outlined"
-                    label="Add a comment"
-                    fullWidth
-                    sx={{ marginBottom: 1 }}
-                    value={commentInputText}
-                    onChange={(e) => setCommentInputText(e.currentTarget.value)}
-                />
-                <Button variant="outlined" type="submit">
-                    Post
-                </Button>
-            </form>
+            {taskStatus !== TaskStatus.ARCHIVED &&
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        variant="outlined"
+                        label="Add a comment"
+                        fullWidth
+                        sx={{ marginBottom: 1 }}
+                        value={commentInputText}
+                        onChange={(e) => setCommentInputText(e.currentTarget.value)}
+                    />
+                    <Button variant="outlined" type="submit">
+                        Post
+                    </Button>
+                </form>
+            }
+
             <PageChanger
                 onClickNext={() => setPageNum(pageNum + 1)}
                 onClickPrevious={() => setPageNum(pageNum - 1)}

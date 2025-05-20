@@ -13,7 +13,6 @@ type Props = {
 
 const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
     const router = useRouter()
-    console.log(boards)
 
     if (isLoading) {
         return (

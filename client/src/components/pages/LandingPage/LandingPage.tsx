@@ -86,6 +86,55 @@ export default function LandingPage() {
                     </Typography>
                 </Box>
             </Paper>
+
+            {/* How It Works Section */}
+            <Paper elevation={2} sx={{ p: 4, mb: 6 }}>
+            <Typography variant="h4" gutterBottom textAlign="center">
+                How It Works
+            </Typography>
+            <Grid container spacing={6} direction="column">
+                {/* Step 1 */}
+                <Grid>
+                <Typography variant="h6" gutterBottom>
+                    1. Sign up and create your first board
+                </Typography>
+                <Box
+                    component="img"
+                    src="/gifs/create-board.gif"
+                    alt="Step 1 - Create board"
+                    sx={{ width: '100%', borderRadius: 2, display: 'block', mx: 'auto' }}
+                />
+                </Grid>
+
+                {/* Step 2 */}
+                <Grid>
+                <Typography variant="h6" gutterBottom>
+                    2. Add tasks and assign team members
+                </Typography>
+                <Box
+                    component="img"
+                    src="/gifs/add-task.gif"
+                    alt="Step 2 - Add tasks and assign"
+                    sx={{ width: '100%', borderRadius: 2, display: 'block', mx: 'auto' }}
+                />
+                </Grid>
+
+                {/* Step 3 */}
+                <Grid>
+                <Typography variant="h6" gutterBottom>
+                    3. Drag and drop cards between stages: To Do, In Progress, Done
+                </Typography>
+                <Box
+                    component="img"
+                    src="/gifs/move-task.gif"
+                    alt="Step 3 - Drag and drop tasks"
+                    sx={{ width: '100%', borderRadius: 2, display: 'block', mx: 'auto' }}
+                />
+                </Grid>
+            </Grid>
+            </Paper>
+
+
         </Container>
     );
 }

@@ -23,6 +23,7 @@ const UserProfile = ({ name, imageUrl, buttons }: Props) => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+console.log('Avatar image URL:', imageUrl ? `http://localhost:5000/images/${imageUrl}` : 'No image URL');
 
   return (
     <Card className={styles.container} elevation={2}>
@@ -33,16 +34,17 @@ const UserProfile = ({ name, imageUrl, buttons }: Props) => {
           height: '100%',
         }}
       >
+        
         <div className={styles.content}>
           <Typography variant="h6">{name}</Typography>
           <Avatar
             className={styles.avatar}
             alt={name}
-            src={`http://localhost:5000/images/${imageUrl}`}
+            src={imageUrl ? `http://localhost:5000/images/${imageUrl}` : undefined}
             sx={{ width: 56, height: 56 }}
           >
             {!imageUrl && (
-              <PersonIcon sx={{ fontSize: 40, color: 'grey.600' }} />
+              <PersonIcon sx={{ fontSize: 40, color: 'white' }} />
             )}
           </Avatar>
         </div>

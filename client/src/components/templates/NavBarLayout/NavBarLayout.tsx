@@ -113,8 +113,8 @@ const NavBarLayout = ({ children }: Props) => {
                         </Box>
                         <Box className={styles.centered_wrapper}>
                             {user && <UserProfile
-                                name={user.userName ?? "placeholder"}
-                                imageUrl={user.imageURL}
+                                name={user.userName ?? "name"}
+                                imageUrl={user.imageURL || null}
                                 buttons={[
                                     {
                                         label: 'My Boards',

@@ -89,6 +89,8 @@ const ProfilePage = () => {
       setIsEditMode(false);
       setImage(null); 
       setImageURL(imageName);
+      window.dispatchEvent(new Event('userUpdated'));
+
     } else {
       console.error('Failed to update user:', response.error);
     }

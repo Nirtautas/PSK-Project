@@ -67,7 +67,6 @@ const ProfilePage = () => {
   const handleSaveChanges = async () => {
         let imageName = imageURL;
         if (image) {
-            console.log('Uploading image:', image); 
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {
                 console.error(imageResponse.error)
@@ -88,7 +87,9 @@ const ProfilePage = () => {
     if (response.result) {
       setIsEditMode(false);
       setImage(null); 
-      setImageURL(imageName);
+      setImageURL(imageName); 
+      window.dispatchEvent(new Event('userUpdated'));
+
     } else {
       console.error('Failed to update user:', response.error);
     }
@@ -151,14 +152,11 @@ const ProfilePage = () => {
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
                             <Avatar
-                                className={styles.avatar}
                                 alt={userName}
-                                src={`http://localhost:5000/images/${imageURL}`}
+                                src={imageURL ? (imageURL.startsWith('http') ? imageURL : `http://localhost:5000/images/${imageURL}`) : undefined}
                                 sx={{ width: 56, height: 56 }}
-                            >
-                                {!imageURL && (
-                                <PersonIcon sx={{ fontSize: 40, color: 'grey.600' }} />
-                                )}
+                                >
+                                {!imageURL && <PersonIcon sx={{ fontSize: 40, color: 'white' }} />}
                             </Avatar>
                             </Grid>
                             <Grid item>

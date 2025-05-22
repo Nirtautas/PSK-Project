@@ -1,9 +1,11 @@
+import { UserUpdateRequest } from "@/components/pages/ProfilePage/ProfilePage";
 import { apiBaseUrl } from "@/constants/api";
 import { FetchResponse, HTTPMethod } from "@/types/fetch";
 import { User } from "@/types/types";
 import { fetch, getAuthorizedHeaders } from "@/utils/fetch";
 
 export default class UserApi {
+
     static async getById(userId: number | undefined): Promise<FetchResponse<User>> {
         return await fetch ({
             url: `${apiBaseUrl}/users/${userId}`,
@@ -12,15 +14,12 @@ export default class UserApi {
         })
     }
 
-    static async updateUser(userId: number, patchDoc: any[]): Promise<FetchResponse<User>> {
+    static async updateUser(userId: number, updatedUserData: UserUpdateRequest): Promise<FetchResponse<User>> {
         return await fetch({
-          url: `${apiBaseUrl}/users/${userId}`,
-          method: HTTPMethod.PUT,
-          headers: {
-            ...getAuthorizedHeaders(),
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(patchDoc),
+            url: `${apiBaseUrl}/users/${userId}`,
+            method: HTTPMethod.PUT,
+            headers: getAuthorizedHeaders(),
+            body: JSON.stringify(updatedUserData),
         });
-      }
+    }
 }

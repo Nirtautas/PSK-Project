@@ -46,7 +46,6 @@ const BoardsPage = ({ pageNum }: Props) => {
                 return
             }
             imageName = imageUploadResponse.result
-            console.log(imageName)
         }
         const response = await BoardApi.createBoard({
             title,

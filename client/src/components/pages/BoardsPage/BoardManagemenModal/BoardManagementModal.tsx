@@ -39,12 +39,12 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
 
     useEffect(() => {
         setTitleError('')
-
         if (initialData) {
             setTitle(initialData.title)
             setDescription(initialData.description)
+            setImageUrl(initialData?.imageName)
         }
-    }, [initialData, open])
+    }, [initialData])
 
     const handleSubmit = () => {
         if (!title.trim()) {
@@ -58,6 +58,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         setTitle('')
         setDescription('')
         setImage(null)
+        setImageUrl('')
     }
 
     return (

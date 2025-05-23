@@ -30,11 +30,11 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     const [description, setDescription] = useState(initialData?.description || '')
 
     const [image, setImage] = useState<File | null>(null)
-    const imageUrl = useMemo(() => image && URL.createObjectURL(image) || placeholderImageUrl, [image])
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const image = e.target.files![0]
+    const [imageUrl, setImageUrl] = useState(initialData?.imageName || (image && URL.createObjectURL(image) || placeholderImageUrl))
+    
+    const handleImageUpload = (image: File) => {
         setImage(image)
+        setImageUrl(image && URL.createObjectURL(image))
     }
 
     useEffect(() => {
@@ -85,20 +85,10 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        {/* <div className={styles.image_section}>
-                            <div className={styles.upload}>
-                                <img src={imageUrl} alt="img" />
-                                <Button startIcon={<CloudUploadIcon />} variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
-                                    Upload Image
-                                    <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
-                                </Button>
-                            </div>
-                            {image && <p>{image.name}</p>}
-                        </div> */}
                         <FileUpload
                             image={image}
-                            imageUrl={imageUrl}
-                            onUpload={(img) => setImage(img)}
+                            imageUrl={imageUrl || ''}
+                            onUpload={handleImageUpload}
                         />
                     </Stack>
                     <div className={styles.buttons}>

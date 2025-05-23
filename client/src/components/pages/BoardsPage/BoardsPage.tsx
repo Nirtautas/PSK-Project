@@ -65,12 +65,6 @@ const BoardsPage = ({ pageNum }: Props) => {
 
     return (
         <div className={styles.content}>
-            <button onClick={() => messages.displayDialog({
-                title: 'lole',
-                text: 'saoidjfaoisdjfoi',
-                onCancelClick: () => { console.log('canceled')},
-                onOkClick: () => { console.log('ok')}
-            })}>asdfasdf</button>
             <Box className={styles.toolbar}>
                 <Typography variant="h3">Your Boards</Typography>
                 <Button variant="contained" className={styles.create_button} onClick={() => setIsModalOpen(true)}>Create new</Button>

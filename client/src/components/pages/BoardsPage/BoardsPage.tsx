@@ -13,6 +13,7 @@ import PageChanger from '../../shared/PageChanger'
 import BoardManagementModal, { CreateBoardFormArgs } from './BoardManagemenModal/BoardManagementModal'
 import usePagedFetch from '@/hooks/usePagedFetch'
 import UploadApi from '@/api/upload.api'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     pageNum: number
@@ -32,8 +33,10 @@ const BoardsPage = ({ pageNum }: Props) => {
         deps: [pageNum]
     })
 
-    useEffect(() => {refetch()}, [pageNum])
+    const messages = useMessagePopup()
 
+    useEffect(() => {refetch()}, [pageNum])
+    
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const isLastPage = data ? pageNum >= pageCount - 1 : false
 
@@ -42,7 +45,7 @@ const BoardsPage = ({ pageNum }: Props) => {
         if (image) {
             const imageUploadResponse = await UploadApi.uploadImage(image)
             if (!imageUploadResponse.result) {
-                console.error(imageUploadResponse.error)
+                messages.displayError(imageUploadResponse.error || 'An error occured')
                 return
             }
             imageName = imageUploadResponse.result
@@ -54,7 +57,7 @@ const BoardsPage = ({ pageNum }: Props) => {
         })
         setIsModalOpen(false)
         if (!response.result) {
-            console.error('Failed to create board.')
+            messages.displayError('Failed to create board.')
             return
         }
         refetch()

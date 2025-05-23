@@ -9,10 +9,13 @@ import AuthApi from '@/api/auth.api'
 import { setCookie } from 'cookies-next'
 import { setUserId } from '@/utils/userId'
 import { GetPageUrl } from '../../../constants/route'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 const RegisterPage = () => {
     const [errorMsgs, setErrorMsgs] = useState<string[]>([])
     const router = useRouter()
+
+    const messages = useMessagePopup()
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -27,7 +30,6 @@ const RegisterPage = () => {
         })
         if (regResponse.error) {
             setErrorMsgs(regResponse.error)
-            console.log(regResponse.error)
             return
         }
 

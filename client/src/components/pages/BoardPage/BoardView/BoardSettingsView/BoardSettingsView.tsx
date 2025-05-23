@@ -38,7 +38,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
 
     const router = useRouter()
     const [userId, setUserId] = useState<number | null>(null)
-    const { displayError } = useMessagePopup()
+    const messages = useMessagePopup()
 
     useEffect(() => {
         const userId = getUserId()
@@ -51,7 +51,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     })
     const userRole = userRoleData?.userRole
 
-    const { 
+    const {
         data: archTaskData,
         setData: setArchTaskData,
         isLoading: isArchTasksLoading,
@@ -77,12 +77,12 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         }
     }
 
-    const handleUpdateBoard = async ({ description, image, title}: CreateBoardFormArgs) => {
+    const handleUpdateBoard = async ({ description, image, title }: CreateBoardFormArgs) => {
         let imageName = ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {
-                displayError(imageResponse.error || 'An error occured')
+                messages.displayError(imageResponse.error || 'An error occured')
                 return
             }
             imageName = imageResponse.result
@@ -97,7 +97,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         const response = await BoardApi.updateBoard(boardId, updatedDataWithVersion)
         if (!response.result) {
             setIsEditOpen(false)
-            displayError(`${response.error} Try again.` || 'Failed to update board.')
+            messages.displayError(`${response.error} Try again.` || 'Failed to update board.')
             return
         }
         setIsEditOpen(false)
@@ -105,52 +105,61 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     }
 
     const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this board?'))
-            return
-
-        setIsDeleting(true)
-        const result = await BoardApi.deleteBoard(boardId)
-        if (result.error) {
-            displayError(result.error || 'Failed to delete board.')
-        }
-        else {
-            router.push('/boards')
-        }
-        setIsDeleting(false)
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: 'Are you sure you want to delete this board?',
+            onOkClick: async () => {
+                setIsDeleting(true)
+                const result = await BoardApi.deleteBoard(boardId)
+                if (result.error) {
+                    messages.displayError(result.error || 'Failed to delete board.')
+                }
+                else {
+                    router.push('/boards')
+                }
+                setIsDeleting(false)
+            }
+        })
     }
 
     const handleArchivedDelete = async () => {
-        const confirmMsg = `All archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?`
-        if (!confirm(confirmMsg))
-            return
-
-        setIsArchTaskDeleting(true)
-        const result = await TaskApi.deleteArchived(boardId)
-        if (result.error) {
-            displayError('Error deleting archived tasks!')
-        }
-        else {
-            setArchTaskData([])
-        }
-        setIsArchTaskDeleting(false)
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: 'All archived tasks will be deleted. Are you sure you want to delete ALL archived tasks?',
+            onOkClick: async () => {
+                setIsArchTaskDeleting(true)
+                const result = await TaskApi.deleteArchived(boardId)
+                if (result.error) {
+                    messages.displayError('Error deleting archived tasks!')
+                }
+                else {
+                    setArchTaskData([])
+                }
+                setIsArchTaskDeleting(false)
+            }
+        })
     }
 
     const handleLeave = async () => {
-        if (!confirm('Are you sure you want to leave this board?'))
-            return
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: 'Are you sure you want to leave this board?',
+            onOkClick: async () => {
+                setIsLeaving(true)
+                setLeaveError('')
+                var response = await CollaboratorApi.removeCollaborator(boardId, userId ?? 0)
 
-        setIsLeaving(true)
-        setLeaveError('')
-        var response = await CollaboratorApi.removeCollaborator(boardId, userId ?? 0)
+                if (response.error) {
+                    setLeaveError(response.error)
+                    setIsLeaving(false)
+                    return
+                }
 
-        if (response.error) {
-            setLeaveError(response.error)
-            setIsLeaving(false)
-            return
-        }
+                router.push('/boards')
+                setIsLeaving(false)
+            }
+        })
 
-        router.push('/boards')
-        setIsLeaving(false)
     }
 
     return (

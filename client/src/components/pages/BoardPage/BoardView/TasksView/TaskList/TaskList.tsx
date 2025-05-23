@@ -39,7 +39,7 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
                         <TaskCard
                             boardId={boardId}
                             task={task}
-                            onClick={() => { console.log('clicked task: ', task)}}
+                            onClick={() => {}}
                             onMouseDown={onMouseDown}
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}

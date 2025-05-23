@@ -10,10 +10,13 @@ import { TextField, Typography, Button, Link, Box } from '@mui/material'
 import PasswordInput from '@/components/templates/FormControlLayout/PasswordInput'
 
 import styles from './LoginPage.module.scss'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 const LoginPage = () => {
     const [errorMsg, setErrorMsg] = useState<string>()
     const router = useRouter()
+
+    const messages = useMessagePopup()
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -24,7 +27,7 @@ const LoginPage = () => {
         })
         if (response.error) {
             setErrorMsg(response.error)
-            console.log(errorMsg)
+            messages.displayError(errorMsg || 'An error occured')
             return
         }
         const { jwtToken, id } = response.result!

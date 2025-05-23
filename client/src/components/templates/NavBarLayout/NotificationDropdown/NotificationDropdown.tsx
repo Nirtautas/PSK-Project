@@ -6,6 +6,7 @@ import styles from './NotificationDropdown.module.scss'
 import { Notification } from '@/types/types'
 import NotificationCard from './NotificationCard'
 import ErrorDisplay from '@/components/shared/ErrorDisplay'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     isLoading?: boolean
@@ -16,8 +17,11 @@ type Props = {
     onDeleteAllNotifications: () => void 
 }
 
-const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept, onInvitationDecline, onDeleteAllNotifications   }: Props) => {
+const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept, onInvitationDecline, onDeleteAllNotifications }: Props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+    const messages = useMessagePopup()
+
     const isOpen = Boolean(anchorEl)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -28,11 +32,13 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
     }
 
     const handleDeleteAllNotifications = () => {
-        const confirmMsg = `${notifications.length} notifications will be deleted. Are you sure you want to delete ALL notifications?`
-        if (!confirm(confirmMsg))
-            return
-
-        onDeleteAllNotifications(); 
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: `${notifications.length} notifications will be deleted. Are you sure you want to delete ALL notifications?`,
+            onOkClick: () => {
+                onDeleteAllNotifications()
+            }
+        })
     }
 
     const getNotificationHeaderContent = () => {

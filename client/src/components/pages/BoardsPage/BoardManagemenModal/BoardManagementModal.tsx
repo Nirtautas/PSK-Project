@@ -30,7 +30,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     const [description, setDescription] = useState(initialData?.description || '')
 
     const [image, setImage] = useState<File | null>(null)
-    const [imageUrl, setImageUrl] = useState(initialData?.imageName || (image && URL.createObjectURL(image) || placeholderImageUrl))
+    const [imageUrl, setImageUrl] = useState(initialData?.imageName || (image && URL.createObjectURL(image)))
     
     const handleImageUpload = (image: File) => {
         setImage(image)

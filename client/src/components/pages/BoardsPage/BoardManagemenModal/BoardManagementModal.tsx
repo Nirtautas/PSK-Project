@@ -9,6 +9,8 @@ import FileUpload from '@/components/shared/FileUpload/'
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material'
 
 import styles from './BoardManagemenModal.module.scss'
+import { FileSize } from '@/utils/fileSize'
+import { ALLOWED_IMAGE_FORMATS, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from '@/constants/api'
 
 export type CreateBoardFormArgs = {
     title: string
@@ -28,12 +30,23 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     const [title, setTitle] = useState(initialData?.title || '')
     const [titleError, setTitleError] = useState<string>('')
     const [description, setDescription] = useState(initialData?.description || '')
-
+    
     const [image, setImage] = useState<File | null>(null)
+    const [imageError, setImageError] = useState<string>('')
     const imageUrl = useMemo(() => image && URL.createObjectURL(image) || placeholderImageUrl, [image])
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const image = e.target.files![0]
+    const handleImageUpload = async (image: File) => {
+        if (image.size > MAX_IMAGE_SIZE) {
+            setImageError(`Image size must not exceed ${MAX_IMAGE_SIZE_MB} MB.`)
+            setImage(null)
+            return
+        }
+        if (!ALLOWED_IMAGE_FORMATS.some((imageFormat) => image.name.endsWith(imageFormat))) {
+            setImageError(`Image format not supported.`)
+            setImage(null)
+            return
+        }
+        setImageError('')
         setImage(image)
     }
 
@@ -85,27 +98,24 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        {/* <div className={styles.image_section}>
-                            <div className={styles.upload}>
-                                <img src={imageUrl} alt="img" />
-                                <Button startIcon={<CloudUploadIcon />} variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
-                                    Upload Image
-                                    <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
-                                </Button>
-                            </div>
-                            {image && <p>{image.name}</p>}
-                        </div> */}
                         <FileUpload
                             image={image}
                             imageUrl={imageUrl}
-                            onUpload={(img) => setImage(img)}
+                            errorMsg={imageError}
+                            onUpload={handleImageUpload}
                         />
                     </Stack>
                     <div className={styles.buttons}>
                         <Button variant="outlined" onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} className={styles.buttons_button_right} sx={{ marginLeft: '1rem' }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                            className={styles.buttons_button_right}
+                            sx={{ marginLeft: '1rem' }}
+                        >
                             {mode === 'edit' ? 'Edit' : 'Create'}
                         </Button>
                     </div>

@@ -7,7 +7,7 @@ import styles from './UserProfile.module.scss'
 
 type Props = {
   name: string
-  imageUrl: string | null | undefined
+  imageUrl?: string
   buttons: {
     label: string
     onClick: () => void
@@ -23,8 +23,7 @@ const UserProfile = ({ name, imageUrl, buttons }: Props) => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-console.log('Avatar image URL:', imageUrl ? `http://localhost:5000/images/${imageUrl}` : 'No image URL');
-
+  
   return (
     <Card className={styles.container} elevation={2}>
       <CardActionArea
@@ -40,7 +39,7 @@ console.log('Avatar image URL:', imageUrl ? `http://localhost:5000/images/${imag
           <Avatar
             className={styles.avatar}
             alt={name}
-            src={imageUrl ? `http://localhost:5000/images/${imageUrl}` : undefined}
+            src={imageUrl}
             sx={{ width: 56, height: 56 }}
           >
             {!imageUrl && (

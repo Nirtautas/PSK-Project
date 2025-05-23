@@ -10,6 +10,6 @@ namespace WorthBoards.Data.Identity
         [MaxLength(30)]
         public required string LastName { get; set; }
         public required DateTime CreationDate { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageName { get; set; }
     }
 }

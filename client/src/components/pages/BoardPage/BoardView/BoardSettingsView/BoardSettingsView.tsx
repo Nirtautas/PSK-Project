@@ -63,11 +63,10 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
         try {
             const { result } = await BoardApi.getBoardById(boardId)
             if (result == null) throw new Error('Board not found.')
-
             const boardData: UpdateBoardDto = {
                 title: result.title,
                 description: result.description,
-                imageName: '',
+                imageName: result.imageURL || '',
                 version: result.version
             }
             setEditData(boardData)
@@ -78,7 +77,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     }
 
     const handleUpdateBoard = async ({ description, image, title}: CreateBoardFormArgs) => {
-        let imageName = ''
+        let imageName = editData?.imageName || ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {

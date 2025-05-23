@@ -14,7 +14,7 @@ namespace WorthBoards.Business.AutoMapper
         {
             // User
             CreateMap<ApplicationUser, UserResponse>()
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageURL)));
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
             CreateMap<UserRequest, ApplicationUser>();
             CreateMap<UserRegisterRequest, ApplicationUser>();
             CreateMap<ApplicationUser, LinkedUserToTaskResponse>();
@@ -65,7 +65,7 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Tuple<TaskOnUser, ApplicationUser>, LinkedUserToTaskResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.Item2.ImageName)))
                 .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.Item1.AssignedAt));
 
             //BoardOnUser
@@ -76,7 +76,7 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Tuple<BoardOnUser, ApplicationUser>, LinkedUserToBoardResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.Item2.ImageName)))
                 .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Item1.UserRole))
                 .ForMember(dest => dest.AddedAt, opt => opt.MapFrom(src => src.Item1.AddedAt));
         }

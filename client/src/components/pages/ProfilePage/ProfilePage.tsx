@@ -153,7 +153,7 @@ const ProfilePage = () => {
                             <Grid item>
                             <Avatar
                                 alt={userName}
-                                src={imageURL ? (imageURL.startsWith('http') ? imageURL : `http://localhost:5000/images/${imageURL}`) : undefined}
+                                src={imageURL}
                                 sx={{ width: 56, height: 56 }}
                                 >
                                 {!imageURL && <PersonIcon sx={{ fontSize: 40, color: 'white' }} />}

@@ -37,7 +37,6 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
         setCurrentTask(updatedTask)
         onTaskUpdate(updatedTask)
     }
-
     return (
         <>
             <Card elevation={2} className={styles.task_card} onMouseDown={onMouseDown ? (e) => onMouseDown(e as unknown as MouseEvent, task) : undefined} onClick={handleOpen}>

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CommentApi from "@/api/comment.api";
 import Avatar from "@mui/material/Avatar";
+import styles from "./CommentDisplay.module.scss"
 
 export default function CommentDisplay({
     commentData,
@@ -41,7 +42,7 @@ export default function CommentDisplay({
     }
     
     return (
-        <Box sx={{ padding: 1, borderBottom: '1px solid #ccc' }}>
+        <Box className={styles.comment_container}>
             {editing ? (
                 <form onSubmit={handleEdit}>
                     <TextField
@@ -60,35 +61,34 @@ export default function CommentDisplay({
                 </form>
             ) : (
                 <>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                        <Avatar alt="userName" src={user?.imageURL} />
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="body1" 
-                              sx={{
-                                wordBreak: 'break-word',
-                                whiteSpace: 'pre-wrap',
-                              }}>{user?.userName}: {commentData.content}</Typography>
-                            <Typography variant="body2" sx={{ color: 'gray' }}>
-                                {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
-                            </Typography>
-                        </Box>
-                    </Box>
+                    <div className={styles.comment_header}>
+                        <Avatar className={styles.avatar} alt="userName" src={user?.imageURL} />
+                        <div className={styles.username}>{user?.userName}</div>
+                        <Typography variant="body2" className={styles.date}>
+                            {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
+                        </Typography>
+                    </div>
+                    <Typography variant="body1" className={styles.comment_text}>
+                        {commentData.content}
+                    </Typography>
                     {commentData.userId === userId && taskStatus !== TaskStatus.ARCHIVED && (
-                    <Box sx={{ display: 'flex', gap: 1, marginTop: 1 }}>
-                        <Button
-                            variant="text"
-                            size="small"
-                            onClick={() => setEditing(true)}
-                            startIcon={<EditIcon fontSize="small"/>}
-                        />
-                        <Button
-                            variant="text"
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete({commentData})}
-                            startIcon={<Delete fontSize="small"/>}
-                        />
-                    </Box>
+                        <Box className={styles.buttons_container}>
+                            <Button
+                                className={styles.button}
+                                variant="text"
+                                size="small"
+                                onClick={() => setEditing(true)}
+                                startIcon={<EditIcon fontSize="small"/>}
+                            />
+                            <Button
+                                className={styles.button}
+                                variant="text"
+                                size="small"
+                                color="error"
+                                onClick={() => handleDelete({commentData})}
+                                startIcon={<Delete fontSize="small"/>}
+                            />
+                        </Box>
                     )}
                 </>
             )}

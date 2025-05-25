@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql.Internal;
 using System.Security.Claims;
@@ -11,19 +12,23 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards/{boardId:int}/tasks/{taskId:int}/comments")]
+    [Authorize]
     public class CommentController(ICommentService _commentService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllBoardTaskComments([FromRoute] int taskId, CancellationToken cancellationToken, int pageNum = 0, int pageSize = 10)
         {
             var (commentResponse, totalCount) = await _commentService.GetAllBoardTaskCommentsAsync(taskId, cancellationToken, pageNum, pageSize);
-            return Ok(new {Comments = commentResponse, TotalCount = totalCount});
+            
+            var pageCount = totalCount == 0 ? 1 : (int)Math.Ceiling((double)totalCount / pageSize);
+            return Ok(new {items = commentResponse, pageNumber = pageNum, pageCount, pageSize});
         }
 
         [HttpGet("{commentId}")]
         public async Task<IActionResult> GetCommentById([FromRoute] int taskId, int commentId, CancellationToken cancellationToken)
         {
             var commentResponse = await _commentService.GetCommentByIdAsync(taskId, commentId, cancellationToken);
+            
             return Ok(commentResponse);
         }
 

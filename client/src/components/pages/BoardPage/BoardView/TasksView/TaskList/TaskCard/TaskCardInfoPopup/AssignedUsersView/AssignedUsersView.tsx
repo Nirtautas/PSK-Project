@@ -5,6 +5,9 @@ import styles from './AssignedUsers.module.scss'
 import SelectUsersField from "../../../../CreateTaskForm/SelectUsersField";
 import { useEffect, useState } from "react";
 import TaskOnUserApi from "@/api/taskOnUser.api";
+import { Avatar } from "@mui/material";
+import { useMessagePopup } from "@/components/shared/MessagePopup/MessagePopupProvider";
+import { useDarkTheme } from '@/hooks/darkTheme'
 
 type Props = {
     users: TaskUser[]
@@ -16,30 +19,39 @@ type Props = {
   
 export default function AssignedUsersView({ users, boardId, taskId, onUserChange, editMode }: Props) {
     const [currentUsers, setCurrentUsers] = useState<TaskUser[]>(users)
-
+    const { displayError } = useMessagePopup()
+    const isDarkTheme = useDarkTheme()
     useEffect(() => {
-        console.log('1')
         setCurrentUsers(users)
     }, [users])
 
     const handleSelectedUsersChange = async (changedUsers: BoardUser[]) => {
-        console.log('2')
         if (currentUsers.length !== 0)
         {
-            const userIds = currentUsers.map(user => user.id)
-            console.log(`currentUsers: ${userIds}`)
-            await TaskOnUserApi.unlinkTaskUser(boardId, taskId, userIds)
+            const unlinkedUserIds = currentUsers.filter(current => !changedUsers.some(changed => changed.id === current.id)).map(user => user.id)
+            if (unlinkedUserIds.length !== 0) {
+                const unlinkResult = await TaskOnUserApi.unlinkTaskUser(boardId, taskId, unlinkedUserIds)
+                if (unlinkResult.error) {
+                    displayError(unlinkResult.error)
+                    return
+                }
+            }
         }
         
-        const newAssignedUserIds = changedUsers.map(user => user.id)
-        console.log(`newAssignedUserIds: ${newAssignedUserIds}`)
-        const linkResult = await TaskOnUserApi.linkTaskUser(boardId, taskId, newAssignedUserIds)
+        const newAssignedUserIds = changedUsers.filter(changed => !currentUsers.some(current => changed.id === current.id)).map(user => user.id)
+        if (newAssignedUserIds.length !== 0) {
+            const linkResult = await TaskOnUserApi.linkTaskUser(boardId, taskId, newAssignedUserIds)
+            if (linkResult.error) {
+                displayError(linkResult.error)
+                return
+            }
+        }
 
         const newUsers = changedUsers as unknown as TaskUser[]
         setCurrentUsers(newUsers)
         onUserChange(newUsers)
     }
-    console.log('3')
+
     return (
         <Box sx={{ height: '100%'}}>
             <Typography variant="h4">Assigned Users</Typography>
@@ -50,8 +62,8 @@ export default function AssignedUsersView({ users, boardId, taskId, onUserChange
                     boardId={boardId}
                 />}
                 {!editMode && (currentUsers && currentUsers.length ? currentUsers.map((user) => (
-                    <Box key={user.id} className={styles.user_box}>
-                        <img key={user.id} width={25} height={25} src={user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true'} alt="image" />
+                    <Box sx={{ backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0' }} key={user.id} className={styles.user_box}>
+                        <Avatar className={styles.avatar} alt={user.userName} src={user.imageURL}/>
                         <Typography>{user.userName}</Typography>
                     </Box>
                 )) : (

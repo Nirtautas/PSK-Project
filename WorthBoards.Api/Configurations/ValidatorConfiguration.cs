@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using System.Reflection;
-using WorthBoards.Business.Dtos.Requests;
 namespace WorthBoards.Api.Configurations;
 
 public static class ValidatorConfiguration

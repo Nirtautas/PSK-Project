@@ -8,12 +8,13 @@ export type Board = {
     tasks: Task[]
 }
 
-export type StatusString = 'Pending' | 'In_Progress' | 'Completed'
+export type StatusString = 'Pending' | 'In_Progress' | 'Completed' | 'Archived'
 
 export enum TaskStatus {
     PENDING,
     IN_PROGRESS,
-    COMPLETED
+    COMPLETED,
+    ARCHIVED
 }
 
 export type Task = {
@@ -42,6 +43,7 @@ export type User = {
     userName: string
     creationDate: Date
     imageURL: string
+    email: string
 }
 
 export type BoardUser = {

@@ -1,0 +1,32 @@
+
+
+.upload {
+  padding: 0.5rem 0;
+  display: flex;
+
+  &_button {
+    margin: auto 0 auto auto;
+  }
+
+  > img {
+    max-height: 75px;
+    max-width: 75px;
+    margin-right: 1rem;
+  }
+
+}
+
+.image_section {
+  padding: 0.5rem;
+  max-width: 100%;
+  overflow: hidden;
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.error {
+    color: red
+}

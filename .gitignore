@@ -20,3 +20,4 @@ Migrations
 # Logger
 Logs
 /WorthBoards.Data/Migrations/ApplicationDbContextModelSnapshot.cs
+/WorthBoards.Data/StaticImages

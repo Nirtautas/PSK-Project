@@ -8,6 +8,8 @@ import { useCollaborators } from '@/hooks/useCollaborators'
 import { getUserId } from '@/utils/userId';
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api';
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider';
+import { useDarkTheme } from '@/hooks/darkTheme';
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value) 
@@ -42,6 +44,8 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const debouncedUserName = useDebounce(userName, 500) 
   const [removeErrors, setRemoveErrors] = useState<{ [userId: number]: string }>({});
   const [userId, setUserId] = useState<number | null>(null)
+  const { displayError } = useMessagePopup();
+  const isDarkTheme = useDarkTheme()
 
   useEffect(() => {
       const userId = getUserId();
@@ -56,17 +60,19 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   useEffect(() => {
     const fetchUsers = async () => {
       if (debouncedUserName.length > 0) {
-        try {
-          const { result } = await CollaboratorApi.getUsersByUserName(boardId, debouncedUserName)
-          setUsers(result || [])
-        } catch (error) {
-          setLinkErrorMsg('Failed to fetch users')
-        }
-      }
-    }
+        const response = await CollaboratorApi.getUsersByUserName(boardId, debouncedUserName);
 
-  fetchUsers()
-  }, [debouncedUserName, boardId])
+        if (response.error) {
+          displayError(response.error || 'Failed to fetch users. Try again.');
+          return;
+        }
+
+        setUsers(response.result || []);
+      }
+    };
+
+    fetchUsers();
+  }, [debouncedUserName, boardId]);
 
   const handleRoleSelection = (userId: number, newRole: string) => {
     setRoleMapping(prevState => ({
@@ -76,19 +82,31 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   }
 
   const handleRoleChange = async (userId: number, newRole: string) => {
-    try {
-      const response = await CollaboratorApi.updateUserRole(boardId, userId, newRole);
-      if (response.result) {
-        setRoleMapping((prev) => ({ ...prev, [userId]: newRole }));
-        setRoleErrors((prev) => ({ ...prev, [userId]: '' })); 
-        const { result } = await CollaboratorApi.getCollaborators(boardId);
-        setCollaborators(result || []);
-      } else {
-        setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
-      }
-    } catch (error) {
-      setRoleErrors((prev) => ({ ...prev, [userId]: 'Failed to update role' }));
+    const updateResponse = await CollaboratorApi.updateUserRole(boardId, userId, newRole);
+
+    if (updateResponse.error) {
+      displayError(updateResponse.error || 'Failed to update role.');
+      return;
     }
+
+    setRoleMapping((prev) => ({ ...prev, [userId]: newRole }));
+    setRoleErrors((prev) => ({ ...prev, [userId]: '' }));
+
+    const collaboratorsResponse = await CollaboratorApi.getCollaborators(boardId);
+    if (collaboratorsResponse.error) {
+      displayError(collaboratorsResponse.error || 'Failed to fetch collaborators after role update.');
+      return;
+    }
+    
+      let updatedCollaborators = collaboratorsResponse.result || [];
+
+    const owner = updatedCollaborators.find(user => user.userRole === Role.OWNER);
+    if (owner) {
+      updatedCollaborators = updatedCollaborators.filter(user => user.userRole !== Role.OWNER);
+      updatedCollaborators.unshift(owner);
+    }
+
+    setCollaborators(updatedCollaborators);
   };
 
   const handleUserSelection = (userId: number) => {
@@ -132,13 +150,14 @@ const mapUserRoleEnumToString = (role: string | null): RoleString => {
 };
 
 const handleRemoveCollaborator = async (userId: number) => {
-  try {
-    await CollaboratorApi.removeCollaborator(boardId, userId);
-    setCollaborators((prev) => prev.filter((user) => user.id !== userId));
-    setRemoveErrors((prev) => ({ ...prev, [userId]: '' }));
-  } catch (error) {
-    setRemoveErrors((prev) => ({ ...prev, [userId]: 'Failed to remove collaborator. Please try again.' }));
+  const response = await CollaboratorApi.removeCollaborator(boardId, userId);
+
+  if (response.error) {
+    displayError(response.error || 'Failed to remove collaborator. Please try again.');
+    return;
   }
+
+  setCollaborators((prev) => prev.filter((user) => user.id !== userId));
 };
 
 return (
@@ -154,9 +173,9 @@ return (
         ) : (
           <Box className={styles.card_container}>
               {Array.isArray(collaborators) && collaborators.map((user: BoardUser, index: number) => (
-                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: '#262626', width: '70%' }}>
-                  <CardContent className={styles.card_Content}>
-                  <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center', backgroundColor: '#262626'}} >
+                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}}>
+                  <CardContent className={styles.card_content}>
+                  <Paper elevation={1} className={styles.user_info} sx={{ backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}} >
                     {index + 1}.    
                     <Avatar className={styles.img_container} alt={user.userName} src={user.imageURL}  sx={{ marginLeft: 2, marginRight: 3 }}/>
                     <span style={{ marginRight: '20px' }}>{user.userName}</span>
@@ -168,14 +187,15 @@ return (
                       </Typography>   
                     </div>
                   </CardContent>
-                  <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
+                  <div className={styles.user_control}>
+                    <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
                       <InputLabel>Role</InputLabel>
                       <Select 
                         value={roleMapping[user.id] || 'VIEWER'}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         label="Role"
                         size="small"
-                        disabled={user.userRole === Role.OWNER}
+                        disabled={user.userRole === Role.OWNER || userRole?.userRole !== Role.OWNER}
                       >
                         <MenuItem value="EDITOR">Editor</MenuItem>
                         <MenuItem value="VIEWER">Viewer</MenuItem>
@@ -187,12 +207,17 @@ return (
                     {userRole === null || userRole === undefined ? (
                       <Typography>Loading user role...</Typography>
                     ) : (
-                      userRole.userRole === Role.OWNER && user.userRole !== Role.OWNER && (
-                        <IconButton onClick={() => handleRemoveCollaborator(user.id)} sx={{ color: 'red' }} >
+                      (
+                        <IconButton
+                          onClick={() => handleRemoveCollaborator(user.id)}
+                          disabled={!(userRole.userRole === Role.OWNER && user.userRole !== Role.OWNER)}
+                          sx={{ color: 'red', marginRight: 2}}
+                        >
                           <RemoveCircleOutlineIcon />
                         </IconButton>
                       )
                     )}
+                  </div>
                 </Card>
               ))}
           </Box>
@@ -241,7 +266,7 @@ return (
                       justifyContent: 'space-between',
                       padding: 2,
                       marginBottom: 2,
-                      backgroundColor: '#1e1e1e',
+                      backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0',
                       borderRadius: 2,
                       width: '50%'
                     }}

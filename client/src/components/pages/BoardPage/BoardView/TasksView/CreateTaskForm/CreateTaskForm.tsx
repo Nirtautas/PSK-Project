@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { useState, FormEvent } from "react";
 import { BoardUser, Task, TaskStatus, TaskUser } from "@/types/types";
 import TaskOnUserApi from "@/api/taskOnUser.api";
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     handleClose: () => void
@@ -20,39 +21,40 @@ const CreateTaskForm = ({ handleClose, boardId, onCreate }: Props) => {
     const [deadline, setDeadline] = useState<dayjs.Dayjs | null>(null);
     const [selectedUsers, setSelectedUsers] = useState<BoardUser[]>([]);
 
+    const messages = useMessagePopup()
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        
-        try {
-            const newTask = {
-                title,
-                description: description || null,
-                taskStatus: TaskStatus.PENDING,
-                deadlineEnd: deadline ? deadline.toDate() : null
-            }
-            
-            const response = await TaskApi.create(newTask as CreateTaskDto, boardId)
-            if (response.result) {
-                const userIds = selectedUsers.map(user => user.id)
-                await TaskOnUserApi.linkTaskUser(boardId, response.result.id, userIds)
-                
-                const taskUsers: TaskUser[] = selectedUsers.map(user => ({
-                    id: user.id,
-                    userName: user.userName,
-                    imageURL: user.imageURL ?? 'https://preview.colorkit.co/color/ff0000.png?static=true',
-                    assignedAt: new Date()
-                }))
-                
-                const createdTask: Task = {
-                    ...response.result,
-                    assignedUsers: taskUsers
-                }
-                onCreate(createdTask)
-            }
-            handleClose()
-        } catch (error) {
-            console.error('Task creation failed:', error)
+
+        const newTask = {
+            title,
+            description: description || null,
+            taskStatus: TaskStatus.PENDING,
+            deadlineEnd: deadline ? deadline.toDate() : null
         }
+        
+        const response = await TaskApi.create(newTask as CreateTaskDto, boardId)
+        if (!response.result) {
+            messages.displayError(response.error || 'An error occured')
+            handleClose()
+            return
+        }
+        const userIds = selectedUsers.map(user => user.id)
+            await TaskOnUserApi.linkTaskUser(boardId, response.result.id, userIds)
+            
+            const taskUsers: TaskUser[] = selectedUsers.map(user => ({
+                id: user.id,
+                userName: user.userName,
+                imageURL: user.imageURL ?? '',
+                assignedAt: new Date()
+            }))
+            
+            const createdTask: Task = {
+                ...response.result,
+                assignedUsers: taskUsers
+            }
+            onCreate(createdTask)
+        handleClose()
     }
 
     return (

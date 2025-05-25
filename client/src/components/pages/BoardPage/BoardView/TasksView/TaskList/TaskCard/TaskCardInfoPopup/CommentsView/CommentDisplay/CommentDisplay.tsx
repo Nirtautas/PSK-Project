@@ -3,43 +3,43 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
-import { BoardUser, Comment } from "@/types/types";
+import { BoardUser, Comment, TaskStatus } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import CommentApi from "@/api/comment.api";
 import Avatar from "@mui/material/Avatar";
+import styles from "./CommentDisplay.module.scss"
+import { useDarkTheme } from "@/hooks/darkTheme";
 
 export default function CommentDisplay({
     commentData,
     boardId,
     handleDelete,
-    cashedUsers,
+    user,
+    onEdit,
+    taskStatus
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
-    cashedUsers: BoardUser[] | null
+    user?: BoardUser
+    onEdit: (newContent: string) => void
+    taskStatus: TaskStatus
 }) {
     const userId = getUserId();
     const [editing, setEditing] = useState(false);
+    const isDarkTheme = useDarkTheme()
     
     const handleEdit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const commentText = (event.currentTarget[0] as HTMLInputElement).value;
-        const updatedComment = await CommentApi.update(boardId, commentData.taskId, commentData.id, commentText, commentData.version);
-        if (updatedComment.error) {
-            console.error("Error updating comment:", updatedComment.error);
-        }
-        if (updatedComment.result) {
-            console.log("Edited text to:", commentText);
-            commentData.content = commentText;
-        }
+        onEdit(commentText)
         setEditing(false);
     }
     
     return (
-        <Box sx={{ padding: 1, borderBottom: '1px solid #ccc' }}>
+        <Box className={styles.comment_container} sx={{backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}}>
             {editing ? (
                 <form onSubmit={handleEdit}>
                     <TextField
@@ -58,38 +58,34 @@ export default function CommentDisplay({
                 </form>
             ) : (
                 <>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                        <Avatar alt="profile picture" src={cashedUsers?.find(user => user.id === commentData.userId)?.imageURL} />
-                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                            {commentData.userId === userId ? "You" : cashedUsers?.find(user => user.id === commentData.userId)?.userName}
+                    <div className={styles.comment_header}>
+                        <Avatar className={styles.avatar} alt="userName" src={user?.imageURL} />
+                        <div className={styles.username}>{user?.userName}</div>
+                        <Typography variant="body2" className={styles.date}>
+                            {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
                         </Typography>
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="body1" 
-                              sx={{
-                                wordBreak: 'break-word', // allows long words to wrap
-                                whiteSpace: 'pre-wrap',  // respects line breaks and wraps text
-                              }}>{commentData.content}</Typography>
-                            <Typography variant="body2" sx={{ color: 'gray' }}>
-                                {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
-                            </Typography>
+                    </div>
+                    <Typography variant="body1" className={styles.comment_text}>
+                        {commentData.content}
+                    </Typography>
+                    {commentData.userId === userId && taskStatus !== TaskStatus.ARCHIVED && (
+                        <Box className={styles.buttons_container}>
+                            <Button
+                                className={styles.button}
+                                variant="text"
+                                size="small"
+                                onClick={() => setEditing(true)}
+                                startIcon={<EditIcon fontSize="small"/>}
+                            />
+                            <Button
+                                className={styles.button}
+                                variant="text"
+                                size="small"
+                                color="error"
+                                onClick={() => handleDelete({commentData})}
+                                startIcon={<Delete fontSize="small"/>}
+                            />
                         </Box>
-                    </Box>
-                    {commentData.userId === userId && (
-                    <Box sx={{ display: 'flex', gap: 1, marginTop: 1 }}>
-                        <Button
-                            variant="text"
-                            size="small"
-                            onClick={() => setEditing(true)}
-                            startIcon={<EditIcon fontSize="small"/>}
-                        />
-                        <Button
-                            variant="text"
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete({commentData})}
-                            startIcon={<Delete fontSize="small"/>}
-                        />
-                    </Box>
                     )}
                 </>
             )}

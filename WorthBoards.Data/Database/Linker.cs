@@ -9,7 +9,7 @@ namespace WorthBoards.Data.Database
         public static void LinkAll(ModelBuilder modelBuilder)
         {
             AddDateGeneration(modelBuilder);
-            LinkApplicationUser(modelBuilder);
+            LinkEntities(modelBuilder);
         }
 
         public static void AddDateGeneration(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace WorthBoards.Data.Database
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         }
 
-        public static void LinkApplicationUser(ModelBuilder modelBuilder)
+        public static void LinkEntities(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany<BoardOnUser>()
@@ -85,6 +85,12 @@ namespace WorthBoards.Data.Database
                 .HasOne(n => n.Task)
                 .WithMany()
                 .HasForeignKey(n => n.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Board)
+                .WithMany()
+                .HasForeignKey(n => n.BoardId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

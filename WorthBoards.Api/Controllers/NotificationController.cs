@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
-using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Controllers;
 
 [Route("api/notifications")]
 [ApiController]
+[Authorize]
 public class NotificationController(INotificationService _notificationService) : ControllerBase
 {
     [HttpPost("{notificationId}/accept")]
@@ -37,4 +37,13 @@ public class NotificationController(INotificationService _notificationService) :
         await _notificationService.UnlinkNotification(userId.Value, notificationId, cancellationToken);
         return Ok();
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteAllNotifications(CancellationToken cancellationToken = default)
+    {
+        var userId = UserHelper.GetUserId(User);
+        await _notificationService.UnlinkAllNotifications(userId.Value, cancellationToken);
+        return Ok();
+    }
+
 }

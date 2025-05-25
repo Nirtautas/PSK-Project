@@ -2,15 +2,23 @@
 
 import { Alert, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
-import styles from './BoardManagemenModal.module.scss'
-import { useEffect, useState } from 'react'
-import { placeholderImageUrl } from '@/constants/placeholders'
+import React, { useEffect, useState } from 'react'
 import { CreateBoardDto } from '../../../../api/board.api'
+import FileUpload from '@/components/shared/FileUpload/'
+
+import styles from './BoardManagemenModal.module.scss'
+import { ALLOWED_IMAGE_FORMATS, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from '@/constants/api'
+
+export type CreateBoardFormArgs = {
+    title: string
+    description: string
+    image: File | null
+}
 
 type Props = {
     open: boolean
     onClose: () => void
-    onSubmit: (args: CreateBoardDto) => void
+    onSubmit: (args: CreateBoardFormArgs) => void
     initialData?: CreateBoardDto
     mode: 'create' | 'edit'
 }
@@ -19,26 +27,36 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     const [title, setTitle] = useState(initialData?.title || '')
     const [titleError, setTitleError] = useState<string>('')
     const [description, setDescription] = useState(initialData?.description || '')
-    const [imageURL, setImageURL] = useState<string | null>(initialData?.imageURL ?? '')
+    
+    const [image, setImage] = useState<File | null>(null)
+    const [imageError, setImageError] = useState<string>('')
+    const [imageUrl, setImageUrl] = useState(initialData?.imageName || (image && URL.createObjectURL(image)))
 
-    //const [image, setImage] = useState<File | null>(null)
-    //const imageUrl = (image && URL.createObjectURL(image as Blob)) || placeholderImageUrl
+    const handleImageUpload = async (image: File) => {
+        if (image.size > MAX_IMAGE_SIZE) {
+            setImageError(`Image size must not exceed ${MAX_IMAGE_SIZE_MB} MB.`)
+            setImage(null)
+            return
+        }
+        if (!ALLOWED_IMAGE_FORMATS.some((imageFormat) => image.name.endsWith(imageFormat))) {
+            setImageError(`Image format not supported.`)
+            setImage(null)
+            return
+        }
+        setImageError('')
+        setImage(image)
+        setImageUrl(image && URL.createObjectURL(image))
 
-    //const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //    if (event.target.files && event.target.files.length > 0) {
-    //        setImage(event.target.files[0])
-    //    }
-    //}
+    }
 
     useEffect(() => {
         setTitleError('')
-
         if (initialData) {
             setTitle(initialData.title)
             setDescription(initialData.description)
-            setImageURL(initialData.imageURL)
+            setImageUrl(initialData?.imageName)
         }
-    }, [initialData, open])
+    }, [initialData])
 
     const handleSubmit = () => {
         if (!title.trim()) {
@@ -46,9 +64,13 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
             return
         }
 
-        const safeDescription = description.trim() || 'Welcome to the board!'
+        const safeDescription = description.trim() || ''
 
-        onSubmit({ title, description: safeDescription, imageURL: imageURL?.trim() || placeholderImageUrl })
+        onSubmit({ title, description: safeDescription, image: image })
+        setTitle('')
+        setDescription('')
+        setImage(null)
+        setImageUrl('')
     }
 
     return (
@@ -76,20 +98,24 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
-                        <TextField
-                            label="Image URL"
-                            variant="outlined"
-                            fullWidth
-                            value={imageURL ?? ''}
-                            onChange={(e) => setImageURL(e.target.value)}
+                        <FileUpload
+                            image={image}
+                            errorMsg={imageError}
+                            imageUrl={imageUrl || ''}
+                            onUpload={handleImageUpload}
                         />
                     </Stack>
-
                     <div className={styles.buttons}>
                         <Button variant="outlined" onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} className={styles.buttons_button_right} sx={{ marginLeft: '1rem' }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                            className={styles.buttons_button_right}
+                            sx={{ marginLeft: '1rem' }}
+                        >
                             {mode === 'edit' ? 'Edit' : 'Create'}
                         </Button>
                     </div>
@@ -98,19 +124,5 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         </Modal>
     )
 }
-
-/*
-<div className={styles.image_section}>
-    <div className={styles.upload}>
-        <img src={imageUrl} alt="img"/>
-        <Button variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
-            Upload Image
-            <input type="file" hidden onChange={handleImageUpload} accept="image/*" />
-        </Button>
-    </div>
-    {image && <p>{image.name}</p>}
-</div>
-*/
-
 
 export default BoardManagementModal

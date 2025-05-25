@@ -9,12 +9,14 @@ import Stack from '@mui/material/Stack';
 import DeadlineDescriptionView from './DeadlineDescriptionView';
 import CommentsView from './CommentsView';
 import AssignedUsersView from './AssignedUsersView';
-import { Role, Task, TaskUser } from '@/types/types';
+import { Role, Task, TaskStatus, TaskUser } from '@/types/types';
 import TaskApi, { UpdateTaskDto } from '@/api/task.api';
 import { Comment } from '@/types/types';
 import { TextField } from '@mui/material';
 import { FetchResponse } from '@/types/fetch';
 import TaskOnUserApi from '@/api/taskOnUser.api';
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
+import styles from './TaskCardInfoPopup.module.scss'
 
 export default function TaskCardInfoPopup({
     boardId,
@@ -24,7 +26,8 @@ export default function TaskCardInfoPopup({
     handleUpdate,
     userRole,
     onDelete,
-    onUserChange
+    onUserChange,
+    refetch
 }: {
     boardId: number,
     open: boolean, 
@@ -34,29 +37,49 @@ export default function TaskCardInfoPopup({
     userRole: Role
     onDelete: (t: Task) => void
     onUserChange: (u: TaskUser[]) => void
+    refetch?: () => void
 }) {
     const [editMode, setEditMode] = useState<boolean>(false)
     const [wasEdited, setWasEdited] = useState<boolean>(false)
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
+    const { displayError } = useMessagePopup();
     
-    const handleClose = async () => {
+    useEffect(() => {
+        setDeadline(task.deadlineEnd)
+        setDescription(task.description)
+        setTitle(task.title)
+    }, [task])
+
+    const updateTask = async (taskToUpdate: Task) => {
+        const newTask: UpdateTaskDto = {
+            title: title ?? "",
+            description: description,
+            deadlineEnd: deadline,
+            taskStatus: taskToUpdate.taskStatus,
+            version: taskToUpdate.version
+        }
+        const updatedTask = await TaskApi.update(boardId, taskToUpdate.id, newTask)
+        
+        if (updatedTask.result)
+            handleUpdate(updatedTask.result)
+        else {
+            displayError(`${updatedTask.error} Reloading page data...`)
+            refetch?.()
+            
+            return {
+                shouldReset: true
+            }
+        }
+    }
+
+    const handleClose = () => {
         setOpen(false)
         setEditMode(false)
 
         if (wasEdited) {
-            const newTask: UpdateTaskDto = {
-                title: title ?? "",
-                description: description,
-                deadlineEnd: deadline,
-                taskStatus: task.taskStatus,
-                version: task.version
-            }
-            const updatedTask = await TaskApi.update(boardId, task.id, newTask)
-            
-            if (updatedTask.result)
-                handleUpdate(updatedTask.result)
+            updateTask(task)
         }
         setWasEdited(false)
     }
@@ -67,13 +90,19 @@ export default function TaskCardInfoPopup({
     }
 
     const handleDelete = async () => {
-        try {
-            await TaskApi.delete(boardId, task.id)
+        const response = await TaskApi.delete(boardId, task.id)
+        if (response.result) {
             onDelete(task)
             handleClose()
-        } catch (error) {
-            console.log(error)
+            return
         }
+    }
+
+    const handleArchive = () => {
+        const newStatus = task.taskStatus !== TaskStatus.ARCHIVED ? TaskStatus.ARCHIVED : TaskStatus.PENDING;
+        const newTask = { ...task, taskStatus: newStatus };
+        updateTask(newTask)
+        setOpen(false)
     }
     
     //TODO: move this to a separate file
@@ -114,15 +143,21 @@ export default function TaskCardInfoPopup({
                     }
                     {userRole !== Role.VIEWER && (
                         <>
-                            <Button variant="outlined" onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
-                                Edit
-                            </Button>
-                            <Button variant="outlined" onClick={handleDelete} sx={{ mt: 2, height: 1, ml: 1 }}>
+                            <Button variant="outlined" onClick={handleDelete} color='error' sx={{ mt: 2, height: 1, ml: 1 }}>
                                 Delete
                             </Button>
+                            <Button variant="outlined" onClick={handleArchive} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                {task.taskStatus === TaskStatus.ARCHIVED ? 'Unarchive' : 'Archive'}
+                            </Button>
+                            {
+                                task.taskStatus !== TaskStatus.ARCHIVED &&
+                                <Button variant={editMode ? "contained" : "outlined"} onClick={handleEdit} sx={{ mt: 2, height: 1, ml: 1 }}>
+                                    {editMode ? "Save" : "Edit"}
+                                </Button>
+                            }
                         </>
                     )}
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
+                    <Button className={styles.close_button} variant="outlined" onClick={handleClose} sx={{ mt: 2, height: 1, ml: 1 }}>
                         Close
                     </Button>
                 </Box>
@@ -138,7 +173,7 @@ export default function TaskCardInfoPopup({
                                     description={description}
                                     setDescription={setDescription}
                                 />
-                                <CommentsView taskId={task.id} boardId={boardId}/>
+                                <CommentsView taskId={task.id} boardId={boardId} taskStatus={task.taskStatus} />
                             </Stack>
                         </Grid>
                         <Grid size={0.1}>
@@ -152,4 +187,8 @@ export default function TaskCardInfoPopup({
             </Box>
         </Modal>
     )
+}
+
+function displayError(arg0: string) {
+    throw new Error('Function not implemented.');
 }

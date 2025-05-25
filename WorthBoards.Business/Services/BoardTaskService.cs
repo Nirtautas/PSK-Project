@@ -51,6 +51,16 @@ namespace WorthBoards.Business.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task DeleteArchivedBoardTasks(int boardId, CancellationToken cancellationToken)
+        {
+            var boardTasksToDelete = await _unitOfWork.BoardTaskRepository.GetAllByExpressionAsync(
+                t => t.BoardId == boardId && t.TaskStatus == TaskStatusEnum.ARCHIVED, cancellationToken
+            ) ?? throw new NotFoundException(ExceptionFormatter.NotFound(nameof(Board), [boardId]));
+
+            _unitOfWork.BoardTaskRepository.DeleteRange(boardTasksToDelete);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<BoardTaskResponse> UpdateBoardTask(int boardId, int boardTaskToUpdateId, BoardTaskUpdateRequest boardTaskDto, CancellationToken cancellationToken)
         {
             var boardTaskToUpdate = await _unitOfWork.BoardTaskRepository.GetByExpressionAsync(t => t.Id == boardTaskToUpdateId && t.BoardId == boardId, cancellationToken)

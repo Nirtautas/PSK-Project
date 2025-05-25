@@ -1,7 +1,7 @@
 import { authApiBaseUrl, defaultHeaders } from '@/constants/api'
 import { ChangePasswordRequest, ChangePasswordResponse, ForgotPasswordRequest, ForgotPasswordResponse, LoginResponse, RegisterRequest, RegisterResponse, ResetPasswordRequest, ResetPasswordResponse } from '@/types/auth'
 import { FetchResponse, HTTPMethod } from '@/types/fetch'
-import { fetch } from '@/utils/fetch'
+import { fetch, getAuthorizedHeaders } from '@/utils/fetch'
 
 export default class AuthApi {
     static login({ username, password }: { username: string, password: string }): Promise<FetchResponse<LoginResponse, string>> {
@@ -16,7 +16,7 @@ export default class AuthApi {
         })
     }
 
-    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse, string[]>> {
+    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse>> {
         return fetch({
             url: `${authApiBaseUrl}/register`,
             method: HTTPMethod.POST,
@@ -47,7 +47,7 @@ export default class AuthApi {
         return fetch({
             url: `${authApiBaseUrl}/change-password`,
             method: HTTPMethod.POST,
-            headers: defaultHeaders,
+            headers: getAuthorizedHeaders(),
             body: JSON.stringify(request)
         })
     }

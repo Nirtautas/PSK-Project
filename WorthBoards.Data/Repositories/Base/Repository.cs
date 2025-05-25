@@ -147,6 +147,11 @@ namespace WorthBoards.Data.Repositories.Base
             _dbSet.Remove(entity);
         }
 
+        public void DeleteRange(List<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
+
         private static IQueryable<T> ApplyIncludes(IQueryable<T> query, params Expression<Func<T, object>>[] includes)
         {
             foreach (var include in includes)

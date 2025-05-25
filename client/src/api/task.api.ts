@@ -9,29 +9,11 @@ export type UpdateTaskDto = Omit<Task, 'id' | 'creationDate' | 'boardId' | 'assi
 
 export default class TaskApi {
     static async getTasks(boardId: number): Promise<FetchResponse<Task[]>> {
-        const tasksResponse = await fetch({
-            url: `${apiBaseUrl}/boards/${boardId}/tasks`,
-            method: HTTPMethod.GET,
-            headers: getAuthorizedHeaders()
-        })
-    
-        const tasks = tasksResponse.result ?? []
-    
-        const tasksWithUsers = await Promise.all(
-            tasks.map(async (task: Task) => {
-                const usersResponse = await TaskOnUserApi.getTaskUsers(boardId, task.id)
-                const users = usersResponse.result ?? []
-                return {
-                    ...task,
-                    assignedUsers: users
-                }
-            })
-        )
-    
-        return {
-            ...tasksResponse,
-            result: tasksWithUsers
-        }
+        return this.getAllFiltered(`${apiBaseUrl}/boards/${boardId}/tasks/`, boardId)
+    }
+
+    static async getArchivedTasks(boardId: number): Promise<FetchResponse<Task[]>> {
+        return this.getAllFiltered(`${apiBaseUrl}/boards/${boardId}/tasks/archived`, boardId)
     }
 
     static async getTaskById(boardId: number, taskId: number): Promise<FetchResponse<Task>> {
@@ -81,6 +63,40 @@ export default class TaskApi {
             method: HTTPMethod.DELETE,
             headers: getAuthorizedHeaders()
         })
+    }
+
+    static async deleteArchived(boardId: number): Promise<FetchResponse<any>> {
+        return await fetch({
+            url: `${apiBaseUrl}/boards/${boardId}/tasks/archived`,
+            method: HTTPMethod.DELETE,
+            headers: getAuthorizedHeaders()
+        })
+    }
+
+    private static async getAllFiltered(url: string, boardId: number): Promise<FetchResponse<Task[]>> {
+        const tasksResponse = await fetch({
+            url: url,
+            method: HTTPMethod.GET,
+            headers: getAuthorizedHeaders()
+        })
+    
+        const tasks = tasksResponse.result ?? []
+    
+        const tasksWithUsers = await Promise.all(
+            tasks.map(async (task: Task) => {
+                const usersResponse = await TaskOnUserApi.getTaskUsers(boardId, task.id)
+                const users = usersResponse.result ?? []
+                return {
+                    ...task,
+                    assignedUsers: users
+                }
+            })
+        )
+    
+        return {
+            ...tasksResponse,
+            result: tasksWithUsers
+        }
     }
 
     //TODO: probably needs to be paginated and taken out to a seperate API file

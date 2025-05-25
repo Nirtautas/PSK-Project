@@ -6,6 +6,7 @@ import styles from './BoardView.module.scss'
 import { Board, Task } from '@/types/types'
 import BoardSettingsView from './BoardSettingsView'
 import CollaboratorView from './CollaboratorsView'
+import ArchivedTasksView from './ArchivedTasksView'
 
 type Props = {
     boardId: number
@@ -16,7 +17,7 @@ type Props = {
     onCreate: (t: Task) => void
     onTaskUpdate: (t: Task) => void
     onTaskDelete: (t: Task) => void
-    onTaskVersionMismatch: (errorMsg: string) => void
+    refetch: () => void
 }
 
 const BoardView = ({
@@ -28,7 +29,7 @@ const BoardView = ({
     onCreate,
     onTaskUpdate,
     onTaskDelete,
-    onTaskVersionMismatch
+    refetch
 }: Props) => {
     const [tab, setTab] = useState<BoardViewTab>('Tasks')
 
@@ -42,15 +43,16 @@ const BoardView = ({
                 onCreate={onCreate}
                 onTaskUpdate={onTaskUpdate}
                 onTaskDelete={onTaskDelete}
-                onTaskVersionMismatch={onTaskVersionMismatch}
+                refetch={refetch}
             />
         )
         
         if (tab === 'Collaborators') return <CollaboratorView boardId={boardId} isLoading={isLoading} errorMsg={errorMsg}/>
 
-        if (tab === 'Archives') return <div>Archives</div>
+        if (tab === 'Archives') return <ArchivedTasksView boardId={boardId} onTaskUpdate={onTaskUpdate}/>
         return <BoardSettingsView boardId={boardId} errorMsg={errorMsg} isLoading={isLoading} onUpdate={onUpdate} />
     }
+
     return (
         <div className={styles.wrapper}>
             <BoardViewButtons current={tab} onClick={(tab) => setTab(tab)} />

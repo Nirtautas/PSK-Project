@@ -2,6 +2,7 @@
 using WorthBoards.Business.Dtos.Identity;
 using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
+using WorthBoards.Common.Constrants;
 using WorthBoards.Data.Identity;
 using WorthBoards.Domain.Entities;
 
@@ -12,10 +13,14 @@ namespace WorthBoards.Business.AutoMapper
         public MappingProfile()
         {
             // User
-            CreateMap<ApplicationUser, UserResponse>();
+            CreateMap<ApplicationUser, UserResponse>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
             CreateMap<UserRequest, ApplicationUser>();
             CreateMap<UserRegisterRequest, ApplicationUser>();
             CreateMap<ApplicationUser, LinkedUserToTaskResponse>();
+            CreateMap<ApplicationUser, UserUpdateRequest>();
+            CreateMap<UserUpdateRequest, ApplicationUser>();
+            CreateMap<ApplicationUser, UserUpdateResponse>();
 
             //BoardTask
             CreateMap<BoardTask, BoardTaskResponse>();
@@ -25,14 +30,16 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<BoardTaskUpdateRequest, BoardTask>();
 
             //Board
-            CreateMap<Board, BoardResponse>();
+            CreateMap<Board, BoardResponse>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
             CreateMap<BoardRequest, Board>();
 
             CreateMap<Board, BoardUpdateRequest>();
             CreateMap<BoardUpdateRequest, Board>();
 
             //Comment
-            CreateMap<Comment, CommentResponse>();
+            CreateMap<Comment, CommentResponse>()
+                .ForMember(dest => dest.TaskId, opt => opt.MapFrom(src => src.BoardTaskId));
             CreateMap<CommentRequest, Comment>();
 
             CreateMap<Comment, CommentUpdateRequest>();
@@ -59,7 +66,7 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Tuple<TaskOnUser, ApplicationUser>, LinkedUserToTaskResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.Item2.ImageName)))
                 .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.Item1.AssignedAt));
 
             //BoardOnUser
@@ -70,7 +77,7 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<Tuple<BoardOnUser, ApplicationUser>, LinkedUserToBoardResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Item2.Id))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Item2.UserName))
-                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => src.Item2.ImageURL))
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.Item2.ImageName)))
                 .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Item1.UserRole))
                 .ForMember(dest => dest.AddedAt, opt => opt.MapFrom(src => src.Item1.AddedAt));
         }

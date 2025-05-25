@@ -1,0 +1,41 @@
+.comment_container {
+    padding: 0.8rem;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment_header {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    margin-right: 0.5rem;
+}
+
+.username {
+    margin-right: auto;
+}
+
+.date {
+    color: gray;
+}
+
+.comment_text {
+    margin-top: 0.3rem !important;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.buttons_container {
+    display: flex;
+    padding-left: 0.5rem;
+}
+
+.button {
+    min-width: 0px !important;
+}
+
+

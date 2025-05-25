@@ -9,6 +9,7 @@ import { Board } from '../../../types/types'
 import { Task } from '@/types/types'
 import useFetch from '@/hooks/useFetch'
 import { useState } from 'react'
+import { placeholderImageUrl } from '@/constants/placeholders'
 
 type Props = {
     boardId: number
@@ -41,9 +42,14 @@ const BoardPage = ({ boardId }: Props) => {
     }
 
     const handleTaskUpdate = (updatedTask: Task) => {
+        const tasksContainUpdated =  board.tasks.some(t => t.id === updatedTask.id)
+        const updateExistingTask = board.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+        
+        const updatedTasks = tasksContainUpdated ? updateExistingTask : [...board.tasks, updatedTask]
+
         setBoard({
             ...board,
-            tasks: board.tasks.map(t => t.id === updatedTask.id ? updatedTask : t)
+            tasks: updatedTasks
         })
     }
 
@@ -59,7 +65,7 @@ const BoardPage = ({ boardId }: Props) => {
             <Box className={styles.toolbar}>
                 {isBoardLoading
                     ? <Skeleton variant="rectangular" sx={{ width: '100px', height: '100px' }} />
-                    : <img src={board?.imageURL ?? undefined} alt="Board Image" className={styles.board_image} />}
+                    : <img src={board?.imageURL || placeholderImageUrl} alt="Board Image" className={styles.board_image} />}
                 <Typography variant="h3" className={styles.board_title}>
                     {!isBoardLoading ? board.title || '' : <Skeleton sx={{ width: '10em' }} />}
                 </Typography>
@@ -74,10 +80,7 @@ const BoardPage = ({ boardId }: Props) => {
                     onUpdate={onUpdate}
                     onTaskUpdate={handleTaskUpdate}
                     onTaskDelete={handleTaskDelete}
-                    onTaskVersionMismatch={(errorMsg: string) => {
-                        setSnackbarMsg(`${errorMsg} Reloading tasks...`)
-                        refetchBoard()
-                    }}
+                    refetch={refetchBoard}
                 />
             </div>
             <Snackbar

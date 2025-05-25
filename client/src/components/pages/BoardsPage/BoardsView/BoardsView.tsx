@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import styles from './BoardsView.module.scss'
 import { getPageUrl } from '@/constants/urls'
+import ErrorDisplay from '@/components/shared/ErrorDisplay'
 
 type Props = {
     boards: Board[]
@@ -13,21 +14,13 @@ type Props = {
 
 const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
     const router = useRouter()
-    console.log(boards)
 
     if (isLoading) {
         return (
             <div>
                 {Array.from({ length: 4 }).map((_, index) => (
                     <div className={styles.card_wrapper} key={index}>
-                        <BoardCard
-                            name={''}
-                            description={''}
-                            imgUrl={''}
-                            onClick={() => {
-                            }}
-                            isLoading={true}
-                        />
+                        <BoardCard isLoading/>
                     </div>
                 ))}
             </div>
@@ -35,7 +28,7 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
     }
 
     if (errorMsg) {
-        return <div>{errorMsg}</div>
+        return <ErrorDisplay msg={errorMsg}/>
     }
 
     return (
@@ -45,7 +38,7 @@ const BoardsView = ({ boards, isLoading, errorMsg }: Props) => {
                     <BoardCard
                         name={board.title}
                         description={board.description}
-                        imgUrl={board.imageURL ?? undefined}
+                        imgUrl={board.imageURL}
                         onClick={() => router.push(getPageUrl.board(board.id))}
                         isLoading={false}
                     />

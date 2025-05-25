@@ -4,15 +4,14 @@ import { apiBaseUrl } from '../constants/api'
 import { fetch, getAuthorizedHeaders } from '../utils/fetch'
 import TaskApi from './task.api'
 import { Paginated } from '@/types/api'
-import { resourceLimits } from 'worker_threads'
 
-export type CreateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks' | 'version'| 'collaborators'>
-export type UpdateBoardDto = Omit<Board, 'id' | 'creationDate' | 'tasks'| 'collaborators'>
+export type CreateBoardDto = Pick<Board, 'title' | 'description'> & { imageName: string }
+export type UpdateBoardDto = Pick<Board, 'title' | 'description' | 'version'> & { imageName: string }
+export type BoardWithTotalCount = { boards: Board[], totalCount: number, pageSize: number, pageNumber: number }
 
 export default class BoardApi {
     static async getBoards(pageNumber: number): Promise<FetchResponse<Paginated<Board>>> {
-        // FIXME: fix when actual backend pagination is implemented
-        const response = await fetch<Board[]>({
+        const response = await fetch<Paginated<Board>>({
             url: `${apiBaseUrl}/boards?pageNum=${pageNumber}`,
             method: HTTPMethod.GET,
             headers: getAuthorizedHeaders()
@@ -23,10 +22,10 @@ export default class BoardApi {
         const result = response.result!
         return {
             result: {
-                pageNumber: 0,
-                pageSize: 5,
-                items: (result as any).boards,
-                pageCount: Math.ceil((result as any).boards.length / 5),
+                items: result.items,
+                pageNumber: result.pageNumber,
+                pageSize: result.pageSize,
+                pageCount: result.pageCount
             }
         }
     }

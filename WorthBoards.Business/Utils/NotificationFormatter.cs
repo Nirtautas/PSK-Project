@@ -63,39 +63,39 @@ public class NotificationFormatter
     private static class NotificationTextTemplates
     {
         public static (string Title, string Message) Invitation(Notification notification, string senderUsername) =>
-		("Board invitation", $"You were invited to join board \"{notification.Board.Title}\" by {senderUsername}.");
+		("Board invitation", $"You were invited to join board \"{notification.Board.Title}\" by user \"{senderUsername}\".");
 
 	public static (string Title, string Message) TaskCreated(Notification notification, string creatorUsername) =>
-		("Task created", $"{creatorUsername} created a new task \"{notification.Task.Title}\" on board \"{notification.Board.Title}\".");
+		("Task created", $"Board - \"{notification.Board.Title}\". | User \"{creatorUsername}\" created a new task \"{notification.Task.Title}\".");
 
 	public static (string Title, string Message) TaskStatusChange(Notification notification, string username) =>
 		("Task status change", 
 			notification.NewTaskStatus == TaskStatusEnum.ARCHIVED
-				? $"Board: \"{notification.Board.Title}\" Task \"{notification.Task.Title}\" was archived by {username}."
-				: $"Board: \"{notification.Board.Title}\" Task \"{notification.Task.Title}\" status was changed from \"{notification.OldTaskStatus}\" to \"{notification.NewTaskStatus}\" by {username}.");
+				? $"Board: \"{notification.Board.Title}\". | Task \"{notification.Task.Title}\" was archived by user \"{username}\"."
+				: $"Board: \"{notification.Board.Title}\". | Task \"{notification.Task.Title}\" status was changed from \"{notification.OldTaskStatus}\" to \"{notification.NewTaskStatus}\" by user \"{username}\".");
 
 	public static (string Title, string Message) TaskDeleted(Notification notification, string username) =>
-		("Task deleted", $"Board: \"{notification.Board.Title}\" a task was deleted by {username}.");
+		("Task deleted", $"Board - \"{notification.Board.Title}\". | A task was deleted by user \"{username}\".");
 
 	public static (string Title, string Message) TaskUpdated(Notification notification, string username) =>
-		("Task updated", $"Board: \"{notification.Board.Title}\" task \"{notification.Task.Title}\" was updated by {username}.");
+		("Task updated", $"Board - \"{notification.Board.Title}\". | Task \"{notification.Task.Title}\" was updated by user \"{username}\".");
 
 	public static (string Title, string Message) TaskAssignedTo(Notification notification, string userName, string subjectUsername) =>
-		("Task assigned", $"Board: \"{notification.Board.Title}\" {subjectUsername} was assigned task \"{notification.Task.Title}\" by {userName}.");
+		("Task assigned", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" was assigned task \"{notification.Task.Title}\" by user \"{userName}\".");
 
 	public static (string Title, string Message) TaskAssignedToYou(Notification notification, string username) =>
-		("You were assigned a task", $"Board: \"{notification.Board.Title}\" you were assigned the task \"{notification.Task.Title}\" by {username}.");
+		("You were assigned a task", $"Board - \"{notification.Board.Title}\". | You were assigned the task \"{notification.Task.Title}\" by user \"{username}\".");
 
 	public static (string Title, string Message) UserAddedToBoard(Notification notification, string subjectUsername) =>
-		("User joined board", $"Board: \"{notification.Board.Title}\" {subjectUsername} has joined the board.");
+		("User joined board", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" ({notification.InvitationRole.ToString()}) has joined the board.");
 
 	public static (string Title, string Message) UserRemovedFromBoard(Notification notification, string username, string subjectUsername) =>
-		("User removed from board", $"Board: \"{notification.Board.Title}\" {subjectUsername} was removed by {username}.");
+		("User removed from board", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" was removed by user \"{username}\".");
 
 	public static (string Title, string Message) YouWereRemovedFromBoard(Notification notification, string username) =>
-		("You were removed from board", $"You were removed from board \"{notification.Board.Title}\" by {username}.");
+		("You were removed from board", $"You were removed from board \"{notification.Board.Title}\" by user \"{username}\".");
 
 	public static (string Title, string Message) UserLeftBoard(Notification notification, string username) =>
-		("User left board", $"Board: \"{notification.Board.Title}\" {username} left the board.");
+		("User left board", $"Board - \"{notification.Board.Title}\". | User \"{username}\" left the board.");
 }
 }

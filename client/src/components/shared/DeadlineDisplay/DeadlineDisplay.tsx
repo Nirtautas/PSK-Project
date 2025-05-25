@@ -1,4 +1,3 @@
-import { Task } from "@/types/types"
 import { Box } from "@mui/material"
 
 type Props = {

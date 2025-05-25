@@ -18,7 +18,9 @@ namespace WorthBoards.Business.Validators
         public const string FirstNameRequired = "First name is required.";
         public const string LastNameRequired = "Last name is required.";
         public const string UserNameRequired = "Username is required.";
-        public static readonly string NameTooLong = $"Name cannot exceed {ValidationConstants.NameMaxLength} characters.";
+        public static readonly string FirstNameTooLong = $"Firstname cannot exceed {ValidationConstants.FirstNameMaxLength} characters.";
+        public static readonly string LastNameTooLong = $"Lastname cannot exceed {ValidationConstants.LastNameMaxLength} characters.";
+        public static readonly string UserNameTooLong = $"Username cannot exceed {ValidationConstants.UserNameMaxLength} characters.";
         public const string EmailRequired = "Email is required.";
         public const string EmailInvalid = "Invalid email format.";
         public const string PasswordRequired = "Password is required.";

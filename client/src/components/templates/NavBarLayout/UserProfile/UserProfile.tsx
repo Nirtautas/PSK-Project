@@ -1,27 +1,22 @@
 'use client'
 
-import { Card, CardActionArea, Menu, MenuItem, Typography } from '@mui/material'
-import {useState} from 'react'
-
+import { Avatar, Card, CardActionArea, Menu, MenuItem, Typography } from '@mui/material'
+import { useState } from 'react'
+import PersonIcon from '@mui/icons-material/Person'
 import styles from './UserProfile.module.scss'
 
 type Props = {
     name: string
-    imageUrl: string
+    imageUrl?: string
     buttons: {
         label: string
         onClick: () => void
     }[]
 }
 
-const UserProfile = ({
-    name,
-    imageUrl,
-    buttons
-}: Props) => {
+const UserProfile = ({ name, imageUrl, buttons }: Props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
     const isOpen = Boolean(anchorEl)
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget)
     }
@@ -38,9 +33,19 @@ const UserProfile = ({
                     height: '100%',
                 }}
             >
+
                 <div className={styles.content}>
                     <Typography variant="h6">{name}</Typography>
-                    <img width={50} height={50} src={imageUrl} alt="image" />
+                    <Avatar
+                        className={styles.avatar}
+                        alt={name}
+                        src={imageUrl}
+                        sx={{ width: 56, height: 56 }}
+                    >
+                        {!imageUrl && (
+                            <PersonIcon sx={{ fontSize: 40, color: 'white' }} />
+                        )}
+                    </Avatar>
                 </div>
             </CardActionArea>
 
@@ -52,8 +57,8 @@ const UserProfile = ({
                     paper: {
                         style: {
                             width: `${anchorEl?.offsetWidth}px`,
-                        }
-                    }
+                        },
+                    },
                 }}
             >
                 {buttons.map((button, index) => (

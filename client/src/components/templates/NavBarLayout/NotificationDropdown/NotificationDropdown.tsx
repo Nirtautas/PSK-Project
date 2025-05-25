@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Badge, Card, CircularProgress, IconButton, Menu, Skeleton } from '@mui/material'
+import { Badge, Button, Card, CircularProgress, Divider, IconButton, Menu, Skeleton } from '@mui/material'
 import { Notifications as NotificationsIcon } from '@mui/icons-material'
 
 import styles from './NotificationDropdown.module.scss'
 import { Notification } from '@/types/types'
 import NotificationCard from './NotificationCard'
 import ErrorDisplay from '@/components/shared/ErrorDisplay'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     isLoading?: boolean
@@ -13,10 +14,14 @@ type Props = {
     notifications: Notification[]
     onInvitationAccept: (notification: Notification) => void
     onInvitationDecline: (notification: Notification) => void
+    onDeleteAllNotifications: () => void 
 }
 
-const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept, onInvitationDecline }: Props) => {
+const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitationAccept, onInvitationDecline, onDeleteAllNotifications }: Props) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+    const messages = useMessagePopup()
+
     const isOpen = Boolean(anchorEl)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -24,6 +29,16 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
     }
     const handleClose = () => {
         setAnchorEl(null)
+    }
+
+    const handleDeleteAllNotifications = () => {
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: `${notifications.length} notifications will be deleted. Are you sure you want to delete ALL notifications?`,
+            onOkClick: () => {
+                onDeleteAllNotifications()
+            }
+        })
     }
 
     const getNotificationHeaderContent = () => {
@@ -40,6 +55,19 @@ const NotificationDropdown = ({ isLoading, errorMsg, notifications, onInvitation
                 {'You have '}
                 <span className={notifications.length > 0 ? styles.notification_number_active : styles.notification_number}>{notifications.length}</span>
                 {` ${notifications.length === 1 ? 'notification' : 'notifications'}:`}
+                <span className={styles.notification_text}>
+                {notifications.length > 0 && (
+                    <Button
+                        sx={{ marginLeft: '1rem'}}
+                        variant="contained"
+                        color="error"
+                        onClick={handleDeleteAllNotifications}
+                    >
+                        Delete All
+                    </Button>
+                )}
+            </span>
+            <Divider sx={{ marginTop: '1rem' }} />
             </span>
         )
     }

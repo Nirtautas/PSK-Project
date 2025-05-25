@@ -10,12 +10,15 @@
     margin: 0.3rem 0 0.3rem 0;
     background-color: #1F1F1F;
     border-radius: 1rem;
+    align-items: center;
+    overflow: hidden;
 }
 
 .user_box > * {
     margin-right: 0.5rem;
 }
 
-.user_box > img {
-    border-radius: 50%;
+.user_box .avatar {
+    width: 2rem;
+    height: 2rem;
 }

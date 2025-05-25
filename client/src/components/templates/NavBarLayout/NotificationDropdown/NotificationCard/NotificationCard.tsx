@@ -32,7 +32,7 @@ const NotificationCard = ({ notification, onInvitationAccept, onInvitationDeclin
                     <br />
                     <sub>{notification.description}</sub>
                     <div className={styles.button_wrapper}>
-                        {notification.type === NotificationType.INVITATION && (
+                        {notification.type === NotificationType.INVITATION ? (
                             <>
                                 <Button
                                     variant="contained"
@@ -50,6 +50,15 @@ const NotificationCard = ({ notification, onInvitationAccept, onInvitationDeclin
                                     Decline
                                 </Button>
                             </>
+                        ) : (
+                            <Button
+                                sx={{ marginLeft: '1rem' }}
+                                variant="contained"
+                                color="error"
+                                onClick={onInvitationDecline}
+                            >
+                                Delete
+                            </Button>
                         )}
                     </div>
                 </div>

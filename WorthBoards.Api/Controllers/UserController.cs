@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
+using WorthBoards.Business.Dtos.Identity;
+using WorthBoards.Business.Dtos.Requests;
+using WorthBoards.Business.Services;
 using WorthBoards.Business.Services.Interfaces;
 
 namespace WorthBoards.Api.Controllers
@@ -24,6 +28,14 @@ namespace WorthBoards.Api.Controllers
             }
 
             var userResponse = await _userService.GetUserById(userId.Value, cancellationToken);
+            return Ok(userResponse);
+        }
+
+        [HttpPut("{userId}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserOnBoard(int userId, [FromBody] UserUpdateRequest userUpdateRequest, CancellationToken cancellationToken)
+        {
+            var userResponse = await _userService.UpdateUser(userId, userUpdateRequest, cancellationToken);
             return Ok(userResponse);
         }
     }

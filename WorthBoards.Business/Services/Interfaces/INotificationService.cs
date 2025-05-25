@@ -18,7 +18,7 @@ public interface INotificationService {
 
     Task NotifyTaskStatusChange(int boardId, int taskId, int responsibleUserId, TaskStatusEnum oldStatus, TaskStatusEnum newStatus, CancellationToken cancellationToken);
 
-    Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
+    Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken);
 
     /// <summary>
     /// Does not save changes. You must do that manually within caller methods.
@@ -28,4 +28,6 @@ public interface INotificationService {
     Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken);
 
     Task UnlinkNotification(int userId, int notificationId, CancellationToken cancellationToken);
+
+    Task UnlinkAllNotifications(int userId, CancellationToken cancellationToken);
 }

@@ -1,9 +1,4 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.JsonPatch;
-using System.ComponentModel.Design;
-using WorthBoards.Business.Dtos.Requests;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Services.Interfaces;
 using WorthBoards.Common.Enums;
@@ -41,8 +36,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             NotificationType = NotificationEventTypeEnum.TASK_CREATED,
             SenderId = responsibleUserId
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -57,12 +53,13 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             BoardId = boardId,
             TaskId = taskId,
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
+    public async Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
         var notification = new Notification()
         {
@@ -70,9 +67,11 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             SenderId = responsibleUserId,
             SubjectUserId = userId,
             BoardId = boardId,
+            InvitationRole = role
         };
+        var excpludedUserIds = new List<int> { userId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -87,8 +86,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 TaskId = taskId,
                 BoardId = boardId,
             };
+            var excpludedUserIds = new List<int> { responsibleUserId };
             await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
@@ -153,7 +153,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             new BoardOnUser()
             {
                 AddedAt = DateTime.UtcNow,
-                UserRole = UserRoleEnum.VIEWER,
+                UserRole = (UserRoleEnum)invitationNotification.InvitationRole,
                 BoardId = (int)invitationNotification.BoardId,
                 UserId = userId,
             },
@@ -162,6 +162,16 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
 
         _unitOfWork.NotificationRepository.Delete(invitationNotification);
         await _unitOfWork.SaveChangesAsync();
+
+        //Bad, but cannot call from NotificationController as I need board OWNER id (aka. SenderId below), which is not returned with notificationResponse.
+        //Mandatory userId seems to much if we are only sending this notification to the owner or everyone in the board.
+        await NotifyUserAdded(
+            (int)invitationNotification.BoardId,
+            userId,
+            invitationNotification.SenderId,
+            (UserRoleEnum)invitationNotification.InvitationRole,
+            cancellationToken
+        );
     }
 
     public async Task NotifyUserRemoved(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
@@ -196,6 +206,31 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
         {
             _unitOfWork.NotificationRepository.Delete(notification);
         }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UnlinkAllNotifications(int userId, CancellationToken cancellationToken)
+    {
+        var userNotifications = await _unitOfWork.NotificationOnUserRepository
+            .GetAllByExpressionAsync(nou => nou.UserId == userId, cancellationToken);
+
+        if (!userNotifications.Any())
+            return;
+
+        _unitOfWork.NotificationOnUserRepository.DeleteRange(userNotifications);
+
+        var notificationIds = userNotifications.Select(n => n.NotificationId).ToList();
+        foreach (var id in notificationIds)
+        {
+            var notification = await _unitOfWork.NotificationRepository
+                .GetByExpressionWithIncludesAsync(n => n.Id == id, cancellationToken, n => n.NotificationsOnUsers);
+
+            if (notification is not null && notification.NotificationsOnUsers.Count == 1)
+            {
+                _unitOfWork.NotificationRepository.Delete(notification);
+            }
+        }
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

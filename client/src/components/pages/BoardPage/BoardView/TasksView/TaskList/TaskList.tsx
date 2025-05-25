@@ -12,13 +12,14 @@ type Props = {
     isLoading: boolean
     errorMsg: string
     tasks: Task[]
-    onMouseDown: (e: MouseEvent, task: Task) => void
+    onMouseDown?: (e: MouseEvent, task: Task) => void
     onTaskUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void
+    refetch?: () => void
 }
 
-const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
+const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole, onDelete, refetch }: Props) => {
     if (isLoading) {
         return (
             <div className={styles.tasks_list}>
@@ -34,16 +35,17 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
 
     return (
         <div className={styles.tasks_list}>
-                {tasks.map((task, index) => (
-                    <div key={index} className={styles.task_card_wrapper}>
+                {tasks.map((task) => (
+                    <div key={`task-card-id-${task.id}`} className={styles.task_card_wrapper}>
                         <TaskCard
                             boardId={boardId}
                             task={task}
-                            onClick={() => { console.log('clicked task: ', task)}}
+                            onClick={() => {}}
                             onMouseDown={onMouseDown}
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}
-                            onDelete={onDelete}/>
+                            onDelete={onDelete}
+                            refetch={refetch}/>
                     </div>
                 ))}
         </div>

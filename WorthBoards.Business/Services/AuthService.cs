@@ -64,7 +64,8 @@ namespace WorthBoards.Business.Services
             user.CreationDate = DateTime.UtcNow;
             var response = await userManager.CreateAsync(user, registerUser.Password);
 
-            ArgumentNullException.ThrowIfNull(response);
+            if (response.Errors.Any())
+                throw new BadRequestException(string.Join("\n", response.Errors.Select(err => err.Description)));
 
             await emailService.SendEmailAsync(new SendEmailRequest
             {

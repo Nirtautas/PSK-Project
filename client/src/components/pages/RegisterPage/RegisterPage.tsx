@@ -53,7 +53,16 @@ const RegisterPage = () => {
                 <form onSubmit={onSubmit} className={styles.login_box_container}>
                     <Typography variant="h3">Register</Typography>
                     <br />
-                    {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
+                    {errorMsg && (
+                        <Alert severity="error">
+                            {errorMsg.split('\n').map((line, index) => (
+                                <span key={index}>
+                                    {line}
+                                    <br />
+                                </span>
+                            ))}
+                        </Alert>
+                    )}
                     <div className={styles.horizontal}>
                         <TextField name="firstname" label="First Name" variant="outlined" required/>
                         <TextField name="lastname" label="Last Name" variant="outlined" required/>

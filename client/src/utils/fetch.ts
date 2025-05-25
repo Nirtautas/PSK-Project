@@ -25,7 +25,8 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
         } else {
             const responseJson = await response.json()
             return {
-                error: responseJson.details || responseJson.title || response.statusText
+                error: responseJson.errors ? Object.values(responseJson.errors).flat().join('\n') :
+                    responseJson.details || responseJson.title || response.statusText
             }
         }
     } catch (err) {

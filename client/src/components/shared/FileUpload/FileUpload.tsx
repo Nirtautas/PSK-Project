@@ -7,10 +7,11 @@ import ImageIcon from '@mui/icons-material/Image';
 
 type Props = {
     imageUrl: string
+    errorMsg?: string
     image: File | null
     onUpload: (file: File) => void
 }
-const FileUpload = ({ imageUrl, image, onUpload }: Props) => (
+const FileUpload = ({ imageUrl, errorMsg, image, onUpload }: Props) => (
     <div className={styles.image_section}>
         <div className={styles.upload}>
            <img src={imageUrl || placeholderImageUrl} alt="img" />
@@ -19,7 +20,10 @@ const FileUpload = ({ imageUrl, image, onUpload }: Props) => (
                 <input type="file" hidden onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpload(e.target.files![0])} accept="image/*" />
             </Button>
         </div>
-        {image && <p>{image.name}</p>}
+        {errorMsg
+            ? <p className={styles.error}>{errorMsg}</p>
+            : image && <p>{image.name}</p>
+        }
     </div>
 )
 

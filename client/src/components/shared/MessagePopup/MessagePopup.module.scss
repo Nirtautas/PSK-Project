@@ -69,10 +69,10 @@ $slideDuration: 0.3s;
 
     &:hover {
         background-color: lightgrey;
+        border-radius: 5px;
         @media screen and (prefers-color-scheme: dark) {
             background-color: #1F1F1F;
         }
-        border-radius: 5px;
     }
 }
 

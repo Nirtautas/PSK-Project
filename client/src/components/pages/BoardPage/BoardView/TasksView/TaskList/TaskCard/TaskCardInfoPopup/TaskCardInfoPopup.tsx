@@ -26,7 +26,8 @@ export default function TaskCardInfoPopup({
     handleUpdate,
     userRole,
     onDelete,
-    onUserChange
+    onUserChange,
+    refetch
 }: {
     boardId: number,
     open: boolean, 
@@ -36,13 +37,14 @@ export default function TaskCardInfoPopup({
     userRole: Role
     onDelete: (t: Task) => void
     onUserChange: (u: TaskUser[]) => void
+    refetch?: () => void
 }) {
     const [editMode, setEditMode] = useState<boolean>(false)
     const [wasEdited, setWasEdited] = useState<boolean>(false)
     const [deadline, setDeadline] = useState<Date | null>(task.deadlineEnd)
     const [description, setDescription] = useState<string | null>(task.description)
     const [title, setTitle] = useState<string | null>(task.title)
-    const messagePopup = useMessagePopup()
+    const { displayError } = useMessagePopup();
     
     useEffect(() => {
         setDeadline(task.deadlineEnd)
@@ -62,6 +64,14 @@ export default function TaskCardInfoPopup({
         
         if (updatedTask.result)
             handleUpdate(updatedTask.result)
+        else {
+            displayError(`${updatedTask.error} Reloading page data...`)
+            refetch?.()
+            
+            return {
+                shouldReset: true
+            }
+        }
     }
 
     const handleClose = () => {
@@ -177,4 +187,8 @@ export default function TaskCardInfoPopup({
             </Box>
         </Modal>
     )
+}
+
+function displayError(arg0: string) {
+    throw new Error('Function not implemented.');
 }

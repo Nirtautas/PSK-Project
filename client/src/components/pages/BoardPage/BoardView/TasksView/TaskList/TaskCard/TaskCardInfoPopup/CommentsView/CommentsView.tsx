@@ -64,18 +64,24 @@ export default function CommentsView
             title: 'Are you sure?',
             text: "Are you sure you want to delete this comment?",
             onOkClick: async () => {
-                console.log('clicked ok')
                 const response = await CommentApi.delete(boardId, commentData.taskId, commentData.id)
                 if (response.error) {
                     messages.displayError("Error deleting comment: " + response.error)
                     return
                 }
                 refetch()
-            },
-            onCancelClick: () => {
-                console.log('cancel clickedo')
             }
         })
+    }
+
+    const handleEdit = async (comment: Comment, newText: string) => {
+        const commentData = comment
+        const { error, result: updatedComment } = await CommentApi.update(boardId, commentData.taskId, commentData.id, newText, commentData.version);
+        if (!updatedComment) {
+            messages.displayError(error!)
+            return
+        }
+        setComments(comments.map((c) => c.id === updatedComment.id ? updatedComment : c))
     }
 
     const getUserImageLink = (userId: number) => (
@@ -87,7 +93,15 @@ export default function CommentsView
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {!errorMsgComments && !loadingComments && Array.isArray(comments) && comments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)} taskStatus={taskStatus} />
+                    <CommentDisplay
+                        key={index}
+                        commentData={comment}
+                        boardId={boardId}
+                        handleDelete={handleDelete}
+                        onEdit={(newContent) => handleEdit(comment, newContent)}
+                        pfpLink={getUserImageLink(comment.userId)}
+                        taskStatus={taskStatus}
+                    />
                 ))}
             </Box>
             {taskStatus !== TaskStatus.ARCHIVED &&

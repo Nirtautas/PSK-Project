@@ -33,9 +33,9 @@ namespace WorthBoards.Api.Controllers
 
         [HttpPut("{userId}")]
         [Authorize]
-        public async Task<IActionResult> PatchUserOnBoard(int userId, [FromBody] JsonPatchDocument<UserPatchRequest> userPatchDoc, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUserOnBoard(int userId, [FromBody] UserUpdateRequest userUpdateRequest, CancellationToken cancellationToken)
         {
-            var userResponse = await _userService.PatchUser(userId, userPatchDoc, cancellationToken);
+            var userResponse = await _userService.UpdateUser(userId, userUpdateRequest, cancellationToken);
             return Ok(userResponse);
         }
     }

@@ -24,6 +24,9 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
             }
         } else {
             const responseJson = await response.json()
+            if (responseJson.details === 'token_expired') {
+                window.location.href = '/login'
+            }
             return {
                 error: responseJson.errors ? Object.values(responseJson.errors).flat().join('\n') :
                     responseJson.details || responseJson.title || response.statusText

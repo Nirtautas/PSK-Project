@@ -87,7 +87,7 @@ public class NotificationFormatter
 		("You were assigned a task", $"Board - \"{notification.Board.Title}\". | You were assigned the task \"{notification.Task.Title}\" by user \"{username}\".");
 
 	public static (string Title, string Message) UserAddedToBoard(Notification notification, string subjectUsername) =>
-		("User joined board", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" has joined the board.");
+		("User joined board", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" ({notification.InvitationRole.ToString()}) has joined the board.");
 
 	public static (string Title, string Message) UserRemovedFromBoard(Notification notification, string username, string subjectUsername) =>
 		("User removed from board", $"Board - \"{notification.Board.Title}\". | User \"{subjectUsername}\" was removed by user \"{username}\".");

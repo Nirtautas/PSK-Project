@@ -7,13 +7,15 @@ import UserProfile from '@/components/templates/NavBarLayout/UserProfile'
 import { usePathname, useRouter } from 'next/navigation'
 import { getPageUrl, pathnames } from '@/constants/urls'
 import NotificationApi from '@/api/notification.api'
-import { Notification } from '@/types/types'
+import { Notification, User } from '@/types/types'
 import { getUserId, removeUserId } from '@/utils/userId'
 import { deleteCookie } from 'cookies-next'
 import { GetPageUrl } from '@/constants/route'
 import useFetch from '@/hooks/useFetch'
 import NotificationDropdown from '@/components/templates/NavBarLayout/NotificationDropdown'
 import UserApi from '@/api/user.api'
+import { useEffect, useState } from 'react'
+import React from 'react'
 
 type Props = {
     children: React.ReactNode
@@ -22,10 +24,6 @@ type Props = {
 const NavBarLayout = ({ children }: Props) => {
     const router = useRouter()
     const pathname = usePathname()
-    
-    const {
-        data: user
-    } = useFetch({ resolver: () => UserApi.getById(getUserId())})
 
     const {
         isLoading,
@@ -74,7 +72,25 @@ const NavBarLayout = ({ children }: Props) => {
         removeUserId()
         router.push(GetPageUrl.login)
     }
-    
+
+    const [user, setUser] = useState<User | null>(null)
+
+    useEffect(() => {
+    const fetchUser = async () => {
+        const response = await UserApi.getById(getUserId());
+        if (response.result) setUser(response.result);
+    };
+
+    fetchUser();
+
+    const handleUserUpdated = () => {
+        fetchUser();
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdated);
+    return () => window.removeEventListener('userUpdated', handleUserUpdated);
+    }, []);
+
     return (
         <div className={styles.layout}>
             <header>
@@ -97,8 +113,8 @@ const NavBarLayout = ({ children }: Props) => {
                         </Box>
                         <Box className={styles.centered_wrapper}>
                             {user && <UserProfile
-                                name={user.userName ?? "placeholder"}
-                                imageUrl={user.imageURL}
+                                name={user.userName ?? "name"}
+                                imageUrl={user.imageURL || null}
                                 buttons={[
                                     {
                                         label: 'My Boards',

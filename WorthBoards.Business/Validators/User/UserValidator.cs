@@ -10,20 +10,20 @@ namespace WorthBoards.Business.Validators.User
             RuleFor(x => x.FirstName)
                 .NotEmpty()
                 .WithMessage(ValidationMessages.FirstNameRequired)
-                .MaximumLength(ValidationConstants.NameMaxLength)
-                .WithMessage(ValidationMessages.NameTooLong);
+                .MaximumLength(ValidationConstants.FirstNameMaxLength)
+                .WithMessage(ValidationMessages.FirstNameTooLong);
 
             RuleFor(x => x.LastName)
                 .NotEmpty()
                 .WithMessage(ValidationMessages.LastNameRequired)
-                .MaximumLength(ValidationConstants.NameMaxLength)
-                .WithMessage(ValidationMessages.NameTooLong);
+                .MaximumLength(ValidationConstants.LastNameMaxLength)
+                .WithMessage(ValidationMessages.LastNameTooLong);
 
             RuleFor(x => x.UserName)
                 .NotEmpty()
                 .WithMessage(ValidationMessages.UserNameRequired)
-                .MaximumLength(ValidationConstants.NameMaxLength)
-                .WithMessage(ValidationMessages.NameTooLong);
+                .MaximumLength(ValidationConstants.UserNameMaxLength)
+                .WithMessage(ValidationMessages.UserNameTooLong);
         }
     }
 }

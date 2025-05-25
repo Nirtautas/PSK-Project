@@ -17,12 +17,14 @@ export default function CommentDisplay({
     boardId,
     handleDelete,
     user,
+    onEdit,
     taskStatus
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
     user?: BoardUser
+    onEdit: (newContent: string) => void
     taskStatus: TaskStatus
 }) {
     const userId = getUserId();
@@ -32,14 +34,7 @@ export default function CommentDisplay({
     const handleEdit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const commentText = (event.currentTarget[0] as HTMLInputElement).value;
-        const updatedComment = await CommentApi.update(boardId, commentData.taskId, commentData.id, commentText, commentData.version);
-        if (updatedComment.error) {
-            console.error("Error updating comment:", updatedComment.error);
-        }
-        if (updatedComment.result) {
-            console.log("Edited text to:", commentText);
-            commentData.content = commentText;
-        }
+        onEdit(commentText)
         setEditing(false);
     }
     

@@ -1,3 +1,4 @@
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 import { useEffect, useState } from 'react'
 
 type DragAndDropArgs<T> = {
@@ -29,6 +30,9 @@ const useDragAndDrop = <T>({
     const [selectedItem, setSelectedItem] = useState<T | null>(null)
     let isDragging = false
     const setIsDragging = (val: boolean) => isDragging = val
+
+    const messages = useMessagePopup()
+
     const onStartDragging = (e: MouseEvent) => {
         setIsDragging(true)
         if (!target) return
@@ -85,7 +89,7 @@ const useDragAndDrop = <T>({
             const releaseArgs = onDrop(event, dropTarget || null, selectedItem, target)
             handleRelease(event, dropTarget, releaseArgs)
         } catch (err) {
-            console.error(err as Error)
+            messages.displayError((err as Error).message)
             handleRelease(event, dropTarget, { shouldReset: true })
         }
     }

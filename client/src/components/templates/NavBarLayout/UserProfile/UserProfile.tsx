@@ -6,69 +6,69 @@ import PersonIcon from '@mui/icons-material/Person'
 import styles from './UserProfile.module.scss'
 
 type Props = {
-  name: string
-  imageUrl?: string
-  buttons: {
-    label: string
-    onClick: () => void
-  }[]
+    name: string
+    imageUrl?: string
+    buttons: {
+        label: string
+        onClick: () => void
+    }[]
 }
 
 const UserProfile = ({ name, imageUrl, buttons }: Props) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const isOpen = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-  
-  return (
-    <Card className={styles.container} elevation={2}>
-      <CardActionArea
-        onClick={handleClick}
-        sx={{
-          display: 'flex',
-          height: '100%',
-        }}
-      >
-        
-        <div className={styles.content}>
-          <Typography variant="h6">{name}</Typography>
-          <Avatar
-            className={styles.avatar}
-            alt={name}
-            src={imageUrl}
-            sx={{ width: 56, height: 56 }}
-          >
-            {!imageUrl && (
-              <PersonIcon sx={{ fontSize: 40, color: 'white' }} />
-            )}
-          </Avatar>
-        </div>
-      </CardActionArea>
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    const isOpen = Boolean(anchorEl)
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget)
+    }
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
 
-      <Menu
-        open={isOpen}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        slotProps={{
-          paper: {
-            style: {
-              width: `${anchorEl?.offsetWidth}px`,
-            },
-          },
-        }}
-      >
-        {buttons.map((button, index) => (
-          <MenuItem key={index} onClick={button.onClick}>
-            {button.label}
-          </MenuItem>
-        ))}
-      </Menu>
-    </Card>
-  )
+    return (
+        <Card className={styles.container} elevation={2}>
+            <CardActionArea
+                onClick={handleClick}
+                sx={{
+                    display: 'flex',
+                    height: '100%',
+                }}
+            >
+
+                <div className={styles.content}>
+                    <Typography variant="h6">{name}</Typography>
+                    <Avatar
+                        className={styles.avatar}
+                        alt={name}
+                        src={imageUrl}
+                        sx={{ width: 56, height: 56 }}
+                    >
+                        {!imageUrl && (
+                            <PersonIcon sx={{ fontSize: 40, color: 'white' }} />
+                        )}
+                    </Avatar>
+                </div>
+            </CardActionArea>
+
+            <Menu
+                open={isOpen}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                slotProps={{
+                    paper: {
+                        style: {
+                            width: `${anchorEl?.offsetWidth}px`,
+                        },
+                    },
+                }}
+            >
+                {buttons.map((button, index) => (
+                    <MenuItem key={index} onClick={button.onClick}>
+                        {button.label}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </Card>
+    )
 }
 
 export default UserProfile

@@ -2,10 +2,12 @@
 
 import React, { createContext, useContext, useRef } from 'react'
 import MessagePopupContainer, { MessagePopupRef } from './MessagePopupContainer'
+import ConfirmationDialog, { ConfirmationDialogArgs, ConfirmationDialogRef } from './ConfirmationDialog/ConfirmationDialog'
 
 type MessagePopupContextType = {
     displayErrorWithMs: (message: string, durationMs: number) => void
     displayError: (message: string) => void
+    displayDialog: (args: ConfirmationDialogArgs) => void
 }
 
 type Props = {
@@ -31,14 +33,17 @@ export const useMessagePopup = () => {
 }
 
 const MessagePopupProvider = ({ children }: Props) => {
-    const ref = useRef<MessagePopupRef>(null)
+    const messagesRef = useRef<MessagePopupRef>(null)
+    const confirmationDialogRef = useRef<ConfirmationDialogRef>(null)
     return (
         <MessagePopupContext.Provider value={{
-            displayErrorWithMs: (message, duration) => ref.current?.pushMessage(message, duration, 'error'),
-            displayError: (message) => ref.current?.pushMessage(message, 5000, 'error')
+            displayErrorWithMs: (message, duration) => messagesRef.current?.pushMessage(message, duration, 'error'),
+            displayError: (message) => messagesRef.current?.pushMessage(message, 5000, 'error'),
+            displayDialog: (args) => confirmationDialogRef.current?.showDialog(args)
         }}>
             {children}
-            <MessagePopupContainer ref={ref} />
+            <MessagePopupContainer ref={messagesRef} />
+            <ConfirmationDialog ref={confirmationDialogRef} />
         </MessagePopupContext.Provider>
     )
 }

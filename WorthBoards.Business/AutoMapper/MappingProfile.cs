@@ -38,7 +38,8 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<BoardUpdateRequest, Board>();
 
             //Comment
-            CreateMap<Comment, CommentResponse>();
+            CreateMap<Comment, CommentResponse>()
+                .ForMember(dest => dest.TaskId, opt => opt.MapFrom(src => src.BoardTaskId));
             CreateMap<CommentRequest, Comment>();
 
             CreateMap<Comment, CommentUpdateRequest>();

@@ -40,8 +40,6 @@ export enum Role {
 
 export type User = {
     id: number
-    firstName: string
-    lastName: string
     userName: string
     creationDate: Date
     imageURL: string

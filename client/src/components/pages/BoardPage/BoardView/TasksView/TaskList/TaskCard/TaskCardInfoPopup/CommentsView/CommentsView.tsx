@@ -83,6 +83,7 @@ export default function CommentsView
             return
         }
         setComments(comments.map((c) => c.id === updatedComment.id ? updatedComment : c))
+        refetch()
     }
 
     return (

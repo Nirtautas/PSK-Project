@@ -28,7 +28,8 @@ async function fetchWrapper<T = any, U = string>({ url, method, headers, body }:
                 window.location.href = '/login'
             }
             return {
-                error: responseJson.details || responseJson.title || response.statusText
+                error: responseJson.errors ? Object.values(responseJson.errors).flat().join('\n') :
+                    responseJson.details || responseJson.title || response.statusText
             }
         }
     } catch (err) {

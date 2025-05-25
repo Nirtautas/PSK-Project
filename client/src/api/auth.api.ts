@@ -16,7 +16,7 @@ export default class AuthApi {
         })
     }
 
-    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse, string[]>> {
+    static register(request: RegisterRequest): Promise<FetchResponse<RegisterResponse>> {
         return fetch({
             url: `${authApiBaseUrl}/register`,
             method: HTTPMethod.POST,

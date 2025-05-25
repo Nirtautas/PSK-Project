@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using WorthBoards.Common.Exceptions;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
 
 namespace WorthBoards.Api.Utils.ExceptionHandler
 {

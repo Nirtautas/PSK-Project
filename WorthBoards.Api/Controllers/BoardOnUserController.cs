@@ -17,6 +17,7 @@ namespace WorthBoards.Api.Controllers
     public class BoardOnUserController(IBoardOnUserService _boardOnUserService, INotificationService _notificationService) : ControllerBase
     {
         [HttpPost("{boardId}/invite")]
+        [AuthorizeRole(UserRoleEnum.OWNER)]
         public async Task<IActionResult> InviteUser(int boardId, [FromBody] InvitationRequest invitationRequest, CancellationToken cancellationToken)
         {
             var responsibleUserId = UserHelper.GetUserId(User).Value;
@@ -25,6 +26,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost("{boardId}/remove/{userId}")]
+        [AuthorizeRole(UserRoleEnum.OWNER)]
         public async Task<IActionResult> RemoveUser(int boardId, int userId, CancellationToken cancellationToken)
         {
             var responsibleUserId = UserHelper.GetUserId(User).Value;
@@ -55,14 +57,6 @@ namespace WorthBoards.Api.Controllers
             var linkResponse = await _boardOnUserService.LinkUserToBoard(boardId, userId, linkUserToBoardRequest, cancellationToken);
             return CreatedAtAction(nameof(LinkUserToBoard), new { boardId = linkResponse.BoardId, userId = linkResponse.UserId }, linkResponse);
         }
-
-        // [HttpDelete("{boardId}/link/{userId}")]
-        // [AuthorizeRole(UserRoleEnum.EDITOR)]
-        // public async Task<IActionResult> UnlinkUserFromBoard(int boardId, int userId, CancellationToken cancellationToken)
-        // {
-        //     await _boardOnUserService.UnlinkUserFromBoard(boardId, userId, cancellationToken);
-        //     return NoContent();
-        // }
 
         [HttpPut("{boardId}/link/{userId}")]
         [AuthorizeRole(UserRoleEnum.EDITOR)]

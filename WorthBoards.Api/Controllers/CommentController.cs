@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql.Internal;
 using System.Security.Claims;
@@ -11,6 +12,7 @@ namespace WorthBoards.Api.Controllers
 {
     [ApiController]
     [Route("api/boards/{boardId:int}/tasks/{taskId:int}/comments")]
+    [Authorize]
     public class CommentController(ICommentService _commentService) : ControllerBase
     {
         [HttpGet]

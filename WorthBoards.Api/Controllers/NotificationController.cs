@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorthBoards.Api.Utils;
 using WorthBoards.Business.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace WorthBoards.Api.Controllers;
 
 [Route("api/notifications")]
 [ApiController]
+[Authorize]
 public class NotificationController(INotificationService _notificationService) : ControllerBase
 {
     [HttpPost("{notificationId}/accept")]

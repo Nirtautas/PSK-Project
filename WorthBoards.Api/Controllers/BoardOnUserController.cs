@@ -26,7 +26,7 @@ namespace WorthBoards.Api.Controllers
         }
 
         [HttpPost("{boardId}/remove/{userId}")]
-        [AuthorizeRole(UserRoleEnum.OWNER)]
+        [Authorize]
         public async Task<IActionResult> RemoveUser(int boardId, int userId, CancellationToken cancellationToken)
         {
             var responsibleUserId = UserHelper.GetUserId(User).Value;

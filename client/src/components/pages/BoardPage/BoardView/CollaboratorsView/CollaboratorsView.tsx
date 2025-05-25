@@ -187,7 +187,8 @@ return (
                       </Typography>   
                     </div>
                   </CardContent>
-                  <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
+                  <div className={styles.user_control}>
+                    <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
                       <InputLabel>Role</InputLabel>
                       <Select 
                         value={roleMapping[user.id] || 'VIEWER'}
@@ -216,6 +217,7 @@ return (
                         </IconButton>
                       )
                     )}
+                  </div>
                 </Card>
               ))}
           </Box>
@@ -264,7 +266,7 @@ return (
                       justifyContent: 'space-between',
                       padding: 2,
                       marginBottom: 2,
-                      backgroundColor: '#1e1e1e',
+                      backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0',
                       borderRadius: 2,
                       width: '50%'
                     }}

@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import CommentApi from "@/api/comment.api";
 import Avatar from "@mui/material/Avatar";
 import styles from "./CommentDisplay.module.scss"
+import { useDarkTheme } from "@/hooks/darkTheme";
 
 export default function CommentDisplay({
     commentData,
@@ -26,6 +27,7 @@ export default function CommentDisplay({
 }) {
     const userId = getUserId();
     const [editing, setEditing] = useState(false);
+    const isDarkTheme = useDarkTheme()
     
     const handleEdit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -42,7 +44,7 @@ export default function CommentDisplay({
     }
     
     return (
-        <Box className={styles.comment_container}>
+        <Box className={styles.comment_container} sx={{backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}}>
             {editing ? (
                 <form onSubmit={handleEdit}>
                     <TextField

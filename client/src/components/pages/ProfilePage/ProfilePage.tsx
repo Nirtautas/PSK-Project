@@ -166,10 +166,9 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                         </Grid>
-                        <Grid item className={styles.line}></Grid>
                     </Grid>
                 </Grid>
-
+                <Grid item className={styles.line}></Grid>
                 <Box sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>

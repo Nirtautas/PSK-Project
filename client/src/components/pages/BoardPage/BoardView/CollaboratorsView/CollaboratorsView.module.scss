@@ -61,7 +61,6 @@
 
 .role_select {
   min-width: 120px;
-  // margin: 0 8px;
 }
 
 .user_info {
@@ -70,4 +69,14 @@
   display: flex;
   align-items: center !important;
   box-shadow: none !important;
+}
+
+@media (max-width: 1400px) {
+  .user_card {
+    display: block;
+  }
+
+  .user_control {
+    margin: 1rem !important;
+  }
 }

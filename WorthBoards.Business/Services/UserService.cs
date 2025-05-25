@@ -27,18 +27,16 @@ namespace WorthBoards.Business.Services
             return userDto;
         }
 
-        public async Task<UserPatchResponse> PatchUser(int userId, JsonPatchDocument<UserPatchRequest> userPatchDoc, CancellationToken cancellationToken)
+        public async Task<UserUpdateResponse> UpdateUser(int userId, UserUpdateRequest userUpdateRequest, CancellationToken cancellationToken)
         {
-            var oldUserToPatch = await _unitOfWork.UserRepository.GetByExpressionAsync(b => b.Id == userId, cancellationToken)
+            var oldUserToUpdate = await _unitOfWork.UserRepository.GetByExpressionAsync(
+                b => b.Id == userId, cancellationToken)
                 ?? throw new BadRequestException(ExceptionFormatter.NotFound(nameof(ApplicationUser), [userId]));
 
-            var userToPatchDto = _mapper.Map<UserPatchRequest>(oldUserToPatch);
-            userPatchDoc.ApplyTo(userToPatchDto);
-
-            _mapper.Map(userToPatchDto, oldUserToPatch);
+            _mapper.Map(userUpdateRequest, oldUserToUpdate);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return _mapper.Map<UserPatchResponse>(oldUserToPatch);
+            return _mapper.Map<UserUpdateResponse>(oldUserToUpdate);
         }
     }
 }

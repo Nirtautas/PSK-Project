@@ -55,6 +55,9 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         const safeDescription = description.trim() || ''
 
         onSubmit({ title, description: safeDescription, image: image })
+        setTitle('')
+        setDescription('')
+        setImage(null)
     }
 
     return (

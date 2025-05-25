@@ -36,8 +36,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             NotificationType = NotificationEventTypeEnum.TASK_CREATED,
             SenderId = responsibleUserId
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -52,12 +53,13 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             BoardId = boardId,
             TaskId = taskId,
         };
+        var excpludedUserIds = new List<int> { responsibleUserId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, CancellationToken cancellationToken)
+    public async Task NotifyUserAdded(int boardId, int userId, int responsibleUserId, UserRoleEnum role, CancellationToken cancellationToken)
     {
         var notification = new Notification()
         {
@@ -65,9 +67,11 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             SenderId = responsibleUserId,
             SubjectUserId = userId,
             BoardId = boardId,
+            InvitationRole = role
         };
+        var excpludedUserIds = new List<int> { userId };
         await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+        await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -82,8 +86,9 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
                 TaskId = taskId,
                 BoardId = boardId,
             };
+            var excpludedUserIds = new List<int> { responsibleUserId };
             await _unitOfWork.NotificationRepository.CreateAsync(notification, cancellationToken);
-            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, cancellationToken);
+            await _unitOfWork.NotificationOnUserRepository.AddNotificationToBoardUsers(notification, boardId, excpludedUserIds, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
@@ -148,7 +153,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             new BoardOnUser()
             {
                 AddedAt = DateTime.UtcNow,
-                UserRole = UserRoleEnum.VIEWER,
+                UserRole = (UserRoleEnum)invitationNotification.InvitationRole,
                 BoardId = (int)invitationNotification.BoardId,
                 UserId = userId,
             },
@@ -164,6 +169,7 @@ public class NotificationService(IUnitOfWork _unitOfWork) : INotificationService
             (int)invitationNotification.BoardId,
             userId,
             invitationNotification.SenderId,
+            (UserRoleEnum)invitationNotification.InvitationRole,
             cancellationToken
         );
     }

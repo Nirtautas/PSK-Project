@@ -14,9 +14,7 @@ type Props = {
 const FileUpload = ({ imageUrl, errorMsg, image, onUpload }: Props) => (
     <div className={styles.image_section}>
         <div className={styles.upload}>
-           {imageUrl
-                ? <img src={imageUrl || placeholderImageUrl} alt="img" />  
-                : <ImageIcon sx={{ color: '#9e9e9e', fontSize: 32 }}/> }
+           <img src={imageUrl || placeholderImageUrl} alt="img" />
             <Button startIcon={<CloudUploadIcon />} variant="contained" component="label" sx={{ margin: 'auto 0 auto auto' }}>
                 Upload Image
                 <input type="file" hidden onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpload(e.target.files![0])} accept="image/*" />

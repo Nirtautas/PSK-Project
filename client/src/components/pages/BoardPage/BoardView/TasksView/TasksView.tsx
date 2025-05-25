@@ -181,6 +181,7 @@ const TasksView = ({
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}
                             onDelete={onTaskDelete}
+                            refetch={refetch}
                         />
                     </div>
                 ))

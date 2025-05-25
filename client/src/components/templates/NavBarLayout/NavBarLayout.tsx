@@ -16,6 +16,7 @@ import NotificationDropdown from '@/components/templates/NavBarLayout/Notificati
 import UserApi from '@/api/user.api'
 import { useEffect, useState } from 'react'
 import React from 'react'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 type Props = {
     children: React.ReactNode
@@ -32,10 +33,12 @@ const NavBarLayout = ({ children }: Props) => {
         setData: setNotifications
     } = useFetch({ resolver: () => NotificationApi.getAll() })
 
+    const messages = useMessagePopup()
+
     const handleInvitationAccept = async (subjectNotification: Notification) => {
         const response = await NotificationApi.acceptInvitation(subjectNotification.id)
         if (response.error) {
-            console.error('An error occured when accepting board invitation.')
+            messages.displayError('An error occured when accepting board invitation.')
             return
         }
         setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
@@ -45,23 +48,25 @@ const NavBarLayout = ({ children }: Props) => {
     }
 
     const handleInvitationDecline = async (subjectNotification: Notification) => {
-        const confirmMsg = `Notification will be deleted. Are you sure?`
-        if (!confirm(confirmMsg))
-            return
-
-        const response = await NotificationApi.declineInvitation(subjectNotification.id)
-        if (response.error) {
-            console.error('An error occured when accepting board invitation.')
-            return
-        }
-        setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: `Notification will be deleted. Are you sure?`,
+            onOkClick: async () => {
+                const response = await NotificationApi.declineInvitation(subjectNotification.id)
+                if (response.error) {
+                    messages.displayError('An error occured when accepting board invitation.')
+                    return
+                }
+                setNotifications(notifications.filter((notification) => notification.id !== subjectNotification.id))
+            }
+        })
     }
 
 
     const handleNotificationsDelete = async () => {
         const response = await NotificationApi.deleteAll()
         if (response.error) {
-            console.error('An error occurred when deleting all notifications.')
+            messages.displayError('An error occurred when deleting all notifications.')
             return
         }
         setNotifications([])
@@ -76,20 +81,20 @@ const NavBarLayout = ({ children }: Props) => {
     const [user, setUser] = useState<User | null>(null)
 
     useEffect(() => {
-    const fetchUser = async () => {
-        const response = await UserApi.getById(getUserId());
-        if (response.result) setUser(response.result);
-    };
+        const fetchUser = async () => {
+            const response = await UserApi.getById(getUserId())
+            if (response.result) setUser(response.result)
+        }
 
-    fetchUser();
+        fetchUser()
 
-    const handleUserUpdated = () => {
-        fetchUser();
-    };
+        const handleUserUpdated = () => {
+            fetchUser()
+        }
 
-    window.addEventListener('userUpdated', handleUserUpdated);
-    return () => window.removeEventListener('userUpdated', handleUserUpdated);
-    }, []);
+        window.addEventListener('userUpdated', handleUserUpdated)
+        return () => window.removeEventListener('userUpdated', handleUserUpdated)
+    }, [])
 
     return (
         <div className={styles.layout}>
@@ -114,7 +119,7 @@ const NavBarLayout = ({ children }: Props) => {
                         <Box className={styles.centered_wrapper}>
                             {user && <UserProfile
                                 name={user.userName ?? "name"}
-                                imageUrl={user.imageURL || null}
+                                imageUrl={user.imageURL || undefined}
                                 buttons={[
                                     {
                                         label: 'My Boards',

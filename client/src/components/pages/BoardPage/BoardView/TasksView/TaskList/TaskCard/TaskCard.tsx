@@ -15,9 +15,10 @@ type Props = {
     onTaskUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void
+    refetch?: () => void
 }
 
-const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
+const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole, onDelete, refetch }: Props) => {
 
     const [open, setOpen] = useState(false)
     const [currentTask, setCurrentTask] = useState<Task>(task)
@@ -37,7 +38,6 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
         setCurrentTask(updatedTask)
         onTaskUpdate(updatedTask)
     }
-
     return (
         <>
             <Card elevation={2} className={styles.task_card} onMouseDown={onMouseDown ? (e) => onMouseDown(e as unknown as MouseEvent, task) : undefined} onClick={handleOpen}>
@@ -59,7 +59,17 @@ const TaskCard = ({ boardId, onClick, task, onMouseDown, onTaskUpdate, userRole,
                     </div>
                 </CardActionArea>
             </Card>
-            <TaskCardInfoPopup boardId={boardId} open={open} setOpen={setOpen} task={currentTask} handleUpdate={handleTaskUpdate} userRole={userRole} onDelete={onDelete} onUserChange={handleUsersChange}/>
+            <TaskCardInfoPopup
+                boardId={boardId}
+                open={open}
+                setOpen={setOpen}
+                task={currentTask}
+                handleUpdate={handleTaskUpdate}
+                userRole={userRole}
+                onDelete={onDelete}
+                onUserChange={handleUsersChange}
+                refetch={refetch}
+            />
         </>
     )
 }

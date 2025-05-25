@@ -28,14 +28,18 @@
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  margin-left: 8px;
   margin-right: 8px;
+  width: 80% !important;
+  border-radius: 1rem !important;
+}
+
+.card_content {
+  margin-right: auto;
 }
 
 .card_container {
   flex: 1;
   overflow-y: auto;
-  padding-right: 8px;
   max-height: calc(100vh - 120px);
 }
 
@@ -52,15 +56,27 @@
 }
 
 .date_container {
-  margin-left: 80px; 
+  margin-left: 85px; 
 }
 
 .role_select {
   min-width: 120px;
-  margin: 0 8px;
 }
 
-.CollaboratorsView-module-scss-module__qqKCfG__user_card {
-  width: 100%; 
-  max-width: 100%;
+.user_info {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 1400px) {
+  .user_card {
+    display: block;
+  }
+
+  .user_control {
+    margin: 1rem !important;
+  }
 }

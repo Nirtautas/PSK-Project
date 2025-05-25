@@ -2,14 +2,11 @@
 
 import { Alert, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material'
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { placeholderImageUrl } from '@/constants/placeholders'
+import React, { useEffect, useState } from 'react'
 import { CreateBoardDto } from '../../../../api/board.api'
 import FileUpload from '@/components/shared/FileUpload/'
-import { CloudUpload as CloudUploadIcon } from '@mui/icons-material'
 
 import styles from './BoardManagemenModal.module.scss'
-import { FileSize } from '@/utils/fileSize'
 import { ALLOWED_IMAGE_FORMATS, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE_MB } from '@/constants/api'
 
 export type CreateBoardFormArgs = {
@@ -33,7 +30,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
     
     const [image, setImage] = useState<File | null>(null)
     const [imageError, setImageError] = useState<string>('')
-    const imageUrl = useMemo(() => image && URL.createObjectURL(image) || placeholderImageUrl, [image])
+    const [imageUrl, setImageUrl] = useState(initialData?.imageName || (image && URL.createObjectURL(image)))
 
     const handleImageUpload = async (image: File) => {
         if (image.size > MAX_IMAGE_SIZE) {
@@ -48,16 +45,18 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         }
         setImageError('')
         setImage(image)
+        setImageUrl(image && URL.createObjectURL(image))
+
     }
 
     useEffect(() => {
         setTitleError('')
-
         if (initialData) {
             setTitle(initialData.title)
             setDescription(initialData.description)
+            setImageUrl(initialData?.imageName)
         }
-    }, [initialData, open])
+    }, [initialData])
 
     const handleSubmit = () => {
         if (!title.trim()) {
@@ -71,6 +70,7 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
         setTitle('')
         setDescription('')
         setImage(null)
+        setImageUrl('')
     }
 
     return (
@@ -100,8 +100,8 @@ const BoardManagementModal = ({ open, onClose, onSubmit, initialData, mode }: Pr
                         />
                         <FileUpload
                             image={image}
-                            imageUrl={imageUrl}
                             errorMsg={imageError}
+                            imageUrl={imageUrl || ''}
                             onUpload={handleImageUpload}
                         />
                     </Stack>

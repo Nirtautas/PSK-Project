@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import TaskOnUserApi from "@/api/taskOnUser.api";
 import { Avatar } from "@mui/material";
 import { useMessagePopup } from "@/components/shared/MessagePopup/MessagePopupProvider";
+import { useDarkTheme } from '@/hooks/darkTheme'
 
 type Props = {
     users: TaskUser[]
@@ -19,7 +20,7 @@ type Props = {
 export default function AssignedUsersView({ users, boardId, taskId, onUserChange, editMode }: Props) {
     const [currentUsers, setCurrentUsers] = useState<TaskUser[]>(users)
     const { displayError } = useMessagePopup()
-
+    const isDarkTheme = useDarkTheme()
     useEffect(() => {
         setCurrentUsers(users)
     }, [users])
@@ -61,7 +62,7 @@ export default function AssignedUsersView({ users, boardId, taskId, onUserChange
                     boardId={boardId}
                 />}
                 {!editMode && (currentUsers && currentUsers.length ? currentUsers.map((user) => (
-                    <Box key={user.id} className={styles.user_box}>
+                    <Box sx={{ backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0' }} key={user.id} className={styles.user_box}>
                         <Avatar className={styles.avatar} alt={user.userName} src={user.imageURL}/>
                         <Typography>{user.userName}</Typography>
                     </Box>

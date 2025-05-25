@@ -77,7 +77,7 @@ const BoardSettingsView = ({ boardId, isLoading, errorMsg, onUpdate }: Props) =>
     }
 
     const handleUpdateBoard = async ({ description, image, title}: CreateBoardFormArgs) => {
-        let imageName = editData?.imageName || ''
+        let imageName = editData?.imageName.split('/').pop() || ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {

@@ -19,7 +19,7 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
     
     useEffect(() => {
         const userId = getUserId()
-        setUserId(userId)
+        setUserId(userId!)
     }, [])
     
     const userRole = useFetch({ resolver: () => BoardOnUserApi.getUserRole(boardId, userId), deps: [userId] })
@@ -61,7 +61,7 @@ const ArchivedTasksView = ({ boardId, onTaskUpdate }: Props) => {
                             <TaskCard
                                 boardId={boardId}
                                 task={task}
-                                onClick={() => { console.log('clicked task: ', task)}}
+                                onClick={() => {}}
                                 onTaskUpdate={handleUpdate}
                                 userRole={userRole.data.userRole}
                                 onDelete={handleDelete}/>

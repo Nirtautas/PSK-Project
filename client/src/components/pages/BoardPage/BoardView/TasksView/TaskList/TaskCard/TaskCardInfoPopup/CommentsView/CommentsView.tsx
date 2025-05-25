@@ -76,7 +76,7 @@ export default function CommentsView
     return (
         <Box sx={{ height: '70%'}}>
             <Typography variant="h4">Comments</Typography>
-            <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
+            <Box sx={{ padding: '1rem 0.6rem 1rem 0', overflowY: 'auto', height: '50%' }}>
                 {!errorMsgComments && !loadingComments && Array.isArray(comments) && comments.map((comment: Comment, index: number) => (
                     <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} user={getUserData(comment.userId)} taskStatus={taskStatus}/>
                 ))}

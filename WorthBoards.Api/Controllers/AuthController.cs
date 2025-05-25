@@ -18,19 +18,8 @@ namespace WorthBoards.Api.Controllers
         [HttpPost("/register")]
         public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterRequest request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var response = await authService.RegisterUserAsync(request, cancellationToken);
-                return Ok(response);
-            }
-            catch (BadRequestException ex)
-            {
-                return BadRequest(new { Error = ex.Message.Split("; ") });
-            }
-            catch (Exception)
-            {
-                return Problem();
-            }
+            var response = await authService.RegisterUserAsync(request, cancellationToken);
+            return Ok(response);
         }
 
         [AllowAnonymous]

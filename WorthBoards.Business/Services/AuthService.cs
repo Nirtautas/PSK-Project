@@ -16,6 +16,7 @@ using WorthBoards.Common.Exceptions;
 using Newtonsoft.Json;
 using WorthBoards.Business.Dtos.Responses;
 using WorthBoards.Business.Dtos.Requests;
+using Microsoft.EntityFrameworkCore;
 
 namespace WorthBoards.Business.Services
 {
@@ -55,28 +56,13 @@ namespace WorthBoards.Business.Services
 
         public async Task<UserResponse> RegisterUserAsync(UserRegisterRequest registerUser, CancellationToken cancellationToken)
         {
-            int maxNumOfCharsInName = 30;
-            if (registerUser.FirstName.Length > maxNumOfCharsInName || registerUser.LastName.Length > maxNumOfCharsInName)
-            {
-                throw new BadRequestException($"First Name and Last Name must be at most {maxNumOfCharsInName} characters long.");
-            }
-
-            if (registerUser.UserName.Length > maxNumOfCharsInName)
-            {
-                throw new BadRequestException($"Username must be at most {maxNumOfCharsInName} characters long.");
-            }
+            bool emailAlreadyExists = await userManager.Users.AnyAsync(u => u.Email == registerUser.Email);
+            if (emailAlreadyExists)
+                throw new BadRequestException($"There is already an account registered to {registerUser.Email}. Please log in!");
 
             var user = mapper.Map<ApplicationUser>(registerUser);
-
             user.CreationDate = DateTime.UtcNow;
-
             var response = await userManager.CreateAsync(user, registerUser.Password);
-
-            if (!response.Succeeded)
-            {
-                var errors = response.Errors.Select(e => e.Description).ToList();
-                throw new BadRequestException(string.Join("; ", errors));
-            }
 
             ArgumentNullException.ThrowIfNull(response);
 

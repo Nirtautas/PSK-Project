@@ -1,7 +1,7 @@
 'use client'
 
 import styles from './RegisterPage.module.scss'
-import { TextField, Typography, Button, Link, Box } from '@mui/material'
+import { TextField, Typography, Button, Link, Box, Alert } from '@mui/material'
 import PasswordInput from '@/components/templates/FormControlLayout/PasswordInput'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -11,13 +11,13 @@ import { setUserId } from '@/utils/userId'
 import { GetPageUrl } from '../../../constants/route'
 
 const RegisterPage = () => {
-    const [errorMsgs, setErrorMsgs] = useState<string[]>([])
+    const [errorMsg, setErrorMsg] = useState<string>('')
     const router = useRouter()
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-        
         const { firstname, lastname, email, username, password } = event.target as HTMLFormElement
+
         const regResponse = await AuthApi.register({
             firstName: firstname.value,
             lastName: lastname.value,
@@ -26,8 +26,7 @@ const RegisterPage = () => {
             password: password.value
         })
         if (regResponse.error) {
-            setErrorMsgs(regResponse.error)
-            console.log(regResponse.error)
+            setErrorMsg(regResponse.error)
             return
         }
 
@@ -36,7 +35,7 @@ const RegisterPage = () => {
             password: password.value
         })
         if (response.error) {
-            setErrorMsgs([response.error])
+            setErrorMsg(response.error)
             return
         }
         const { jwtToken, id } = response.result!
@@ -54,6 +53,7 @@ const RegisterPage = () => {
                 <form onSubmit={onSubmit} className={styles.login_box_container}>
                     <Typography variant="h3">Register</Typography>
                     <br />
+                    {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
                     <div className={styles.horizontal}>
                         <TextField name="firstname" label="First Name" variant="outlined" required/>
                         <TextField name="lastname" label="Last Name" variant="outlined" required/>
@@ -61,13 +61,6 @@ const RegisterPage = () => {
                     <TextField name="email" type="email" label="Email" variant="outlined" required/>
                     <TextField name="username" label="Username" variant="outlined" required/>
                     <PasswordInput name="password" required/>
-                    <ul className={styles.errors_container}>
-                        {errorMsgs ? errorMsgs.map(error => {
-                            return (
-                                <li key={styles.error_msg} className={styles.error_msg}>{error}</li>
-                            )
-                        }) : null}
-                    </ul>
                     <br />
                     <Button type="submit" variant="contained">Register</Button>
                     <br />

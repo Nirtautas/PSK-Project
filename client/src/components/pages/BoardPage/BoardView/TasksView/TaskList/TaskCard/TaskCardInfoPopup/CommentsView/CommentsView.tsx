@@ -9,21 +9,23 @@ import BoardOnUserApi from "@/api/boardOnUser.api"
 import useFetch from '@/hooks/useFetch'
 import usePagedFetch from '@/hooks/usePagedFetch'
 import PageChanger from '@/components/shared/PageChanger'
+import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
 export default function CommentsView
-({
-    taskId,
-    boardId,
-    taskStatus
-}: {
-    taskId: number,
-    boardId: number,
-    taskStatus: TaskStatus
-}) {
+    ({
+        taskId,
+        boardId,
+        taskStatus
+    }: {
+        taskId: number,
+        boardId: number,
+        taskStatus: TaskStatus
+    }) {
     const [commentInputText, setCommentInputText] = useState<string>('')
     const { data: users, isLoading: loadingUsers } = useFetch({ resolver: () => BoardOnUserApi.getBoardUsers(boardId), deps: [taskId] })
     const [pageNum, setPageNum] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
+
     const {
         data: comments,
         setData: setComments,
@@ -37,36 +39,49 @@ export default function CommentsView
     })
 
     useEffect(() => {
-        if(pageNum + 1 >= pageCount) {
+        if (pageNum + 1 >= pageCount) {
             setPageNum(pageCount - 1)
-        }}, [comments]);
+        }
+    }, [comments])
+
+    const messages = useMessagePopup()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         //TODO: the comments taskId returns as 0 all the time
         const response = await CommentApi.create(boardId, commentInputText, taskId)
-        console.log("Response:", response)
         if (!response.result) {
-            console.error("Error creating comment:", response.error)
+            messages.displayError("Error creating comment: " + response.error)
             return
         }
 
-        console.log("Created comment:", response.result)
         refetch()
         setCommentInputText('')
     }
 
-    const handleDelete = ({commentData} : {commentData: Comment} ) => {
-        const confirmed = window.confirm("Are you sure you want to delete this comment?")
-        if (!confirmed) return
-
-        CommentApi.delete(boardId, commentData.taskId, commentData.id).then((resp) => {
-            if (resp.error) {
-                console.error("Error deleting comment:", resp.error)
-                return
+    const handleDelete = ({ commentData }: { commentData: Comment }) => {
+        messages.displayDialog({
+            title: 'Are you sure?',
+            text: "Are you sure you want to delete this comment?",
+            onOkClick: async () => {
+                const response = await CommentApi.delete(boardId, commentData.taskId, commentData.id)
+                if (response.error) {
+                    messages.displayError("Error deleting comment: " + response.error)
+                    return
+                }
+                refetch()
             }
-            refetch()
         })
+    }
+
+    const handleEdit = async (comment: Comment, newText: string) => {
+        const commentData = comment
+        const { error, result: updatedComment } = await CommentApi.update(boardId, commentData.taskId, commentData.id, newText, commentData.version);
+        if (!updatedComment) {
+            messages.displayError(error!)
+            return
+        }
+        setComments(comments.map((c) => c.id === updatedComment.id ? updatedComment : c))
     }
 
     const getUserImageLink = (userId: number) => (
@@ -74,11 +89,19 @@ export default function CommentsView
     )
 
     return (
-        <Box sx={{ height: '70%'}}>
+        <Box sx={{ height: '70%' }}>
             <Typography variant="h4">Comments</Typography>
             <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
                 {!errorMsgComments && !loadingComments && Array.isArray(comments) && comments.map((comment: Comment, index: number) => (
-                    <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} pfpLink={getUserImageLink(comment.userId)} taskStatus={taskStatus}/>
+                    <CommentDisplay
+                        key={index}
+                        commentData={comment}
+                        boardId={boardId}
+                        handleDelete={handleDelete}
+                        onEdit={(newContent) => handleEdit(comment, newContent)}
+                        pfpLink={getUserImageLink(comment.userId)}
+                        taskStatus={taskStatus}
+                    />
                 ))}
             </Box>
             {taskStatus !== TaskStatus.ARCHIVED &&

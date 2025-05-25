@@ -18,9 +18,11 @@ namespace WorthBoards.Business.AutoMapper
             CreateMap<UserRequest, ApplicationUser>();
             CreateMap<UserRegisterRequest, ApplicationUser>();
             CreateMap<ApplicationUser, LinkedUserToTaskResponse>();
-            CreateMap<ApplicationUser, UserUpdateRequest>();
+            CreateMap<ApplicationUser, UserUpdateRequest>()
+                .ForMember(dest => dest.ImageName, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
             CreateMap<UserUpdateRequest, ApplicationUser>();
-            CreateMap<ApplicationUser, UserUpdateResponse>();
+            CreateMap<ApplicationUser, UserUpdateResponse>()
+                .ForMember(dest => dest.ImageURL, opt => opt.MapFrom(src => ImageFiles.GetFormattedImageUrl(src.ImageName)));
 
             //BoardTask
             CreateMap<BoardTask, BoardTaskResponse>();

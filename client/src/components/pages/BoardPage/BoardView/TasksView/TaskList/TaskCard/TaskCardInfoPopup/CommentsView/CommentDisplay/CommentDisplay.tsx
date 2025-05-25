@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
-import { Comment, TaskStatus } from "@/types/types";
+import { BoardUser, Comment, TaskStatus } from "@/types/types";
 import { getUserId } from "@/utils/userId";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -14,13 +14,13 @@ export default function CommentDisplay({
     commentData,
     boardId,
     handleDelete,
-    pfpLink,
+    user,
     taskStatus
 }: {
     commentData: Comment,
     boardId: number,
     handleDelete: ({commentData}: {commentData: Comment}) => void,
-    pfpLink: string,
+    user?: BoardUser
     taskStatus: TaskStatus
 }) {
     const userId = getUserId();
@@ -61,13 +61,13 @@ export default function CommentDisplay({
             ) : (
                 <>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                        <Avatar alt="userName" src={pfpLink} />
+                        <Avatar alt="userName" src={user?.imageURL} />
                         <Box sx={{ flex: 1 }}>
                             <Typography variant="body1" 
                               sx={{
                                 wordBreak: 'break-word',
                                 whiteSpace: 'pre-wrap',
-                              }}>{commentData.content}</Typography>
+                              }}>{user?.userName}: {commentData.content}</Typography>
                             <Typography variant="body2" sx={{ color: 'gray' }}>
                                 {new Date(commentData.creationDate).toISOString().slice(0, 16).replace('T', ' ')}
                             </Typography>

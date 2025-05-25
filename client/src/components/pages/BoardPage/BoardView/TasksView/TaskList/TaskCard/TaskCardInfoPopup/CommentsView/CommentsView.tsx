@@ -74,6 +74,7 @@ export default function CommentsView
         })
     }
 
+    const getUserData = (userId: number) => !loadingUsers ? users.find((user: BoardUser) => user.id === userId) : undefined
     const handleEdit = async (comment: Comment, newText: string) => {
         const commentData = comment
         const { error, result: updatedComment } = await CommentApi.update(boardId, commentData.taskId, commentData.id, newText, commentData.version);
@@ -84,22 +85,19 @@ export default function CommentsView
         setComments(comments.map((c) => c.id === updatedComment.id ? updatedComment : c))
     }
 
-    const getUserImageLink = (userId: number) => (
-        !loadingUsers ? users.find((user: BoardUser) => user.id === userId)?.imageURL || '' : ''
-    )
-
     return (
         <Box sx={{ height: '70%' }}>
             <Typography variant="h4">Comments</Typography>
-            <Box sx={{ padding: 1, overflowY: 'auto', height: '50%' }}>
+            <Box sx={{ padding: '1rem 0.6rem 1rem 0', overflowY: 'auto', height: '50%' }}>
                 {!errorMsgComments && !loadingComments && Array.isArray(comments) && comments.map((comment: Comment, index: number) => (
+                    // <CommentDisplay key={index} commentData={comment} boardId={boardId} handleDelete={handleDelete} user={getUserData(comment.userId)} taskStatus={taskStatus}/>
                     <CommentDisplay
                         key={index}
                         commentData={comment}
                         boardId={boardId}
                         handleDelete={handleDelete}
                         onEdit={(newContent) => handleEdit(comment, newContent)}
-                        pfpLink={getUserImageLink(comment.userId)}
+                        user={getUserData(comment.userId)}
                         taskStatus={taskStatus}
                     />
                 ))}

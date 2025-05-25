@@ -1,11 +1,12 @@
 import { Card, CardActionArea, Skeleton, Typography } from '@mui/material'
 
 import styles from './BoardCard.module.scss'
+import { placeholderImageUrl } from '@/constants/placeholders'
 
 type Props = {
     name: string
     description: string
-    imgUrl: string | undefined
+    imgUrl?: string
     onClick: () => void
     isLoading: boolean
 } | { isLoading: true }
@@ -35,7 +36,7 @@ const BoardCard = ({
                     !isLoading
                         ? (
                             <>
-                                <img src={imgUrl} alt="Card Image" className={styles.board_image}/>
+                                <img src={imgUrl || placeholderImageUrl} alt="Card Image" className={styles.board_image}/>
                                 <div className={styles.text_content}>
                                     <Typography variant="h4">{name}</Typography> <br/>
                                     <p>{description}</p>

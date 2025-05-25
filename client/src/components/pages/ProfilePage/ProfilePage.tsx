@@ -154,10 +154,10 @@ const ProfilePage = () => {
                     <Grid item>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
-                                <Avatar
-                                    alt={userName}
-                                    src={imageURL ? (imageURL.startsWith('http') ? imageURL : `http://localhost:5000/images/${imageURL}`) : undefined}
-                                    sx={{ width: 56, height: 56 }}
+                            <Avatar
+                                alt={userName}
+                                src={imageURL}
+                                sx={{ width: 56, height: 56 }}
                                 >
                                     {!imageURL && <PersonIcon sx={{ fontSize: 40, color: 'white' }} />}
                                 </Avatar>
@@ -169,10 +169,9 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                         </Grid>
-                        <Grid item className={styles.line}></Grid>
                     </Grid>
                 </Grid>
-
+                <Grid item className={styles.line}></Grid>
                 <Box sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
@@ -213,53 +212,11 @@ const ProfilePage = () => {
                         </Grid>
 
                         {isEditMode && (
-                            <Grid item xs={12}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    {imageUrl ? (
-                                        <img
-                                            src={imageUrl}
-                                            alt="Uploaded"
-                                            style={{
-                                                width: 64,
-                                                height: 64,
-                                                objectFit: 'cover',
-                                                borderRadius: 8,
-                                            }}
-                                        />
-                                    ) : (
-                                        <Box
-                                            sx={{
-                                                width: 64,
-                                                height: 64,
-                                                backgroundColor: '#e0e0e0',
-                                                borderRadius: 1,
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <ImageIcon sx={{ color: '#9e9e9e', fontSize: 32 }} />
-                                        </Box>
-                                    )}
-
-                                    <label htmlFor="upload-input">
-                                        <input
-                                            id="upload-input"
-                                            type="file"
-                                            hidden
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                                if (e.target.files?.[0]) {
-                                                    handleImageUpload(e.target.files[0])
-                                                }
-                                            }}
-                                        />
-                                        <Button variant="contained" component="span">
-                                            Upload Image
-                                        </Button>
-                                    </label>
-                                </Box>
-                            </Grid>
+                            <FileUpload
+                                image={image}
+                                imageUrl={imageUrl || ''}
+                                onUpload={handleImageUpload}
+                            />
                         )}
 
                         {!isEditMode && (

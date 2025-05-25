@@ -7,7 +7,7 @@ import styles from './UserProfile.module.scss'
 
 type Props = {
     name: string
-    imageUrl: string | null | undefined
+    imageUrl?: string
     buttons: {
         label: string
         onClick: () => void
@@ -39,7 +39,7 @@ const UserProfile = ({ name, imageUrl, buttons }: Props) => {
                     <Avatar
                         className={styles.avatar}
                         alt={name}
-                        src={imageUrl ? `http://localhost:5000/images/${imageUrl}` : undefined}
+                        src={imageUrl}
                         sx={{ width: 56, height: 56 }}
                     >
                         {!imageUrl && (

@@ -16,9 +16,10 @@ type Props = {
     onTaskUpdate: (t: Task) => void
     userRole: Role
     onDelete: (t: Task) => void
+    refetch?: () => void
 }
 
-const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole, onDelete }: Props) => {
+const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpdate, userRole, onDelete, refetch }: Props) => {
     if (isLoading) {
         return (
             <div className={styles.tasks_list}>
@@ -43,7 +44,8 @@ const TaskList = ({ boardId, isLoading, tasks, errorMsg, onMouseDown, onTaskUpda
                             onMouseDown={onMouseDown}
                             onTaskUpdate={onTaskUpdate}
                             userRole={userRole}
-                            onDelete={onDelete}/>
+                            onDelete={onDelete}
+                            refetch={refetch}/>
                     </div>
                 ))}
         </div>

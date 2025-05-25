@@ -9,6 +9,7 @@ import { getUserId } from '@/utils/userId';
 import useFetch from '@/hooks/useFetch'
 import BoardOnUserApi from '@/api/boardOnUser.api';
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider';
+import { useDarkTheme } from '@/hooks/darkTheme';
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value) 
@@ -44,6 +45,7 @@ const CollaboratorView = ({ boardId, isLoading, errorMsg }: Props) => {
   const [removeErrors, setRemoveErrors] = useState<{ [userId: number]: string }>({});
   const [userId, setUserId] = useState<number | null>(null)
   const { displayError } = useMessagePopup();
+  const isDarkTheme = useDarkTheme()
 
   useEffect(() => {
       const userId = getUserId();
@@ -171,9 +173,9 @@ return (
         ) : (
           <Box className={styles.card_container}>
               {Array.isArray(collaborators) && collaborators.map((user: BoardUser, index: number) => (
-                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: '#262626', width: '60%' }}>
-                  <CardContent className={styles.card_Content}>
-                  <Paper elevation={1} sx={{ marginBottom: 1, padding: 1, display: 'flex', alignItems: 'center', backgroundColor: '#262626'}} >
+                <Card key={user.id} className={styles.user_card} sx={{backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}}>
+                  <CardContent className={styles.card_content}>
+                  <Paper elevation={1} className={styles.user_info} sx={{ backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0'}} >
                     {index + 1}.    
                     <Avatar className={styles.img_container} alt={user.userName} src={user.imageURL}  sx={{ marginLeft: 2, marginRight: 3 }}/>
                     <span style={{ marginRight: '20px' }}>{user.userName}</span>
@@ -185,7 +187,8 @@ return (
                       </Typography>   
                     </div>
                   </CardContent>
-                  <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
+                  <div className={styles.user_control}>
+                    <FormControl className={styles.roleSelect} sx={{ marginLeft: 2, marginRight: 3 }}>
                       <InputLabel>Role</InputLabel>
                       <Select 
                         value={roleMapping[user.id] || 'VIEWER'}
@@ -204,12 +207,17 @@ return (
                     {userRole === null || userRole === undefined ? (
                       <Typography>Loading user role...</Typography>
                     ) : (
-                      userRole.userRole === Role.OWNER && user.userRole !== Role.OWNER && (
-                        <IconButton onClick={() => handleRemoveCollaborator(user.id)} sx={{ color: 'red' }} >
+                      (
+                        <IconButton
+                          onClick={() => handleRemoveCollaborator(user.id)}
+                          disabled={!(userRole.userRole === Role.OWNER && user.userRole !== Role.OWNER)}
+                          sx={{ color: 'red', marginRight: 2}}
+                        >
                           <RemoveCircleOutlineIcon />
                         </IconButton>
                       )
                     )}
+                  </div>
                 </Card>
               ))}
           </Box>
@@ -258,7 +266,7 @@ return (
                       justifyContent: 'space-between',
                       padding: 2,
                       marginBottom: 2,
-                      backgroundColor: '#1e1e1e',
+                      backgroundColor: isDarkTheme ? '#1F1F1F' : '#E0E0E0',
                       borderRadius: 2,
                       width: '50%'
                     }}

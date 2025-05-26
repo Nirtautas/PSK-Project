@@ -60,7 +60,7 @@ const ProfilePage = () => {
     }, [userId])
 
     const handleSaveChanges = async () => {
-        let imageName = imageURL
+        let imageName = imageURL.split('/').pop() || ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {

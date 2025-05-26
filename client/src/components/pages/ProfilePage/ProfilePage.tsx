@@ -13,7 +13,7 @@ import ImageIcon from '@mui/icons-material/Image'
 import PersonIcon from '@mui/icons-material/Person'
 import { useMessagePopup } from '@/components/shared/MessagePopup/MessagePopupProvider'
 
-export type UserUpdateRequest = Omit<User, 'id' | 'creationDate'>
+export type UserUpdateRequest = Omit<User, 'id' | 'creationDate' | 'imageURL'> & { imageName: string }
 
 const ProfilePage = () => {
     const userId = getUserId()
@@ -59,16 +59,8 @@ const ProfilePage = () => {
         fetchUserData()
     }, [userId])
 
-    const buildUserUpdateRequest = (): UserUpdateRequest => ({
-        firstName,
-        lastName,
-        userName,
-        email,
-        imageURL,
-    })
-
     const handleSaveChanges = async () => {
-        let imageName = imageURL
+        let imageName = imageURL.split('/').pop() || ''
         if (image) {
             const imageResponse = await UploadApi.uploadImage(image)
             if (!imageResponse.result) {
@@ -83,14 +75,14 @@ const ProfilePage = () => {
             lastName,
             userName,
             email,
-            imageURL: imageName,
+            imageName,
         }
 
         const response = await UserApi.updateUser(Number(userId), updatedUserDto)
         if (response.result) {
             setIsEditMode(false)
             setImage(null)
-            setImageURL(imageName)
+            setImageURL(response.result.imageURL)
             window.dispatchEvent(new Event('userUpdated'))
 
         } else {
@@ -214,7 +206,7 @@ const ProfilePage = () => {
                         {isEditMode && (
                             <FileUpload
                                 image={image}
-                                imageUrl={imageUrl || ''}
+                                imageUrl={imageUrl}
                                 onUpload={handleImageUpload}
                             />
                         )}
